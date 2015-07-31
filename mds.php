@@ -235,9 +235,11 @@ class Mds extends CarrierModule {
 						) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 			Db::getInstance()->execute($sql);
 			
-			
-		
+		$sql = 'UPDATE  `'._DB_PREFIX_.'country` SET `contains_states`= 1 WHERE `iso_code`= "ZA"';
+		Db::getInstance()->execute($sql);
+	
 	}
+	
 
 	public function uninstall()
 	{
@@ -299,6 +301,29 @@ class Mds extends CarrierModule {
 		}
 
 		return true;
+	}
+	
+	public function uninstallSqlInstall()
+	{
+	
+		
+			
+		$sql = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'mds_collivery_processed`';
+		Db::getInstance()->execute($sql);
+			
+		$sql = 'UPDATE  `'._DB_PREFIX_.'country` SET `contains_states`= 0 WHERE `iso_code`= "ZA"';
+		Db::getInstance()->execute($sql);
+		
+		$sql = 'DELETE * FROM `'._DB_PREFIX_.'state` WHERE `id_mds` is not NULL';
+		Db::getInstance()->execute($sql);
+		
+		$sql = 'SELECT * FROM '._DB_PREFIX_.'state WHERE id_mds';
+		if ( ! Db::getInstance()->query($sql))
+			{
+				$sql = 'ALTER TABLE `'._DB_PREFIX_.'state` DROP `id_mds`';
+				Db::getInstance()->execute($sql);
+			}
+	
 	}
 
 	public static function installExternalCarrier($config)
@@ -563,13 +588,18 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
 		$addressRow = Db::getInstance()->getRow($sql);
+		
+		$town_id = $addressRow['id_state'];
+		$sql = 'SELECT `id_mds` FROM ' . _DB_PREFIX_ . 'state
+		WHERE id_state = \'' . $town_id . '\'';
+		$mds_town_id = Db::getInstance()->getValue($sql);
 
 		$colliveryParams['company_name'] = $addressRow['company'];
 		$colliveryParams['building'] = '';
 		$colliveryParams['street'] = $addressRow['address1'];
 		$colliveryParams['location_type'] = $addressRow['address2'];
 		$colliveryParams['suburb'] = $addressRow['city'];
-		$colliveryParams['town'] = $addressRow['id_state'];
+		$colliveryParams['town'] = $mds_town_id;
 		$colliveryParams['zip_code'] = $addressRow['postcode'];
 		$colliveryParams['full_name'] = $addressRow['firstname'] . " " . $addressRow['lastname'];
 		$colliveryParams['phone'] = $addressRow['phone'];
@@ -640,13 +670,18 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
 		$addressRow = Db::getInstance()->getRow($sql);
+		
 		$cartProducts = $params->getProducts();
-		//print_r($addressRow);
+		
+		$town_id = $addressRow['id_state'];
+		$sql = 'SELECT `id_mds` FROM ' . _DB_PREFIX_ . 'state`
+		WHERE id_state = \'' . $town_id . '\'';
+		$mds_town_id = Db::getInstance()->getValue($sql);
 
 		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
 
 		$colliveryGetPriceArray = Array();
- 		$colliveryGetPriceArray['to_town_id'] = $addressRow['id_state'];
+ 		$colliveryGetPriceArray['to_town_id'] = $mds_town_id;
  		$colliveryGetPriceArray['collivery_from'] = $colliveryAddressFrom['address_id'];
  		//$colliveryGetPriceArray['to_location_type'] = $addressRow['address2'];
 
@@ -732,20 +767,21 @@ class Mds extends CarrierModule {
 		$query = new DbQuery();
 		$query->select('count(*)');
 		$query->from('state');
+		$query->where('id_mds is not NULL');
 		$numberOfTowns = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
 		
 		if ($numberOfTowns != array_count_values($towns))
 		{
 
-			$sql = 'DELETE * FROM '._DB_PREFIX_.'state';
+			$sql = 'DELETE * FROM `'._DB_PREFIX_.'state` WHERE `id_mds` is not NULL';
 			Db::getInstance()->execute($sql);
 			
 			foreach($towns as $index => $town) 
 			{
 
-				$sql = 'INSERT INTO '._DB_PREFIX_.'state (id_state,id_country,id_zone,name,iso_code,tax_behavior,active)
+				$sql = 'INSERT INTO '._DB_PREFIX_.'state (id_country,id_zone,name,iso_code,id_mds,tax_behavior,active)
 				VALUES 
-				('.$index.',30,4,\''.$town.'\',\'za\',0,1)';
+				(30,4,\''.$town.'\',\'ZA\','.$index.',0,1)';
 				 Db::getInstance()->execute($sql);
 			}
 
@@ -753,7 +789,8 @@ class Mds extends CarrierModule {
 
 
 
-				
+
+
 				
 	
 
