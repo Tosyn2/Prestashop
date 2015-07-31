@@ -907,34 +907,35 @@ class Collivery {
 		$services      = $this->getServices();
 
 		if ( ! isset( $data['collivery_from'] ) )
-			$this->setError( 'missing_data', 'collivery_from not set.' );
+		{	$this->setError( 'missing_data', 'collivery_from not set.' ); die('1');}
 		elseif ( ! is_array( $this->getAddress( $data['collivery_from'] ) ) )
-			$this->setError( 'invalid_data', 'Invalid Address ID for: collivery_from.' );
+			{$this->setError( 'invalid_data', 'Invalid Address ID for: collivery_from.' ); die('2');}
 
 		if ( ! isset( $data['contact_from'] ) )
-			$this->setError( 'missing_data', 'contact_from not set.' );
+			{$this->setError( 'missing_data', 'contact_from not set.' ); die('3');}
 		elseif ( ! isset( $contacts_from[ $data['contact_from'] ] ) )
-			$this->setError( 'invalid_data', 'Invalid Contact ID for: contact_from.' );
+			{$this->setError( 'invalid_data', 'Invalid Contact ID for: contact_from.' ); die('4');}
 
 		if ( ! isset( $data['collivery_to'] ) )
-			$this->setError( 'missing_data', 'collivery_to not set.' );
+		{	$this->setError( 'missing_data', 'collivery_to not set.' ); die('5');}
 		elseif ( ! is_array( $this->getAddress( $data['collivery_to'] ) ) )
-			$this->setError( 'invalid_data', 'Invalid Address ID for: collivery_to.' );
+		{	$this->setError( 'invalid_data', 'Invalid Address ID for: collivery_to.' ); die('6');}
 
 		if ( ! isset( $data['contact_to'] ) )
-			$this->setError( 'missing_data', 'contact_to not set.' );
+		{	$this->setError( 'missing_data', 'contact_to not set.' ); die('7');}
 		elseif ( ! isset( $contacts_to[ $data['contact_to'] ] ) )
-			$this->setError( 'invalid_data', 'Invalid Contact ID for: contact_to.' );
+		{	$this->setError( 'invalid_data', 'Invalid Contact ID for: contact_to.' ); die('8');}
 
 		if ( ! isset( $data['collivery_type'] ) )
-			$this->setError( 'missing_data', 'collivery_type not set.' );
+
+			{$this->setError( 'missing_data', 'collivery_type not set.' ); 		die('9');}
 		elseif ( ! isset( $parcel_types[ $data['collivery_type'] ] ) )
-			$this->setError( 'invalid_data', 'Invalid collivery_type.' );
+		{	$this->setError( 'invalid_data', 'Invalid collivery_type.' ); die('10');}
 
 		if ( ! isset( $data['service'] ) )
-			$this->setError( 'missing_data', 'service not set.' );
+		{	$this->setError( 'missing_data', 'service not set.' );  die('11');}
 		elseif ( ! isset( $services[ $data['service'] ] ) )
-			$this->setError( 'invalid_data', 'Invalid service.' );
+			{$this->setError( 'invalid_data', 'Invalid service.' );  die('12');}
 
 		if ( ! $this->hasErrors() ) {
 			try {
@@ -946,14 +947,14 @@ class Collivery {
 
 			if ( isset( $result['collivery_id'] ) ) {
 				if ( isset( $result['error_id'] ) )
-					$this->setError( $result['error_id'], $result['error'] );
+				{	$this->setError( $result['error_id'], $result['error'] );  die('13');}
 
 				return $result['collivery_id'];
 			} else {
 				if ( isset( $result['error_id'] ) )
-					$this->setError( $result['error_id'], $result['error'] );
+				{	$this->setError( $result['error_id'], $result['error'] );  die('14');}
 				else
-					$this->setError( 'result_unexpected', 'No result returned.' );
+				{	$this->setError( 'result_unexpected', 'No result returned.' );  die('15');}
 
 				return false;
 			}

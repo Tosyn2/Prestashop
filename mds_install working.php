@@ -1,14 +1,8 @@
 <?php
 
 // Avoid direct access to the file
-if ( ! defined('_PS_VERSION_')) 
-{
+if ( ! defined('_PS_VERSION_')) {
 	exit;
-}
-
-if (version_compare(PHP_VERSION, '5.3.0') < 0) 
-{
-	die('Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.');
 }
 
 
@@ -18,7 +12,7 @@ class Mds extends CarrierModule {
 	private $_html = '';
 	private $_postErrors = array();
 	private $_moduleName = 'mds';
-	public static $_this = false;
+	//public static $_this = false;
 	protected $cache;
 	protected $db;
 	protected $towns;
@@ -45,12 +39,12 @@ class Mds extends CarrierModule {
 		$this->name = 'mds';
 		$this->tab = 'shipping_logistics';
 		$this->version = '1.0';
-		$this->author = 'Nicole Johnson';
+		$this->author = 'MDS Technologies (Pty) Ltd';
 		$this->limited_countries = array();
 
 		parent::__construct();
 
-		$this->displayName = $this->l('Mds Shipping');
+		$this->displayName = $this->l('MDS Shipping');
 		$this->description = $this->l('Offer your customers, different delivery methods that you want');
 
 		if (self::isInstalled($this->name)) {
@@ -79,12 +73,18 @@ class Mds extends CarrierModule {
 			if ( ! in_array((int) (Configuration::get('MYCARRIER2_CARRIER_ID')), $id_carrier_list)) {
 				$warning[] .= $this->l('"Carrier 2"') . ' ';
 			}
-			if ( ! Configuration::get('MYCARRIER1_OVERCOST')) {
-				$warning[] .= $this->l('"Carrier 1 Overcost"') . ' ';
+			if ( ! in_array((int) (Configuration::get('MYCARRIER3_CARRIER_ID')), $id_carrier_list)) {
+				$warning[] .= $this->l('"Carrier 3"') . ' ';
 			}
-			if ( ! Configuration::get('MYCARRIER2_OVERCOST')) {
-				$warning[] .= $this->l('"Carrier 2 Overcost"') . ' ';
+			if ( ! in_array((int) (Configuration::get('MYCARRIER5_CARRIER_ID')), $id_carrier_list)) {
+				$warning[] .= $this->l('"Carrier 3"') . ' ';
 			}
+// 			if ( ! Configuration::get('MYCARRIER1_OVERCOST')) {
+// 				$warning[] .= $this->l('"Carrier 1 Overcost"') . ' ';
+// 			}
+// 			if ( ! Configuration::get('MYCARRIER2_OVERCOST')) {
+// 				$warning[] .= $this->l('"Carrier 2 Overcost"') . ' ';
+// 			}
 			if (count($warning)) {
 				$this->warning .= implode(' , ', $warning) . $this->l(
 						'must be configured to use this module correctly'
@@ -108,9 +108,9 @@ class Mds extends CarrierModule {
 	public function install()
 	{
 
-		if ( ! extension_loaded('soap')) {
-			$warning[] = "'" . $this->l('Class Soap') . "', ";
-		}
+//		if ( ! extension_loaded('soap')) {
+//			$warning[] = "'" . $this->l('Class Soap') . "', ";
+//		}
 
 		$carrierConfig = array(
 			0 => array(
@@ -207,86 +207,52 @@ class Mds extends CarrierModule {
 			! $this->registerHook('leftColumn') ||
 			! $this->registerhook('displayFooter') ||
 			! $this->registerHook('header') ||
-			! $this->registerHook('displayBackOfficeFooter')
-		) {
+			! $this->registerHook('displayBackOfficeFooter') ||
+			! $this->registerHook('displayAdminOrderTabShip') ||
+			! $this->registerHook('displayAdminOrderContentShip')
+			) {
 			return false;
 		}
 
 		return true;
 	}
-	
-	public function sqlInstall()
-	{
-	
-		$sql = 'SELECT * FROM '._DB_PREFIX_.'state WHERE id_mds';
-		if ( ! Db::getInstance()->query($sql))
-			{
-				$sql = 'ALTER TABLE `'._DB_PREFIX_.'state` ADD `id_mds` INT NULL AFTER  `iso_code`';
-				Db::getInstance()->execute($sql);
-			}
-			
-		$sql = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'mds_collivery_processed` (
-						`id` int(11) NOT NULL AUTO_INCREMENT,
-						`waybill` int(11) NOT NULL,
-						`order_id` int(11) NOT NULL,
-						`validation_results` TEXT NOT NULL,
-						`status` int(1) NOT NULL DEFAULT 1,
-						PRIMARY KEY (`id`)
-						) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
-			Db::getInstance()->execute($sql);
-			
-			
-		
-	}
 
 	public function uninstall()
 	{
 		// Uninstall
-		if ( ! parent::uninstall() ||
-			! Configuration::deleteByName('MYCARRIER1_OVERCOST') ||
-			! Configuration::deleteByName('MYCARRIER2_OVERCOST') ||
-			! Configuration::deleteByName('MYCARRIER3_OVERCOST') ||
-			! Configuration::deleteByName('MYCARRIER5_OVERCOST') ||
-
+		if (!parent::uninstall() ||
+			!Configuration::deleteByName('MYCARRIER1_OVERCOST') ||
+			!Configuration::deleteByName('MYCARRIER2_OVERCOST') ||
+			!Configuration::deleteByName('MYCARRIER3_OVERCOST') ||
+			!Configuration::deleteByName('MYCARRIER5_OVERCOST') ||
 			! $this->unregisterHook('updateCarrier') ||
 			! $this->unregisterHook('actionPaymentConfirmation') ||
 			! $this->unregisterHook('leftColumn') ||
 			! $this->unregisterhook('displayFooter') ||
 			! $this->unregisterHook('header') ||
-			! $this->unregisterHook('backOfficeHeader')
-		) {
-			return false;
-		}
-
+			! $this->unregisterHook('displayBackOfficeFooter') ||
+					! $this->unregisterHook('displayAdminOrderTabShip') ||
+			! $this->unregisterHook('displayAdminOrderContentShip')
+			)
+			{
+				return false;
+			}
 		// Delete External Carrier
-		$Carrier1 = new Carrier((int) (Configuration::get('MYCARRIER1_CARRIER_ID')));
-		$Carrier2 = new Carrier((int) (Configuration::get('MYCARRIER2_CARRIER_ID')));
-		$Carrier3 = new Carrier((int) (Configuration::get('MYCARRIER3_CARRIER_ID')));
-		$Carrier5 = new Carrier((int) (Configuration::get('MYCARRIER5_CARRIER_ID')));
+		$Carrier1 = new Carrier((int)(Configuration::get('MYCARRIER1_CARRIER_ID')));
+		$Carrier2 = new Carrier((int)(Configuration::get('MYCARRIER2_CARRIER_ID')));
+		$Carrier3 = new Carrier((int)(Configuration::get('MYCARRIER3_CARRIER_ID')));
+		$Carrier5 = new Carrier((int)(Configuration::get('MYCARRIER5_CARRIER_ID')));
+
+
 
 		// If external carrier is default set other one as default
-		if (Configuration::get('PS_CARRIER_DEFAULT') == (int) ($Carrier1->id) || Configuration::get(
-				'PS_CARRIER_DEFAULT'
-			) == (int) ($Carrier2->id) || Configuration::get(
-				'PS_CARRIER_DEFAULT'
-			) == (int) ($Carrier3->id) || Configuration::get(
-				'PS_CARRIER_DEFAULT'
-			) == (int) ($Carrier3->id) || Configuration::get('PS_CARRIER_DEFAULT') == (int) ($Carrier5->id)
-		) {
+		if (Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier1->id) || Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier2->id) ||Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier3->id) || Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier3->id) || Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier5->id))
+		{
 			global $cookie;
-			$carriersD = Carrier::getCarriers(
-				$cookie->id_lang,
-				true,
-				false,
-				false,
-				null,
-				PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE
-			);
-			foreach ($carriersD as $carrierD) {
-				if ($carrierD['active'] AND ! $carrierD['deleted'] AND ($carrierD['name'] != $this->_config['name'])) {
+			$carriersD = Carrier::getCarriers($cookie->id_lang, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
+			foreach($carriersD as $carrierD)
+				if ($carrierD['active'] AND !$carrierD['deleted'] AND ($carrierD['name'] != $this->_config['name']))
 					Configuration::updateValue('PS_CARRIER_DEFAULT', $carrierD['id_carrier']);
-				}
-			}
 		}
 
 		// Then delete Carrier
@@ -294,9 +260,8 @@ class Mds extends CarrierModule {
 		$Carrier2->deleted = 1;
 		$Carrier3->deleted = 1;
 		$Carrier5->deleted = 1;
-		if ( ! $Carrier1->update() || ! $Carrier2->update() || ! $Carrier3->update() || ! $Carrier5->update()) {
+		if (!$Carrier1->update() || !$Carrier2->update() ||  !$Carrier3->update() ||  !$Carrier5->update())
 			return false;
-		}
 
 		return true;
 	}
@@ -395,11 +360,11 @@ class Mds extends CarrierModule {
 
 			$this->_postValidation();
 			if ( ! sizeof($this->_postErrors)) {
-				$email = Tools::getValue('your_email');
-				$password = Tools::getValue('your_password');
-
-				Configuration::updateValue($this->name . '_email', $email);
-				Configuration::updateValue($this->name . '_password', $password);
+//				$email = Tools::getValue('your_email');
+//				$password = Tools::getValue('your_password');
+//
+//				Configuration::updateValue($this->name . '_email', $email);
+//				Configuration::updateValue($this->name . '_password', $password);
 				$this->_postProcess();
 			} else {
 				foreach ($this->_postErrors AS $err) {
@@ -450,8 +415,8 @@ class Mds extends CarrierModule {
 			$this->_html .= '<br />' . (isset($alert['carrier3']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 3) ' . $this->l(
 					'Configure the carrier 3 overcost'
 				);
-			$this->_html .= '<br />' . (isset($alert['carrier5']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 4) ' . $this->l(
-					'Configure the carrier 5 overcost'
+			$this->_html .= '<br />' . (isset($alert['carrier5']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 5) ' . $this->l(
+					'Configure the carrier 4 overcost'
 				);
 		}
 
@@ -526,9 +491,9 @@ class Mds extends CarrierModule {
 			Configuration::updateValue('MYCARRIER1_OVERCOST', Tools::getValue('mycarrier1_overcost')) &&
 			Configuration::updateValue('MYCARRIER2_OVERCOST', Tools::getValue('mycarrier2_overcost')) &&
 			Configuration::updateValue('MYCARRIER3_OVERCOST', Tools::getValue('mycarrier3_overcost')) &&
-			Configuration::updateValue('MYCARRIER5_OVERCOST', Tools::getValue('mycarrier5_overcost')) &&
-			Configuration::updateValue($this->name . 'your_email', Tools::getValue('your_email')) &&
-			Configuration::updateValue($this->name . 'your_password', Tools::getValue('your_password'))
+			Configuration::updateValue('MYCARRIER5_OVERCOST', Tools::getValue('mycarrier5_overcost')) //&&
+//			Configuration::updateValue($this->name . 'your_email', Tools::getValue('your_email')) &&
+//			Configuration::updateValue($this->name . 'your_password', Tools::getValue('your_password'))
 		) {
 			$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
 		} else {
@@ -537,9 +502,10 @@ class Mds extends CarrierModule {
 	}
 
 	/*
-	 * Hook update carrier
-	 *
-	 */
+	** Hook update carrier
+	**
+	*/
+
 	public function hookupdateCarrier($params)
 	{
 		if ((int) ($params['id_carrier']) == (int) (Configuration::get('MYCARRIER1_CARRIER_ID'))) {
@@ -555,6 +521,8 @@ class Mds extends CarrierModule {
 			Configuration::updateValue('MYCARRIER5_CARRIER_ID', (int) ($params['carrier']->id));
 		}
 	}
+
+
 
 	function addColliveryAddressTo($params)
 	{
@@ -641,7 +609,7 @@ class Mds extends CarrierModule {
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
 		$addressRow = Db::getInstance()->getRow($sql);
 		$cartProducts = $params->getProducts();
-		//print_r($addressRow);
+
 
 		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
 
@@ -675,49 +643,27 @@ class Mds extends CarrierModule {
 
 	public function getOrderShippingCost($params, $shipping_cost)
 	{
-		$orderParams = $this->buildColliveryGetPriceArray($params);
 
-		switch ($this->id_carrier) {
-			case '11':
-				$orderParams['service'] = 1;
-				$colliveryPriceOptions = $this->collivery->getPrice($orderParams); //Code broken here.
-				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-				$totalShipping = (float) (Configuration::get('MYCARRIER1_OVERCOST')) + $colliveryPrice;
+;
+		try {
+			$orderParams = $this->buildColliveryGetPriceArray($params);
 
-				return $totalShipping;
-				break;
+			$service = $this->getServiceFromCarrierId($this->id_carrier);
+			$orderParams['service'] = $service;
+			
+			//print_r($orderParams);
 
-			case '12':
-				$orderParams['service'] = 2;
-				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-				$totalShipping = (float) (Configuration::get('MYCARRIER2_OVERCOST')) + $colliveryPrice;
+			$colliveryPriceOptions = $this->collivery->getPrice($orderParams); //Code broken here.
+			
+			//print_r($this->collivery->getPrice($orderParams));
+			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+			
+			;
 
-				return $totalShipping;
-				break;
-
-			case '13':
-				$orderParams['service'] = 3;
-				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-				$totalShipping = (float) (Configuration::get('MYCARRIER3_OVERCOST')) + $colliveryPrice;
-
-				return $totalShipping;
-				break;
-
-			case '14':
-				$orderParams['service'] = 5;
-				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-				$totalShipping = (float) (Configuration::get('MYCARRIER5_OVERCOST')) + $colliveryPrice;
-
-				return $totalShipping;
-				break;
-
-			default:
-				return false;
+			return Configuration::get('MYCARRIER'. $service .'_OVERCOST') + $colliveryPrice;
+		} catch (InvalidArgumentException $e) {
+			return false;
 		}
-
 	}
 
 	public function getOrderShippingCostExternal($params)
@@ -737,7 +683,7 @@ class Mds extends CarrierModule {
 		if ($numberOfTowns != array_count_values($towns))
 		{
 
-			$sql = 'DELETE * FROM '._DB_PREFIX_.'state';
+			$sql = 'DELETE  FROM '._DB_PREFIX_.'state';
 			Db::getInstance()->execute($sql);
 			
 			foreach($towns as $index => $town) 
@@ -745,23 +691,11 @@ class Mds extends CarrierModule {
 
 				$sql = 'INSERT INTO '._DB_PREFIX_.'state (id_state,id_country,id_zone,name,iso_code,tax_behavior,active)
 				VALUES 
-				('.$index.',30,4,\''.$town.'\',\'za\',0,1)';
+				('.$index.',30,4,\''.$town.'\',\'ZA\',0,1)';
 				 Db::getInstance()->execute($sql);
 			}
 
 		}
-
-
-
-				
-				
-	
-
-
-				
-				
-
-		
 
 	}
 
@@ -770,22 +704,22 @@ class Mds extends CarrierModule {
 
 		$orderParams = $this->buildColliveryDataArray($params);
 
-		switch ($params['cart']->id_carrier) 
+		switch ($this->id_carrier) 
 		{
-			case '11':
-				$orderParams['service'] = 1;
+			case '7':
+				$service = 1;
 				break;
 
-			case '12':
-				$orderParams['service'] = 2;
+			case '8':
+				$service = 2;
 				break;
 
-			case '13':
-				$orderParams['service'] = 3;
+			case '9':
+				$service = 3;
 				break;
 
-			case '14':
-				$orderParams['service'] = 5;
+			case '10':
+				$service = 5;
 				break;
 
 			default:
@@ -849,10 +783,44 @@ class Mds extends CarrierModule {
 					addDropDownLocationType(location_types);
 				</script>';
 
-		return $js;
+		//return $js;
+	}
+
+	/**
+	 * @param $carrierId
+	 *
+	 * @return mixed
+	 */
+	protected function getServiceFromCarrierId($carrierId)
+	{
+		$serviceMappings = [
+			7 => 1,
+			8 => 2,
+			9 => 3,
+			10 => 5,
+		];
+
+		if ( ! array_key_exists($carrierId, $serviceMappings)) {
+			throw new InvalidArgumentException;
+		}
+
+		return $serviceMappings[$carrierId];
+	}
+	
+	public function hookDisplayAdminOrderTabShip()
+	{
+	
+	}
+	
+	public function hookDisplayAdminOrderContentShip()
+	{
+	
 	}
 
 }
+
+
+
 
 
 
