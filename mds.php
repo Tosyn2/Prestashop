@@ -211,13 +211,7 @@ class Mds extends CarrierModule {
 		) {
 			return false;
 		}
-
-		return true;
-	}
-	
-	public function sqlInstall()
-	{
-	
+		
 		$sql = 'SELECT * FROM '._DB_PREFIX_.'state WHERE id_mds';
 		if ( ! Db::getInstance()->query($sql))
 			{
@@ -237,7 +231,8 @@ class Mds extends CarrierModule {
 			
 		$sql = 'UPDATE  `'._DB_PREFIX_.'country` SET `contains_states`= 1 WHERE `iso_code`= "ZA"';
 		Db::getInstance()->execute($sql);
-	
+		
+		return true;
 	}
 	
 
@@ -300,32 +295,12 @@ class Mds extends CarrierModule {
 			return false;
 		}
 
+	
 		return true;
+		
+		
 	}
 	
-	public function uninstallSqlInstall()
-	{
-	
-		
-			
-		$sql = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'mds_collivery_processed`';
-		Db::getInstance()->execute($sql);
-			
-		$sql = 'UPDATE  `'._DB_PREFIX_.'country` SET `contains_states`= 0 WHERE `iso_code`= "ZA"';
-		Db::getInstance()->execute($sql);
-		
-		$sql = 'DELETE * FROM `'._DB_PREFIX_.'state` WHERE `id_mds` is not NULL';
-		Db::getInstance()->execute($sql);
-		
-		$sql = 'SELECT * FROM '._DB_PREFIX_.'state WHERE id_mds';
-		if ( ! Db::getInstance()->query($sql))
-			{
-				$sql = 'ALTER TABLE `'._DB_PREFIX_.'state` DROP `id_mds`';
-				Db::getInstance()->execute($sql);
-			}
-	
-	}
-
 	public static function installExternalCarrier($config)
 	{
 		$carrier = new Carrier();
