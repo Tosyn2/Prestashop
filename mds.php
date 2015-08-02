@@ -746,14 +746,14 @@ class Mds extends CarrierModule {
 
 		$towns = $this->collivery->getTowns();
 
-		$sql = 'SELECT count(`id_mds`) FROM  `'._DB_PREFIX_.'state` WHERE  `id_mds` is not NULL AND `id_mds` != 0 ';
+		$sql = 'SELECT count(`id_mds`) FROM  `'._DB_PREFIX_.'state` WHERE  `id_mds` is not NULL';
 		$numberOfTowns = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
 
 		if ($numberOfTowns != count($towns))
 		{
 
-			$sql = 'DELETE FROM `'._DB_PREFIX_.'state` WHERE `id_mds` is not NULL AND `id_mds` != 0';
-			if(!Db::getInstance()->execute($sql)) die('5');
+			$sql = 'DELETE FROM `'._DB_PREFIX_.'state` WHERE `id_mds` is not NULL';
+			Db::getInstance()->execute($sql);
 			
 			foreach($towns as $index => $town) 
 			{
@@ -813,11 +813,20 @@ class Mds extends CarrierModule {
 
 	}
 
-	public function hookDisplayFooter()
+	public function hookDisplayFooter($address1)
 	{
+	$idAddress = (int)$this->context->cart->id_address_delivery;
 	
+	$sql = 'SELECT * FROM `' ._DB_PREFIX_.'address` WHERE `id_address` = ' . $idAddress ;
+	
+    $address = Db::getInstance()->getRow($sql);
+    
+    $suburb = $address['city'];
+    $location_type = $address['address2'];
 
-		
+
+
+
 		$this->context->controller->addJS(($this->_path).'helper.js');
 
 		$suburbs = $this->collivery->getSuburbs('');
@@ -827,11 +836,13 @@ class Mds extends CarrierModule {
 		console.log("no");
 					var suburbs= '.  json_encode( $suburbs ) .';
 					var location_types= '.  json_encode( $location_types ) .';
+					var suburb= '.  json_encode( $suburb ) .';
+					var location_type= '.  json_encode( $location_type ) .';
 					replaceText("State","Town");
 					replaceText("City","Suburb");
 					replaceText("Address (Line 2)","Location Type");
-						addDropDownSuburb(suburbs);
-					addDropDownLocationType(location_types);
+					addDropDownSuburb(suburbs, suburb);
+					addDropDownLocationType(location_types,location_type);
 				</script>';
 		
 	}

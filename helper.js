@@ -14,7 +14,7 @@ function replaceText(oldText, newText, node){
   } 
 }
 
-function addDropDownSuburb(suburbs)
+function addDropDownSuburb(suburbs , suburb)
 {
 	var text = '';
 
@@ -24,12 +24,14 @@ function addDropDownSuburb(suburbs)
 		}
 	}
 	
+	console.log(suburb);
+
 	$("#city")
-		.replaceWith('<select id="city" name="city" >' +
-		'<option value="">-</option>' + text +
-		'</select>');
-		
-		
+		.replaceWith( '<select id="city" name="city" class="form-control">' 
+							+ '<option value=\" '+  suburb +' \">' +  suburb +'</option>' 
+							+ text
+							+ '</select>'
+							);
 
 }
 
@@ -58,7 +60,7 @@ function addDropDownSuburb(suburbs)
 
 
 
-function addDropDownLocationType(location_types)
+function addDropDownLocationType(location_types,location_type)
 {
 	var text = '';
 
@@ -69,10 +71,11 @@ function addDropDownLocationType(location_types)
 	}
 	
 	$("#address2")
-		.replaceWith(
-		'<select id="address2" name="address2" >' +
-		'<option value="">-</option>' + text +
-		'</select>' );
+		.replaceWith('<select id="address2" name="address2" class="form-control">' 
+		+'<option value=" '+location_type+' ">' +location_type+'</option>' 
+		+ text
+		+'</select>' 
+		);
 
 }
 
