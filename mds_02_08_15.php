@@ -121,7 +121,7 @@ class Mds extends CarrierModule {
 				'shipping_handling'    => false,
 				'range_behavior'       => 0,
 				'delay'                => array(
-					'fr' => 'Overnight before 10:00', 'en' => 'Description 1', Language::getIsoById(
+					'fr' => 'Description 1', 'en' => 'Description 1', Language::getIsoById(
 						Configuration::get('PS_LANG_DEFAULT')
 					)    => 'Description 1'
 				),
@@ -139,7 +139,7 @@ class Mds extends CarrierModule {
 				'shipping_handling'    => false,
 				'range_behavior'       => 0,
 				'delay'                => array(
-					'fr' => 'Overnight before 16:00', 'en' => 'Description 2', Language::getIsoById(
+					'fr' => 'Description 2', 'en' => 'Description 2', Language::getIsoById(
 						Configuration::get('PS_LANG_DEFAULT')
 					)    => 'Description 2'
 				),
@@ -157,7 +157,7 @@ class Mds extends CarrierModule {
 				'shipping_handling'    => false,
 				'range_behavior'       => 0,
 				'delay'                => array(
-					'fr' => 'Road Freight', 'en' => 'Description 2', Language::getIsoById(
+					'fr' => 'Description 2', 'en' => 'Description 2', Language::getIsoById(
 						Configuration::get('PS_LANG_DEFAULT')
 					)    => 'Description 2'
 				),
@@ -175,7 +175,7 @@ class Mds extends CarrierModule {
 				'shipping_handling'    => false,
 				'range_behavior'       => 0,
 				'delay'                => array(
-					'fr' => 'Road Freight Express', 'en' => 'Description 2', Language::getIsoById(
+					'fr' => 'Description 2', 'en' => 'Description 2', Language::getIsoById(
 						Configuration::get('PS_LANG_DEFAULT')
 					)    => 'Description 2'
 				),
@@ -288,9 +288,16 @@ class Mds extends CarrierModule {
 			}
 		}
 
-		$sql = 'UPDATE ' ._DB_PREFIX_.'carrier SET `deleted` = 1 WHERE `external_module_name` = \'mds\'';
-		Db::getInstance()->execute($sql);
+		// Then delete Carrier
+		$Carrier1->deleted = 1;
+		$Carrier2->deleted = 1;
+		$Carrier3->deleted = 1;
+		$Carrier5->deleted = 1;
+		if ( ! $Carrier1->update() || ! $Carrier2->update() || ! $Carrier3->update() || ! $Carrier5->update()) {
+			return false;
+		}
 
+	
 		return true;
 		
 		
@@ -680,17 +687,17 @@ class Mds extends CarrierModule {
 
 	public function getOrderShippingCost($params, $shipping_cost)
 	{
+	
+// 		print_r( Tools::getValue(
+// 				'mycarrier2_carrier_id', Configuration::get('MYCARRIER2_CARRIER_ID'))
+// 			);
 
+			print_r(Configuration::get('MYCARRIER2_CARRIER_ID'), $id_carrier_list);
 		
-
 		$orderParams = $this->buildColliveryGetPriceArray($params);
-				
-		$sql = 'SELECT name FROM '._DB_PREFIX_.'carrier WHERE id_carrier =' . $this->id_carrier .' and deleted = 0';
-		
-		$carrierName = Db::getInstance()->getValue($sql);
 
-		switch ($carrierName) {
-			case 'Overnight before 10:00':
+		switch ($this->id_carrier) {
+			case '11':
 				$orderParams['service'] = 1;
 				$colliveryPriceOptions = $this->collivery->getPrice($orderParams); //Code broken here.
 				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
@@ -699,7 +706,7 @@ class Mds extends CarrierModule {
 				return $totalShipping;
 				break;
 
-			case 'Overnight before 16:00':
+			case '12':
 				$orderParams['service'] = 2;
 				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
@@ -708,7 +715,7 @@ class Mds extends CarrierModule {
 				return $totalShipping;
 				break;
 
-			case 'Road Freight Express':
+			case '13':
 				$orderParams['service'] = 3;
 				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
@@ -717,7 +724,7 @@ class Mds extends CarrierModule {
 				return $totalShipping;
 				break;
 
-			case 'Road Freight':
+			case '14':
 				$orderParams['service'] = 5;
 				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
@@ -728,22 +735,17 @@ class Mds extends CarrierModule {
 
 			default:
 				return false;
-				
-			}
-		return false;
+		}
 
 	}
 
 	public function getOrderShippingCostExternal($params)
 	{
-
-
 		return false;
 	}
 
 	public function hookLeftColumn()
 	{
-
 		$towns = $this->collivery->getTowns();
 
 		$query = new DbQuery();
@@ -769,6 +771,19 @@ class Mds extends CarrierModule {
 
 		}
 
+
+
+
+
+				
+	
+
+
+				
+				
+
+		
+
 	}
 
 	public function hookActionPaymentConfirmation($params)
@@ -776,33 +791,26 @@ class Mds extends CarrierModule {
 
 		$orderParams = $this->buildColliveryDataArray($params);
 
-
-			
-				
-		$sql = 'SELECT name FROM '._DB_PREFIX_.'carrier WHERE id_carrier =' . $params['cart']->id_carrier .' and deleted = 0';
-		
-		$carrierName = Db::getInstance()->getValue($sql);
-
-		switch ($carrierName) {
-			case 'Overnight before 10:00':
+		switch ($params['cart']->id_carrier) 
+		{
+			case '11':
 				$orderParams['service'] = 1;
 				break;
 
-			case 'Overnight before 16:00':
+			case '12':
 				$orderParams['service'] = 2;
 				break;
 
-			case 'Road Freight Express':
+			case '13':
 				$orderParams['service'] = 3;
 				break;
 
-			case 'Road Freight':
+			case '14':
 				$orderParams['service'] = 5;
 				break;
 
 			default:
 				return false;
-				
 		}
 		
 		try 
@@ -818,16 +826,13 @@ class Mds extends CarrierModule {
 
 	public function hookDisplayFooter()
 	{
-	
-	die('df');
 		
 		$this->context->controller->addJS(($this->_path).'helper.js');
 
-		$suburbs = $this->collivery->getSuburbs('');
+		$suburbs = $this->collivery->getSuburbs('248');
 		$location_types = $this->collivery->getLocationTypes();
 
 		return '<script type="text/javascript">
-		console.log("no");
 					var suburbs= '.  json_encode( $suburbs ) .';
 					var location_types= '.  json_encode( $location_types ) .';
 					replaceText("State","Town");
@@ -865,7 +870,7 @@ class Mds extends CarrierModule {
 					addDropDownLocationType(location_types);
 				</script>';
 
-		//return $js;
+		return $js;
 	}
 
 }
