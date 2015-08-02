@@ -746,17 +746,14 @@ class Mds extends CarrierModule {
 
 		$towns = $this->collivery->getTowns();
 
-		$query = new DbQuery();
-		$query->select('count(*)');
-		$query->from('state');
-		$query->where('id_mds is not NULL');
-		$numberOfTowns = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
-		
-		if ($numberOfTowns != array_count_values($towns))
+		$sql = 'SELECT count(`id_mds`) FROM  `'._DB_PREFIX_.'state` WHERE  `id_mds` is not NULL AND `id_mds` != 0 ';
+		$numberOfTowns = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+
+		if ($numberOfTowns != count($towns))
 		{
 
-			$sql = 'DELETE * FROM `'._DB_PREFIX_.'state` WHERE `id_mds` is not NULL';
-			Db::getInstance()->execute($sql);
+			$sql = 'DELETE FROM `'._DB_PREFIX_.'state` WHERE `id_mds` is not NULL AND `id_mds` != 0';
+			if(!Db::getInstance()->execute($sql)) die('5');
 			
 			foreach($towns as $index => $town) 
 			{
@@ -819,7 +816,7 @@ class Mds extends CarrierModule {
 	public function hookDisplayFooter()
 	{
 	
-	die('df');
+
 		
 		$this->context->controller->addJS(($this->_path).'helper.js');
 
