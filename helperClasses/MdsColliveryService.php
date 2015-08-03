@@ -44,10 +44,10 @@ class MdsColliveryService
 	 */
 	public static function getInstance($settings = null)
 	{
-		if (! self::$instance) {
+	//	if (! self::$instance) {
 		
 			self::$instance = new self($settings);
-		}
+	//	}
 
 		return self::$instance;
 	}
@@ -76,25 +76,27 @@ class MdsColliveryService
 	 */
 	public function initMdsCollivery($settings=null)
 	{
-		
 		if($settings) {
 			$username = $settings['mds_user'];
 			$password = $settings['mds_pass'];
-
 		} else {
 			$username = $this->settings['mds_user'];
 			$password = $this->settings['mds_pass'];
-				
 			
 		}
+		
+// // 		print_r($settings['mds_user']);
+// // 		print_r($this->settings['mds_user']);
+// // 		
+// // 		die('end');
 
-	return	$this->collivery = new Collivery(array(
-			'demo' => false,
-			'user_email'    => $username,
-			'user_password' => $password,
-			
+		$this->collivery =  new Collivery(array(
 
-		));
+			'demo'          => false,
+				));
+// 	return	$this->collivery = new Collivery(array(
+// 		'demo' => true,
+// 		));
 	}
 
 	/**
@@ -392,10 +394,35 @@ class MdsColliveryService
 	 *
 	 * @return \Mds\Collivery
 	 */
-	public function returnColliveryClass()
+	public function returnColliveryClass($settings)
 	{
+	
 		
-		return $this->collivery;
+		if($settings) {
+			$username = $settings['mds_user'];
+			$password = $settings['mds_pass'];
+		} else {
+			$username = $this->settings['mds_user'];
+			$password = $this->settings['mds_pass'];
+			
+		}
+		
+// 		print_r($settings['mds_user']);
+// 		print_r($this->settings['mds_user']);
+// 		
+// 		die('end');
+
+return	$this->collivery = new Collivery(array(
+			'app_name'      => 'Default App Name', // Application Name
+			'app_version'   => '0.0.1',            // Application Version
+			'app_host'      => '', // Framework/CMS name and version, eg 'Wordpress 3.8.1 WooCommerce 2.0.20' / 'Joomla! 2.5.17 VirtueMart 2.0.26d'
+			'app_url'       => '', // URL your site is hosted on
+			'user_email'    =>$username,
+			'user_password' => $password ,
+			'demo'          => false,
+				));
+//		return $this->collivery;
+// 			
 	}
 
 	/**
