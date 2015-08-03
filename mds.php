@@ -94,16 +94,15 @@ class Mds extends CarrierModule {
 			}
 		}
 
-		require_once 'helperClasses/MdsColliveryService.php';
-			$settings = Array();
-			$settings['mds_user'] = 'fch';
-			$settings['mds_pass'] = 'fch';
-
+			require_once 'helperClasses/MdsColliveryService.php';
 			
-		$this->mdsService = \helperClasses\MdsColliveryService::getInstance();
-		//$this->mdsService ->  initMdsCollivery($settings);
-		$this->collivery = $this->mdsService->returnColliveryClass();
-		$this->cache = $this->mdsService->returnCacheClass();
+			$settings['mds_user'] = Configuration::get('MDS_EMAIL');
+            $settings['mds_pass'] = Configuration::get('MDS_PASSWORD');
+//            
+			
+			$this->mdsService = \helperClasses\MdsColliveryService::getInstance($settings);
+			$this->collivery = $this->mdsService->returnColliveryClass();
+			$this->cache = $this->mdsService->returnCacheClass();
 
 	}
 
@@ -207,28 +206,23 @@ class Mds extends CarrierModule {
 		Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int) $id_carrier2);
 		Configuration::updateValue('MYCARRIER3_CARRIER_ID', (int) $id_carrier3);
 		Configuration::updateValue('MYCARRIER5_CARRIER_ID', (int) $id_carrier5);
-// 		Configuration::updateValue('MDS_EMAIL', 'api@collivery.co.za');
-// 		Configuration::updateValue('MDS_PASSWORD', 'api123');
-// 		Configuration::updateValue('MDS_RISK', 0);
-// 	
-		
-		
 
+		$config = Array();
 		if ( ! parent::install() ||
 			! Configuration::updateValue('MYCARRIER1_OVERCOST', '') ||
 			! Configuration::updateValue('MYCARRIER2_OVERCOST', '') ||
 			! Configuration::updateValue('MYCARRIER3_OVERCOST', '') ||
 			! Configuration::updateValue('MYCARRIER5_OVERCOST', '') ||
-				!Configuration::updateValue('MDS_EMAIL', 'api@collivery.co.za') ||
-		!Configuration::updateValue('MDS_PASSWORD', 'api123') ||
-		!Configuration::updateValue('MDS_RISK', '0') ||
-	
+			!Configuration::updateValue('MDS_EMAIL', 'api@collivery.co.za') ||
+			!Configuration::updateValue('MDS_PASSWORD', 'api123') ||
+			!Configuration::updateValue('MDS_RISK', '0') ||
 			! $this->registerHook('updateCarrier') ||
 			! $this->registerHook('actionPaymentConfirmation') ||
 			! $this->registerHook('leftColumn') ||
 			! $this->registerhook('displayFooter') ||
 			! $this->registerHook('header') ||
 			! $this->registerHook('displayBackOfficeFooter')
+
 		) {
 			return false;
 		}
@@ -254,6 +248,8 @@ class Mds extends CarrierModule {
 				
 		$sql = 'UPDATE  `'._DB_PREFIX_.'country` SET `contains_states`= 1 WHERE `iso_code`= "ZA"';
 		Db::getInstance()->execute($sql);
+		
+
 		
 		return true;
 	}
@@ -313,8 +309,7 @@ class Mds extends CarrierModule {
 		Db::getInstance()->execute($sql);
 
 		return true;
-		
-		
+	
 	}
 	
 	public static function installExternalCarrier($config)
@@ -408,20 +403,17 @@ class Mds extends CarrierModule {
 	{
 		$this->_html .= '<h2>' . $this->l('My Carrier') . '</h2>';
 		if ( ! empty($_POST) AND Tools::isSubmit('submitSave')) {
+		
+			
 
 			$this->_postValidation();
 			if ( ! sizeof($this->_postErrors)) {
-			
-		//	die(Tools::getValue('mds_email'));	
-// 				$email = Tools::getValue('your_email');
-// 				$password = Tools::getValue('your_password');
-// 
-// 				Configuration::updateValue($this->name . '_email', $email);
+
  			 	Configuration::updateValue('MDS_EMAIL', Tools::getValue('MDS_EMAIL'));
  			 	Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD'));
  			 	Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'));
 
-				$this->_postProcess();
+ 			 	$this->_postProcess();
 			} else {
 				foreach ($this->_postErrors AS $err) {
 					$this->_html .= '<div class="alert error"><img src="' . _PS_IMG_ . 'admin/forbbiden.gif" alt="nok" />&nbsp;' . $err . '</div>';
@@ -558,8 +550,6 @@ class Mds extends CarrierModule {
 
 	private function _postProcess()
 	{
-	
-		//	die(Tools::getValue('mds_email'));
 
 		if (Configuration::updateValue('MYCARRIER1_OVERCOST', Tools::getValue('mycarrier1_overcost')) &&
 			Configuration::updateValue('MYCARRIER1_OVERCOST', Tools::getValue('mycarrier1_overcost')) &&
@@ -567,12 +557,13 @@ class Mds extends CarrierModule {
 			Configuration::updateValue('MYCARRIER3_OVERCOST', Tools::getValue('mycarrier3_overcost')) &&
 			Configuration::updateValue('MYCARRIER5_OVERCOST', Tools::getValue('mycarrier5_overcost')) ||
 			Configuration::updateValue('MDS_EMAIL', Tools::getValue('MDS_EMAIL')) ||
-						Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD')) ||
-Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
+			Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD')) ||
+			Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
 
-		//	Configuration::updateValue($this->name . 'your_password', Tools::getValue('your_password'))
 		) {
+
 			$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
+
 		} else {
 			$this->_html .= $this->displayErrors($this->l('Settings failed'));
 		}
@@ -582,6 +573,8 @@ Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
 	 * Hook update carrier
 	 *
 	 */
+	 
+
 	public function hookupdateCarrier($params)
 	{
 		if ((int) ($params['id_carrier']) == (int) (Configuration::get('MYCARRIER1_CARRIER_ID'))) {
@@ -607,9 +600,14 @@ Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
 		$addressRow = Db::getInstance()->getRow($sql);
 		
 		$town_id = $addressRow['id_state'];
-		$sql = 'SELECT `id_mds` FROM ' . _DB_PREFIX_ . 'state
-		WHERE id_state = \'' . $town_id . '\'';
+		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE id_state = ' . $town_id ;
+		$mds_town_name = Db::getInstance()->getValue($sql);
+		
+		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE `name` = "' . $mds_town_name .'" and `active` = 1 ';
 		$mds_town_id = Db::getInstance()->getValue($sql);
+
 
 		$colliveryParams['company_name'] = $addressRow['company'];
 		$colliveryParams['building'] = '';
@@ -688,11 +686,16 @@ Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
 		$addressRow = Db::getInstance()->getRow($sql);
 		
+
 		$cartProducts = $params->getProducts();
 		
 		$town_id = $addressRow['id_state'];
-		$sql = 'SELECT `id_mds` FROM ' . _DB_PREFIX_ . 'state`
-		WHERE id_state = \'' . $town_id . '\'';
+		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE id_state = ' . $town_id ;
+		$mds_town_name = Db::getInstance()->getValue($sql);
+		
+		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE `name` = "' . $mds_town_name .'" and `active` = 1 ';
 		$mds_town_id = Db::getInstance()->getValue($sql);
 
 		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
@@ -700,8 +703,6 @@ Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
 		$colliveryGetPriceArray = Array();
  		$colliveryGetPriceArray['to_town_id'] = $mds_town_id;
  		$colliveryGetPriceArray['collivery_from'] = $colliveryAddressFrom['address_id'];
- 		//$colliveryGetPriceArray['to_location_type'] = $addressRow['address2'];
-
  		
  		foreach ($cartProducts as $colliveryProduct) 
 		{
@@ -727,57 +728,74 @@ Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
 
 	public function getOrderShippingCost($params, $shipping_cost)
 	{
+	
+		try {
+			$orderParams = $this->buildColliveryGetPriceArray($params);
+			
+			$sql = 'SELECT name FROM '._DB_PREFIX_.'carrier WHERE id_carrier =' . $this->id_carrier .' and deleted = 0';
+		
+			$carrierName = Db::getInstance()->getValue($sql);
 
+			$service = $this->getServiceFromCarrierId($carrierName);
+			$orderParams['service'] = $carrierName;
+			
+			$colliveryPriceOptions = $this->collivery->getPrice($orderParams); 
+			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+
+			return Configuration::get('MYCARRIER'. $service .'_OVERCOST') + $colliveryPrice;
+		} catch (InvalidArgumentException $e) {
+			return false;
+		}
 		
 
-		$orderParams = $this->buildColliveryGetPriceArray($params);
-				
-		$sql = 'SELECT name FROM '._DB_PREFIX_.'carrier WHERE id_carrier =' . $this->id_carrier .' and deleted = 0';
-		
-		$carrierName = Db::getInstance()->getValue($sql);
-
-		switch ($carrierName) {
-			case 'Overnight before 10:00':
-				$orderParams['service'] = 1;
-				$colliveryPriceOptions = $this->collivery->getPrice($orderParams); //Code broken here.
-				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-				$totalShipping = (float) (Configuration::get('MYCARRIER1_OVERCOST')) + $colliveryPrice;
-
-				return $totalShipping;
-				break;
-
-			case 'Overnight before 16:00':
-				$orderParams['service'] = 2;
-				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-				$totalShipping = (float) (Configuration::get('MYCARRIER2_OVERCOST')) + $colliveryPrice;
-
-				return $totalShipping;
-				break;
-
-			case 'Road Freight Express':
-				$orderParams['service'] = 3;
-				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-				$totalShipping = (float) (Configuration::get('MYCARRIER3_OVERCOST')) + $colliveryPrice;
-
-				return $totalShipping;
-				break;
-
-			case 'Road Freight':
-				$orderParams['service'] = 5;
-				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-				$totalShipping = (float) (Configuration::get('MYCARRIER5_OVERCOST')) + $colliveryPrice;
-
-				return $totalShipping;
-				break;
-
-			default:
-				return false;
-				
-			}
-		return false;
+// 		$orderParams = $this->buildColliveryGetPriceArray($params);
+// 				
+// 		$sql = 'SELECT name FROM '._DB_PREFIX_.'carrier WHERE id_carrier =' . $this->id_carrier .' and deleted = 0';
+// 		
+// 		$carrierName = Db::getInstance()->getValue($sql);
+// 
+// 		switch ($carrierName) {
+// 			case 'Overnight before 10:00':
+// 				$orderParams['service'] = 1;
+// 				$colliveryPriceOptions = $this->collivery->getPrice($orderParams); //Code broken here.
+// 				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+// 				$totalShipping = (float) (Configuration::get('MYCARRIER1_OVERCOST')) + $colliveryPrice;
+// 
+// 				return $totalShipping;
+// 				break;
+// 
+// 			case 'Overnight before 16:00':
+// 				$orderParams['service'] = 2;
+// 				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
+// 				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+// 				$totalShipping = (float) (Configuration::get('MYCARRIER2_OVERCOST')) + $colliveryPrice;
+// 
+// 				return $totalShipping;
+// 				break;
+// 
+// 			case 'Road Freight Express':
+// 				$orderParams['service'] = 3;
+// 				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
+// 				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+// 				$totalShipping = (float) (Configuration::get('MYCARRIER3_OVERCOST')) + $colliveryPrice;
+// 
+// 				return $totalShipping;
+// 				break;
+// 
+// 			case 'Road Freight':
+// 				$orderParams['service'] = 5;
+// 				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
+// 				(float) $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+// 				$totalShipping = (float) (Configuration::get('MYCARRIER5_OVERCOST')) + $colliveryPrice;
+// 
+// 				return $totalShipping;
+// 				break;
+// 
+// 			default:
+// 				return false;
+// 				
+// 			}
+// 		return false;
 
 	}
 
@@ -816,46 +834,21 @@ Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
 
 	public function hookActionPaymentConfirmation($params)
 	{
-
-		$orderParams = $this->buildColliveryDataArray($params);
-
-
-			
-				
-		$sql = 'SELECT name FROM '._DB_PREFIX_.'carrier WHERE id_carrier =' . $params['cart']->id_carrier .' and deleted = 0';
-		
-		$carrierName = Db::getInstance()->getValue($sql);
-
-		switch ($carrierName) {
-			case 'Overnight before 10:00':
-				$orderParams['service'] = 1;
-				break;
-
-			case 'Overnight before 16:00':
-				$orderParams['service'] = 2;
-				break;
-
-			case 'Road Freight Express':
-				$orderParams['service'] = 3;
-				break;
-
-			case 'Road Freight':
-				$orderParams['service'] = 5;
-				break;
-
-			default:
-				return false;
-				
-		}
-		
-		try 
-		{
 	
-			return $this->mdsService->addCollivery($orderParams, true);
-		} catch (Exception $e) 
-			{
-				die($e->getMessage());
-			}
+	try
+	{
+		$orderParams = $this->buildColliveryDataArray($params);
+		$sql = 'SELECT name FROM '._DB_PREFIX_.'carrier WHERE id_carrier =' . $params['cart']->id_carrier .' and deleted = 0';
+		$carrierName = Db::getInstance()->getValue($sql);
+		
+		$service = $this->getServiceFromCarrierId($carrierName);
+		$orderParams['service'] = $service;
+
+		return $this->mdsService->addCollivery($orderParams, true);
+	
+	}catch (InvalidArgumentException $e) {
+			return false;
+		}
 
 	}
 
@@ -915,6 +908,22 @@ Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
 				</script>';
 
 		//return $js;
+	}
+	
+	protected function getServiceFromCarrierId($carrierId)
+	{
+		$serviceMappings = [
+			'Overnight before 10:00' => 1,
+			'Overnight before 16:00' => 2,
+			'Road Freight Express' => 3,
+			'Road Freight' => 5,
+		];
+
+		if ( ! array_key_exists($carrierId, $serviceMappings)) {
+			throw new InvalidArgumentException;
+		}
+
+		return $serviceMappings[$carrierId];
 	}
 
 }

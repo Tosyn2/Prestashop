@@ -45,7 +45,7 @@ class MdsColliveryService
 	public static function getInstance($settings = null)
 	{
 		if (! self::$instance) {
-			
+		
 			self::$instance = new self($settings);
 		}
 
@@ -63,6 +63,8 @@ class MdsColliveryService
 		$this->converter = new UnitConverter();
 
 		$this->cache = new Cache();
+		
+	//	$this->collivery = new Collivery();
 
 		$this->initMdsCollivery($this->settings);
 	}
@@ -86,8 +88,11 @@ class MdsColliveryService
 			
 		}
 
-		$this->collivery = new Collivery(array(
-		'demo' => false,
+	return	$this->collivery = new Collivery(array(
+			'demo' => false,
+			'user_email'    => $username,
+			'user_password' => $password,
+			
 
 		));
 	}

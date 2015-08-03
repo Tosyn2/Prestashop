@@ -28,7 +28,7 @@ function addDropDownSuburb(suburbs , suburb)
 
 	$("#city")
 		.replaceWith( '<select id="city" name="city" class="form-control">' 
-							+ '<option value=\" '+  suburb +' \">' +  suburb +'</option>' 
+							+ '<option value="'+  suburb +'">' +  suburb +'</option>' 
 							+ text
 							+ '</select>'
 							);
@@ -72,7 +72,7 @@ function addDropDownLocationType(location_types,location_type)
 	
 	$("#address2")
 		.replaceWith('<select id="address2" name="address2" class="form-control">' 
-		+'<option value=" '+location_type+' ">' +location_type+'</option>' 
+		+'<option value="'+location_type+'">' +location_type+'</option>' 
 		+ text
 		+'</select>' 
 		);
