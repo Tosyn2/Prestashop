@@ -39,6 +39,8 @@ class Mds extends CarrierModule {
 	** Construct Method
 	**
 	*/
+	
+	
 
 	public function __construct()
 	{
@@ -93,8 +95,13 @@ class Mds extends CarrierModule {
 		}
 
 		require_once 'helperClasses/MdsColliveryService.php';
+			$settings = Array();
+			$settings['mds_user'] = 'fch';
+			$settings['mds_pass'] = 'fch';
 
+			
 		$this->mdsService = \helperClasses\MdsColliveryService::getInstance();
+		//$this->mdsService ->  initMdsCollivery($settings);
 		$this->collivery = $this->mdsService->returnColliveryClass();
 		$this->cache = $this->mdsService->returnCacheClass();
 
@@ -186,6 +193,10 @@ class Mds extends CarrierModule {
 				'need_range'           => true
 			),
 		);
+		
+		
+// 				$sql = 'INSERT INTO  `'._DB_PREFIX_.'configuration` SET `contains_states`= 1 WHERE `iso_code`= "ZA"';
+// 		Db::getInstance()->execute($sql);
 
 		$id_carrier1 = $this->installExternalCarrier($carrierConfig[0]);
 		$id_carrier2 = $this->installExternalCarrier($carrierConfig[1]);
@@ -196,12 +207,22 @@ class Mds extends CarrierModule {
 		Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int) $id_carrier2);
 		Configuration::updateValue('MYCARRIER3_CARRIER_ID', (int) $id_carrier3);
 		Configuration::updateValue('MYCARRIER5_CARRIER_ID', (int) $id_carrier5);
+// 		Configuration::updateValue('MDS_EMAIL', 'api@collivery.co.za');
+// 		Configuration::updateValue('MDS_PASSWORD', 'api123');
+// 		Configuration::updateValue('MDS_RISK', 0);
+// 	
+		
+		
 
 		if ( ! parent::install() ||
 			! Configuration::updateValue('MYCARRIER1_OVERCOST', '') ||
 			! Configuration::updateValue('MYCARRIER2_OVERCOST', '') ||
 			! Configuration::updateValue('MYCARRIER3_OVERCOST', '') ||
 			! Configuration::updateValue('MYCARRIER5_OVERCOST', '') ||
+				!Configuration::updateValue('MDS_EMAIL', 'api@collivery.co.za') ||
+		!Configuration::updateValue('MDS_PASSWORD', 'api123') ||
+		!Configuration::updateValue('MDS_RISK', '0') ||
+	
 			! $this->registerHook('updateCarrier') ||
 			! $this->registerHook('actionPaymentConfirmation') ||
 			! $this->registerHook('leftColumn') ||
@@ -228,7 +249,7 @@ class Mds extends CarrierModule {
 						PRIMARY KEY (`id`)
 						) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 		
-			if(Db::getInstance()->execute($sql));
+			Db::getInstance()->execute($sql);
 
 				
 		$sql = 'UPDATE  `'._DB_PREFIX_.'country` SET `contains_states`= 1 WHERE `iso_code`= "ZA"';
@@ -390,11 +411,16 @@ class Mds extends CarrierModule {
 
 			$this->_postValidation();
 			if ( ! sizeof($this->_postErrors)) {
-				$email = Tools::getValue('your_email');
-				$password = Tools::getValue('your_password');
+			
+		//	die(Tools::getValue('mds_email'));	
+// 				$email = Tools::getValue('your_email');
+// 				$password = Tools::getValue('your_password');
+// 
+// 				Configuration::updateValue($this->name . '_email', $email);
+ 			 	Configuration::updateValue('MDS_EMAIL', Tools::getValue('MDS_EMAIL'));
+ 			 	Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD'));
+ 			 	Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'));
 
-				Configuration::updateValue($this->name . '_email', $email);
-				Configuration::updateValue($this->name . '_password', $password);
 				$this->_postProcess();
 			} else {
 				foreach ($this->_postErrors AS $err) {
@@ -409,7 +435,9 @@ class Mds extends CarrierModule {
 
 	private function _displayForm()
 	{
-		$this->_html .= '<fieldset>
+	
+		
+	$this->_html .= '<fieldset>
 		<legend><img src="' . $this->_path . 'logo.gif" alt="" /> ' . $this->l(
 				'My Carrier Module Status'
 			) . '</legend>';
@@ -424,7 +452,10 @@ class Mds extends CarrierModule {
 		if ( ! Configuration::get('MYCARRIER3_OVERCOST') || Configuration::get('MYCARRIER3_OVERCOST') == '') {
 			$alert['carrier3'] = 1;
 		}
-		if ( ! Configuration::get('MYCARRIER5_OVERCOST') || Configuration::get('MYCARRIER5_OVERCOST') == '') {
+		if ( ! Configuration::get('MDS_EMAIL') || Configuration::get('MDS_EMAIL') == '') {
+			$alert['carrier3'] = 1;
+					}	
+			if ( ! Configuration::get('MYCARRIER5_OVERCOST') || Configuration::get('MYCARRIER5_OVERCOST') == '') {
 			$alert['carrier5'] = 1;
 		}
 
@@ -448,6 +479,7 @@ class Mds extends CarrierModule {
 			$this->_html .= '<br />' . (isset($alert['carrier5']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 4) ' . $this->l(
 					'Configure the carrier 5 overcost'
 				);
+	
 		}
 
 		$this->_html .= '</fieldset><div class="clear">&nbsp;</div>
@@ -485,45 +517,60 @@ class Mds extends CarrierModule {
 				'mycarrier5_overcost',
 				Configuration::get('MYCARRIER5_OVERCOST')
 			) . '" /></div>
-						<label>' . $this->l('MDS account email') . '</label>
-						<div class="margin-form"><input type="text" name="your_email" value="' . Tools::getValue(
-				'your_email'
+						<label>' . $this->l('MDS account email') . ' : </label>
+						<div class="margin-form"><input type="text" name="MDS_EMAIL" value="' . Tools::getValue(
+				'MDS_EMAIL', 
+				Configuration::get('MDS_EMAIL')
 			) . '"  /></div>
 						<label>' . $this->l('MDS account password') . '</label>
-						<div class="margin-form"><input type="text" name="your_password" value="' . Tools::getValue(
-				'your_password'
+						<div class="margin-form"><input type="text" name="MDS_PASSWORD" value="' . Tools::getValue(
+				'MDS_PASSWORD',
+				Configuration::get('MDS_PASSWORD')
 			) . '" /></div>
 						<label>' . $this->l('MDS risk cover') . '</label>
-						<div class="margin-form"><input type="checkbox" name="your_riskcover" /></div>
+						<div class="margin-form"><input type="checkbox" name="MDS_RISK" value="' . Tools::getValue(
+				'MDS_RISK',
+				Configuration::get('MDS_RISK')
+			) . '"  /></div>
 					</div>
 				<br /><br />
 				</fieldset>				
 				<div class="margin-form"><input class="button" name="submitSave" type="submit"></div>
 			</form>
 		</div></div>';
-	}
-
+		}
+	
+	
 	private function _postValidation()
 	{
+	
+	
 		// Check configuration values
-		if (Tools::getValue('mycarrier1_overcost') == '' && Tools::getValue(
-				'mycarrier2_overcost'
-			) == '' && Tools::getValue('mycarrier3_overcost') == '' && Tools::getValue('mycarrier5_overcost') == ''
+		if (Tools::getValue('mycarrier1_overcost') == '' &&
+			Tools::getValue('mycarrier2_overcost') == '' && 
+			Tools::getValue('mycarrier3_overcost') == '' && 
+			Tools::getValue('mycarrier5_overcost') == '' ||
+			Tools::getValue('MDS_EMAIL') == ''
 		) {
-			$this->_postErrors[] = $this->l('You have to configure at least one carrier');
+			$this->_postErrors[] = $this->l('You have to configure at least one carrier AND input your MDS account login details');
 		}
 	}
 
 	private function _postProcess()
 	{
+	
+		//	die(Tools::getValue('mds_email'));
 
 		if (Configuration::updateValue('MYCARRIER1_OVERCOST', Tools::getValue('mycarrier1_overcost')) &&
 			Configuration::updateValue('MYCARRIER1_OVERCOST', Tools::getValue('mycarrier1_overcost')) &&
 			Configuration::updateValue('MYCARRIER2_OVERCOST', Tools::getValue('mycarrier2_overcost')) &&
 			Configuration::updateValue('MYCARRIER3_OVERCOST', Tools::getValue('mycarrier3_overcost')) &&
-			Configuration::updateValue('MYCARRIER5_OVERCOST', Tools::getValue('mycarrier5_overcost')) &&
-			Configuration::updateValue($this->name . 'your_email', Tools::getValue('your_email')) &&
-			Configuration::updateValue($this->name . 'your_password', Tools::getValue('your_password'))
+			Configuration::updateValue('MYCARRIER5_OVERCOST', Tools::getValue('mycarrier5_overcost')) ||
+			Configuration::updateValue('MDS_EMAIL', Tools::getValue('MDS_EMAIL')) ||
+						Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD')) ||
+Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
+
+		//	Configuration::updateValue($this->name . 'your_password', Tools::getValue('your_password'))
 		) {
 			$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
 		} else {
@@ -751,9 +798,8 @@ class Mds extends CarrierModule {
 
 		if ($numberOfTowns != count($towns))
 		{
-
-			$sql = 'DELETE FROM `'._DB_PREFIX_.'state` WHERE `id_mds` is not NULL';
-			Db::getInstance()->execute($sql);
+			$sql = 'UPDATE `'._DB_PREFIX_.'state` SET `id_mds` = NULL , `active` = 0 where `id_mds` is not NULL' ;
+		 	Db::getInstance()->execute($sql);
 			
 			foreach($towns as $index => $town) 
 			{
@@ -813,19 +859,15 @@ class Mds extends CarrierModule {
 
 	}
 
-	public function hookDisplayFooter($address1)
+	public function hookDisplayFooter($params)
 	{
-	$idAddress = (int)$this->context->cart->id_address_delivery;
-	
-	$sql = 'SELECT * FROM `' ._DB_PREFIX_.'address` WHERE `id_address` = ' . $idAddress ;
-	
-    $address = Db::getInstance()->getRow($sql);
-    
-    $suburb = $address['city'];
-    $location_type = $address['address2'];
-
-
-
+		$idAddress = (int)$this->context->cart->id_address_delivery;
+		
+		$sql = 'SELECT * FROM `' ._DB_PREFIX_.'address` WHERE `id_address` = ' . $idAddress ;
+		$address = Db::getInstance()->getRow($sql);
+		
+		$suburb = $address['city'];
+		$location_type = $address['address2'];
 
 		$this->context->controller->addJS(($this->_path).'helper.js');
 
@@ -833,7 +875,6 @@ class Mds extends CarrierModule {
 		$location_types = $this->collivery->getLocationTypes();
 
 		return '<script type="text/javascript">
-		console.log("no");
 					var suburbs= '.  json_encode( $suburbs ) .';
 					var location_types= '.  json_encode( $location_types ) .';
 					var suburb= '.  json_encode( $suburb ) .';

@@ -75,18 +75,19 @@ class MdsColliveryService
 	public function initMdsCollivery($settings=null)
 	{
 		
-
 		if($settings) {
 			$username = $settings['mds_user'];
 			$password = $settings['mds_pass'];
+
 		} else {
 			$username = $this->settings['mds_user'];
 			$password = $this->settings['mds_pass'];
+				
 			
 		}
 
 		$this->collivery = new Collivery(array(
-		'demo' => true,
+		'demo' => false,
 
 		));
 	}
