@@ -76,9 +76,37 @@ class Mds extends CarrierModule
 			foreach ($carriers as $carrier) {
 				$id_carrier_list[] .= $carrier['id_carrier'];
 			}
+
+			// Testing if Carrier Id exists
+// 			$warning = array();
+// 			if (!in_array((int)(Configuration::get('MYCARRIER1_CARRIER_ID')), $id_carrier_list)) {
+// 				$warning[] .= $this->l('"Carrier 1"') . ' ';
+// 			}
+// 			if (!in_array((int)(Configuration::get('MYCARRIER2_CARRIER_ID')), $id_carrier_list)) {
+// 				$warning[] .= $this->l('"Carrier 2"') . ' ';
+// 			}
+// 			if (!Configuration::get('MYCARRIER1_OVERCOST')) {
+// 				$warning[] .= $this->l('"Carrier 1 Overcost"') . ' ';
+// 			}
+// 			if (!Configuration::get('MYCARRIER2_OVERCOST')) {
+// 				$warning[] .= $this->l('"Carrier 2 Overcost"') . ' ';
+// 			}
+// 			if (count($warning)) {
+// 				$this->warning .= implode(' , ', $warning) . $this->l(
+// 						'must be configured to use this module correctly'
+// 					) . ' ';
+// 			}
 		}
 
-
+// 		require_once 'helperClasses/MdsColliveryService.php';
+// 
+// 		$this->settings['mds_user'] = Configuration::get('MDS_EMAIL');
+// 		$this->settings['mds_pass'] = Configuration::get('MDS_PASSWORD');
+// 
+// 		$this->mdsService = \helperClasses\MdsColliveryService::getInstance($this->settings);
+// 		$this->collivery = $this->mdsService->returnColliveryClass();
+// 		$this->cache = $this->mdsService->returnCacheClass();
+		
 		require_once 'helperClasses/MdsColliveryService.php';
 
 		$settings['mds_user'] = Configuration::get('MDS_EMAIL');
@@ -398,6 +426,8 @@ class Mds extends CarrierModule
 
 	private function _displayForm()
 	{
+
+
 		$this->_html .= '<fieldset>
 		<legend><img src="' . $this->_path . 'logo.gif" alt="" /> ' . $this->l(
 				'My Carrier Module Status'
@@ -416,6 +446,7 @@ class Mds extends CarrierModule
 		if (Configuration::get('MDS_EMAIL') != Tools::getValue('MDS_EMAIL')) {
 			$alert['account_email'] = 1;
 		}
+		
 		if (Configuration::get('MDS_PASSWORD') != Tools::getValue('MDS_PASSWORD')) {
 			$alert['account_password'] = 1;
 		}
@@ -444,11 +475,11 @@ class Mds extends CarrierModule
 					'Road Freight overcost is connfigured'
 				);
 			$this->_html .= '<br />' . (isset($alert['account_email']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 5) ' . $this->l(
-					'Correct MDS account email'
-				);
+				'Correct MDS account email'
+			);
 			$this->_html .= '<br />' . (isset($alert['account_password']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 6) ' . $this->l(
-					'Correct MDS account password'
-				);
+				'Correct MDS account password'
+			);
 
 		}
 
@@ -513,6 +544,8 @@ class Mds extends CarrierModule
 
 	private function _postValidation()
 	{
+
+
 		// Check configuration values
 		if (Tools::getValue('mycarrier1_overcost') == '' &&
 			Tools::getValue('mycarrier2_overcost') == '' &&
@@ -527,34 +560,35 @@ class Mds extends CarrierModule
 
 	private function _postProcess()
 	{
-		if ($this->settings['mds_user'] != Tools::getValue('MDS_EMAIL') || $this->settings['mds_pass'] != Tools::getValue('MDS_PASSWORD')) {
+		if($this->settings['mds_user'] != Tools::getValue('MDS_EMAIL') || $this->settings['mds_pass'] != Tools::getValue('MDS_PASSWORD')) {
+	
+		$settings['mds_user'] = Tools::getValue('MDS_EMAIL');
+		$settings['mds_pass'] = Tools::getValue('MDS_PASSWORD');
 
-			$settings['mds_user'] = Tools::getValue('MDS_EMAIL');
-			$settings['mds_pass'] = Tools::getValue('MDS_PASSWORD');
-
-			$this->mdsService = \helperClasses\MdsColliveryService::getInstance($settings);
-			$this->collivery = $this->mdsService->returnColliveryClass($settings);
-			if ($this->collivery->isAuthenticated()) {
-				if ($this->updateSettings(Tools::getAllValues())) {
-
+		$this->mdsService = \helperClasses\MdsColliveryService::getInstance($settings);	
+		$this->collivery = $this->mdsService->returnColliveryClass($settings);
+		if($this->collivery->isAuthenticated()) {
+				if($this->updateSettings(Tools::getAllValues())) {
+						
 					$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
 				} else {
 					throw new Exception(sprintf(Tools::displayError('Unable to update Settings')));
 				}
-			} else {
+			} 
+			else{
 				$this->_html .= (sprintf(Tools::displayError('MDS Collivery account details incorrect.')));
 			}
 		}
 	}
-
+	
 
 	/*
 	 * Hook update carrier
 	 *
 	 */
-
-
-	private function updateSettings(array $array)
+	 
+	 
+	 	private function updateSettings(array $array)
 	{
 		$success = true;
 
@@ -565,14 +599,13 @@ class Mds extends CarrierModule
 			Configuration::updateValue('MYCARRIER5_OVERCOST', Tools::getValue('mycarrier5_overcost')) &&
 			Configuration::updateValue('MDS_EMAIL', Tools::getValue('MDS_EMAIL')) &&
 			Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD'))
-		) {
-			return $success;
-		} else {
-			$success = false;
-			return $success;
-		}
+			){return $success;}
+			
+		else{ $success = false;
+		return $success;} 
 
 
+		
 	}
 
 
@@ -598,11 +631,15 @@ class Mds extends CarrierModule
 		$addAddress1 = $params['cart']->id_address_delivery;
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
-		$addressRow = Db::getInstance()->getRow($sql);
+				$addressRow = Db::getInstance()->getRow($sql);
 
 		$town_id = $addressRow['id_state'];
+		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE id_state = ' . $town_id;
+		$mds_town_name = Db::getInstance()->getValue($sql);
+
 		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
-		WHERE `id_state` = "' . $town_id . '" ';
+		WHERE `name` = "' . $mds_town_name . '" and `active` = 1 ';
 		$mds_town_id = Db::getInstance()->getValue($sql);
 
 
@@ -633,22 +670,24 @@ class Mds extends CarrierModule
 
 	function getDefaultColliveryAddressFrom($params)
 	{
+
 		$colliveryAddressesFrom = $this->mdsService->returnDefaultAddress();
 
 		foreach ($colliveryAddressesFrom['contacts'] as $colliveryAddressFrom) {
 		}
+
 		return $colliveryAddressFrom;
 	}
 
 
 	public function buildColliveryDataArray($params)
 	{
+
 		$colliveryAddressTo = $this->addColliveryAddressTo($params);
 		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
 
 		$cart = $params['cart'];
 		$cartProducts = $cart->getProducts();
-		
 		$colliveryParams['collivery_to'] = $colliveryAddressTo['address_id'];
 		$colliveryParams['contact_to'] = $colliveryAddressTo['contact_id'];
 		$colliveryParams['collivery_from'] = $colliveryAddressFrom['address_id'];
@@ -667,23 +706,30 @@ class Mds extends CarrierModule
 		}
 
 		return $colliveryParams;
+
 	}
 
 	public function buildColliveryGetPriceArray($params)
 	{
+
 		$addAddress1 = $params->id_address_delivery;
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
 		$addressRow = Db::getInstance()->getRow($sql);
 
- 		$town_id = $addressRow['id_state'];
-		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
-		WHERE `id_state` = "' . $town_id  . '" ';
-		$mds_town_id = Db::getInstance()->getValue($sql);
-		
-		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
-		
+
 		$cartProducts = $params->getProducts();
+
+		$town_id = $addressRow['id_state'];
+		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE id_state = ' . $town_id;
+		$mds_town_name = Db::getInstance()->getValue($sql);
+
+		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE `name` = "' . $mds_town_name . '" and `active` = 1 ';
+		$mds_town_id = Db::getInstance()->getValue($sql);
+
+		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
 
 		$colliveryGetPriceArray = Array();
 		$colliveryGetPriceArray['to_town_id'] = $mds_town_id;
@@ -701,6 +747,7 @@ class Mds extends CarrierModule
 		}
 
 		return $colliveryGetPriceArray;
+
 	}
 
 	public function getCartProducts($params)
@@ -710,6 +757,7 @@ class Mds extends CarrierModule
 
 	public function getOrderShippingCost($params, $shipping_cost)
 	{
+
 		try {
 			$orderParams = $this->buildColliveryGetPriceArray($params);
 
@@ -727,24 +775,28 @@ class Mds extends CarrierModule
 		} catch (InvalidArgumentException $e) {
 			return false;
 		}
+
+
 	}
 
 	public function getOrderShippingCostExternal($params)
 	{
+
 		return false;
 	}
 
 	public function hookLeftColumn()
 	{
+
 		$towns = $this->collivery->getTowns();
 
-		$sql = 'SELECT count(`id_mds`) FROM  `' . _DB_PREFIX_ . 'state` WHERE  `id_country` = 30 AND `active` = 1';
+		$sql = 'SELECT count(`id_mds`) FROM  `' . _DB_PREFIX_ . 'state` WHERE  `id_mds` is not NULL';
 		$numberOfTowns = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
 
 		if ($numberOfTowns != count($towns)) {
-			$sql = 'UPDATE `' . _DB_PREFIX_ . 'state` SET `active` = 0 where `id_country` = 30';
+			$sql = 'UPDATE `' . _DB_PREFIX_ . 'state` SET `id_mds` = NULL , `active` = 0 where `id_mds` is not NULL';
 			Db::getInstance()->execute($sql);
-			
+
 			foreach ($towns as $index => $town) {
 				$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'state (id_country,id_zone,name,iso_code,id_mds,tax_behavior,active)
 				VALUES 
@@ -821,6 +873,33 @@ class Mds extends CarrierModule
 		return $serviceMappings[$carrierId];
 	}
 
+// 	public function hookDisplayBackOfficeFooter()
+// 	{
+// 		$suburbs = $this->collivery->getSuburbs('');
+// 		$location_types = $this->collivery->getLocationTypes();
+// 
+// 		$js = "";
+// 		$js .= '<script type="text/javascript" src="' . $this->_path . 'helper.js"></script>';
+// 		$js .= '<script type="text/javascript">
+// 					var suburbs= ' . json_encode($suburbs) . ';
+// 					var location_types= ' . json_encode($location_types) . ';
+// 					replaceText("states","towns"); 
+// 					replaceText("Shop address line 2","Location Type"); 
+// 					replaceText("State","Town"); 
+// 					replaceText("States","Towns"); 
+// 					replaceText("City","Suburb"); 
+// 					replaceText("city","suburb"); 
+// 					replaceText("Address (Line 2)","Location Type");
+// 					replaceText("address2","Location Type");
+// 					replaceText("Address (2)","Location Type");
+// 					addDropDownSuburb(suburbs);
+// 					addDropDownSuburbs(suburbs);
+// 					addDropDownLocationTypes(location_types);
+// 					addDropDownLocationType(location_types);
+// 				</script>';
+// 
+// 		return $js;
+// 	}
 }
 
 
