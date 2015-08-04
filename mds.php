@@ -804,7 +804,6 @@ class Mds extends CarrierModule
 
 	}
 
-
 	protected function getServiceFromCarrierId($carrierId)
 	{
 		$serviceMappings = [
