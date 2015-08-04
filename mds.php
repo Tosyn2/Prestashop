@@ -647,7 +647,8 @@ class Mds extends CarrierModule
 		$cart = $params['cart'];
 		$cartProducts = $cart->getProducts();
 
-		if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
+// 		if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
+
 
 		$colliveryParams['service'] = $service;
 		$colliveryParams['collivery_to'] = $colliveryAddressTo['address_id'];
@@ -770,6 +771,7 @@ class Mds extends CarrierModule
 
 		try {
 			$orderParams = $this->buildColliveryDataArray($params);
+			if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
 			return $this->mdsService->addCollivery($orderParams, true);
 		} catch (InvalidArgumentException $e) {
 			return false;
