@@ -106,7 +106,7 @@ class Mds extends CarrierModule
 				'id_tax_rules_group' => 0,
 				'active' => true,
 				'deleted' => 0,
-				'shipping_handling' => false,
+				'shipping_handling' => true,
 				'range_behavior' => 0,
 				'delay' => array(
 					'fr' => 'Overnight before 10:00', 'en' => 'Overnight before 10:00', Language::getIsoById(
@@ -124,7 +124,7 @@ class Mds extends CarrierModule
 				'id_tax_rules_group' => 0,
 				'active' => true,
 				'deleted' => 0,
-				'shipping_handling' => false,
+				'shipping_handling' => true,
 				'range_behavior' => 0,
 				'delay' => array(
 					'fr' => 'Overnight before 16:00', 'en' => 'Overnight before 16:00', Language::getIsoById(
@@ -142,7 +142,7 @@ class Mds extends CarrierModule
 				'id_tax_rules_group' => 0,
 				'active' => true,
 				'deleted' => 0,
-				'shipping_handling' => false,
+				'shipping_handling' => true,
 				'range_behavior' => 0,
 				'delay' => array(
 					'fr' => 'Road Freight', 'en' => 'Road Freight', Language::getIsoById(
@@ -160,7 +160,7 @@ class Mds extends CarrierModule
 				'id_tax_rules_group' => 0,
 				'active' => true,
 				'deleted' => 0,
-				'shipping_handling' => false,
+				'shipping_handling' => true,
 				'range_behavior' => 0,
 				'delay' => array(
 					'fr' => 'Road Freight Express', 'en' => 'Road Freight Express', Language::getIsoById(
@@ -179,8 +179,8 @@ class Mds extends CarrierModule
 		$id_carrier2 = $this->installExternalCarrier($carrierConfig[1]);
 		$id_carrier3 = $this->installExternalCarrier($carrierConfig[2]);
 		$id_carrier5 = $this->installExternalCarrier($carrierConfig[3]);
-
-		Configuration::updateValue('MYCARRIER1_CARRIER_ID', (int)$id_carrier1);
+		
+		Configuration::updateValue('MYCARRIER1_CARRIER_ID',(int)$id_carrier1);
 		Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int)$id_carrier2);
 		Configuration::updateValue('MYCARRIER3_CARRIER_ID', (int)$id_carrier3);
 		Configuration::updateValue('MYCARRIER5_CARRIER_ID', (int)$id_carrier5);
@@ -319,9 +319,11 @@ class Mds extends CarrierModule
 		}
 
 		if ($carrier->add()) {
+		
+	
 			$groups = Group::getGroups(true);
 			foreach ($groups as $group) {
-				Db::getInstance()->autoExecute(
+			Db::getInstance()->autoExecute(
 					_DB_PREFIX_ . 'carrier_group',
 					array('id_carrier' => (int)($carrier->id), 'id_group' => (int)($group['id_group'])),
 					'INSERT'
@@ -361,10 +363,9 @@ class Mds extends CarrierModule
 
 			// Copy Logo
 			if (!copy(dirname(__FILE__) . '/carrier.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int)$carrier->id . '.jpg')) {
-				return false;
+				//	return false;
 			}
 
-			// Return ID Carrier
 			return (int)($carrier->id);
 		}
 
@@ -380,7 +381,6 @@ class Mds extends CarrierModule
 	{
 		$this->_html .= '<h2>' . $this->l('My Carrier') . '</h2>';
 		if (!empty($_POST) AND Tools::isSubmit('submitSave')) {
-
 
 			$this->_postValidation();
 			if (!sizeof($this->_postErrors)) {
@@ -536,7 +536,6 @@ class Mds extends CarrierModule
 			$this->collivery = $this->mdsService->returnColliveryClass($settings);
 			if ($this->collivery->isAuthenticated()) {
 				if ($this->updateSettings(Tools::getAllValues())) {
-
 					$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
 				} else {
 					throw new Exception(sprintf(Tools::displayError('Unable to update Settings')));
@@ -552,7 +551,6 @@ class Mds extends CarrierModule
 	 * Hook update carrier
 	 *
 	 */
-
 
 	private function updateSettings(array $array)
 	{
@@ -572,9 +570,7 @@ class Mds extends CarrierModule
 			return $success;
 		}
 
-
 	}
-
 
 	public function hookupdateCarrier($params)
 	{
@@ -594,7 +590,6 @@ class Mds extends CarrierModule
 
 	function addColliveryAddressTo($params)
 	{
-
 		$addAddress1 = $params['cart']->id_address_delivery;
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
@@ -604,7 +599,6 @@ class Mds extends CarrierModule
 		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
 		WHERE `id_state` = "' . $town_id . '" ';
 		$mds_town_id = Db::getInstance()->getValue($sql);
-
 
 		$colliveryParams['company_name'] = $addressRow['company'];
 		$colliveryParams['building'] = '';
@@ -640,15 +634,17 @@ class Mds extends CarrierModule
 		return $colliveryAddressFrom;
 	}
 
-
 	public function buildColliveryDataArray($params)
 	{
+		$service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
+		
 		$colliveryAddressTo = $this->addColliveryAddressTo($params);
 		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
 
 		$cart = $params['cart'];
 		$cartProducts = $cart->getProducts();
 		
+		$colliveryParams['service'] = $service;
 		$colliveryParams['collivery_to'] = $colliveryAddressTo['address_id'];
 		$colliveryParams['contact_to'] = $colliveryAddressTo['contact_id'];
 		$colliveryParams['collivery_from'] = $colliveryAddressFrom['address_id'];
@@ -712,13 +708,8 @@ class Mds extends CarrierModule
 	{
 		try {
 			$orderParams = $this->buildColliveryGetPriceArray($params);
-
-			$sql = 'SELECT name FROM ' . _DB_PREFIX_ . 'carrier WHERE id_carrier =' . $this->id_carrier . ' and deleted = 0';
-
-			$carrierName = Db::getInstance()->getValue($sql);
-
-			$service = $this->getServiceFromCarrierId($carrierName);
-			$orderParams['service'] = $carrierName;
+			$service = $this->getServiceFromCarrierId($this->id_carrier);
+			$orderParams['service'] = $service;
 
 			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
@@ -761,14 +752,7 @@ class Mds extends CarrierModule
 
 		try {
 			$orderParams = $this->buildColliveryDataArray($params);
-			$sql = 'SELECT name FROM ' . _DB_PREFIX_ . 'carrier WHERE id_carrier =' . $params['cart']->id_carrier . ' and deleted = 0';
-			$carrierName = Db::getInstance()->getValue($sql);
-
-			$service = $this->getServiceFromCarrierId($carrierName);
-			$orderParams['service'] = $service;
-
 			return $this->mdsService->addCollivery($orderParams, true);
-
 		} catch (InvalidArgumentException $e) {
 			return false;
 		}
@@ -807,10 +791,10 @@ class Mds extends CarrierModule
 	protected function getServiceFromCarrierId($carrierId)
 	{
 		$serviceMappings = [
-			'Overnight before 10:00' => 1,
-			'Overnight before 16:00' => 2,
-			'Road Freight Express' => 3,
-			'Road Freight' => 5,
+			Configuration::get('MYCARRIER1_CARRIER_ID') => 1,
+			Configuration::get('MYCARRIER2_CARRIER_ID') => 2,
+			Configuration::get('MYCARRIER3_CARRIER_ID')=> 3,
+			Configuration::get('MYCARRIER5_CARRIER_ID') => 5,
 		];
 
 		if (!array_key_exists($carrierId, $serviceMappings)) {
