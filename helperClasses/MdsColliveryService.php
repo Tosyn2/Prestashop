@@ -1,7 +1,9 @@
 <?php
 
 namespace helperClasses;
+
 use Exception;
+
 /**
  * MdsColliveryService
  */
@@ -44,10 +46,10 @@ class MdsColliveryService
 	 */
 	public static function getInstance($settings = null)
 	{
-	//	if (! self::$instance) {
-		
-			self::$instance = new self($settings);
-	//	}
+		//	if (! self::$instance) {
+
+		self::$instance = new self($settings);
+		//	}
 
 		return self::$instance;
 	}
@@ -63,8 +65,8 @@ class MdsColliveryService
 		$this->converter = new UnitConverter();
 
 		$this->cache = new Cache();
-		
-	//	$this->collivery = new Collivery();
+
+		//	$this->collivery = new Collivery();
 
 		$this->initMdsCollivery($this->settings);
 	}
@@ -74,29 +76,21 @@ class MdsColliveryService
 	 *
 	 * @param null|array $settings
 	 */
-	public function initMdsCollivery($settings=null)
+	public function initMdsCollivery($settings = null)
 	{
-		if($settings) {
+		if ($settings) {
 			$username = $settings['mds_user'];
 			$password = $settings['mds_pass'];
 		} else {
 			$username = $this->settings['mds_user'];
 			$password = $this->settings['mds_pass'];
-			
+
 		}
-		
-// // 		print_r($settings['mds_user']);
-// // 		print_r($this->settings['mds_user']);
-// // 		
-// // 		die('end');
 
-		$this->collivery =  new Collivery(array(
+		$this->collivery = new Collivery(array(
 
-			'demo'          => false,
-				));
-// 	return	$this->collivery = new Collivery(array(
-// 		'demo' => true,
-// 		));
+			'demo' => false,
+		));
 	}
 
 	/**
@@ -114,7 +108,7 @@ class MdsColliveryService
 	 * @param $package
 	 * @return bool
 	 */
-	
+
 
 	/**
 	 * Used to build the package for use out of the shipping class
@@ -129,7 +123,7 @@ class MdsColliveryService
 	 * @param $items
 	 * @return array
 	 */
-	
+
 
 	/**
 	 * @param WC_Order $order
@@ -146,15 +140,15 @@ class MdsColliveryService
 	 * @param bool $accept
 	 * @return bool
 	 */
-	public function addCollivery(array $array, $accept=true) 
+	public function addCollivery(array $array, $accept = true)
 	{
 		$this->validated_data = $this->validateCollivery($array);
 
-		if(isset($this->validated_data['time_changed']) && $this->validated_data['time_changed'] == 1) {
+		if (isset($this->validated_data['time_changed']) && $this->validated_data['time_changed'] == 1) {
 			$id = $this->validated_data['service'];
 			$services = $this->collivery->getServices();
 
-			if(!empty($this->settings["wording_$id"])) {
+			if (!empty($this->settings["wording_$id"])) {
 				$reason = preg_replace('|' . preg_quote($services[$id]) . '|', $this->settings["wording_$id"], $this->validated_data['time_changed_reason']);
 			} else {
 				$reason = $this->validated_data['time_changed_reason'];
@@ -163,13 +157,11 @@ class MdsColliveryService
 			$reason = preg_replace('|collivery|i', 'delivery', $reason);
 			$reason = preg_replace('|The delivery time has been CHANGED to|i', 'the approximate delivery day is', $reason);
 
-			//wc_add_notice(sprintf(__($reason, "woocommerce-mds-shipping")));
-			//add code to display results or messages for users
 		}
 
 		$collivery_id = $this->collivery->addCollivery($this->validated_data);
 
-		if($accept) {
+		if ($accept) {
 			return ($this->collivery->acceptCollivery($collivery_id)) ? $collivery_id : false;
 		}
 
@@ -185,35 +177,35 @@ class MdsColliveryService
 	 */
 	public function validateCollivery(array $array)
 	{
-		if(empty($array['collivery_from'])) {
+		if (empty($array['collivery_from'])) {
 			throw new Exception("Invalid collection address");
 		}
 
-		if(empty($array['collivery_to'])) {
+		if (empty($array['collivery_to'])) {
 			throw new Exception("Invalid destination address");
 		}
 
-		if(empty($array['contact_from'])) {
+		if (empty($array['contact_from'])) {
 			throw new Exception("Invalid collection contact");
 		}
 
-		if(empty($array['contact_to'])) {
+		if (empty($array['contact_to'])) {
 			throw new Exception("Invalid destination contact");
 		}
 
-		if(empty($array['collivery_type'])) {
+		if (empty($array['collivery_type'])) {
 			throw new Exception("Invalid parcel type");
 		}
 
-		if(empty($array['service'])) {
+		if (empty($array['service'])) {
 			throw new Exception("Invalid service");
 		}
 
-		if($array['cover'] != 1 && $array['cover'] != 0) {
+		if ($array['cover'] != 1 && $array['cover'] != 0) {
 			throw new Exception("Invalid risk cover option");
 		}
 
-		if(empty($array['parcels']) || !is_array($array['parcels'])) {
+		if (empty($array['parcels']) || !is_array($array['parcels'])) {
 			throw new Exception("Invalid parcels");
 		}
 
@@ -225,29 +217,6 @@ class MdsColliveryService
 	 * @param bool $processing
 	 */
 
-
-	/**
-	 * Adds the new collivery to our mds processed table
-	 * @param int $collivery_id
-	 * @param int $order_id
-	 * @return bool
-	 */
-	public function addColliveryToProcessedTable($collivery_id, $order_id)
-	{
-		//used to save results from collivery to prestashop
-
-		// Save the results from validation into our table
-// 		$table_name = $wpdb->prefix . 'mds_collivery_processed';
-// 		$data = array(
-// 			'status' => 1,
-// 			'order_id' => $order_id,
-// 			'validation_results' => json_encode($this->returnColliveryValidatedData()),
-// 			'waybill' => $collivery_id
-// 		);
-// 
-// 		$wpdb->insert( $table_name, $data );
-	}
-
 	/**
 	 * Adds an address to MDS Collivery
 	 *
@@ -257,47 +226,47 @@ class MdsColliveryService
 	 */
 	public function addColliveryAddress(array $array)
 	{
-	
+
 		$towns = $this->collivery->getTowns();
 		$location_types = $this->collivery->getLocationTypes();
 
-		if(!is_numeric($array['town'])) {
-			$town_id = (int) array_search($array['town'], $towns);
+		if (!is_numeric($array['town'])) {
+			$town_id = (int)array_search($array['town'], $towns);
 		} else {
 			$town_id = $array['town'];
 		}
 
 		$suburbs = $this->collivery->getSuburbs($town_id);
 
-		if(!is_numeric($array['suburb'])) {
-			$suburb_id = (int) array_search($array['suburb'], $suburbs);
+		if (!is_numeric($array['suburb'])) {
+			$suburb_id = (int)array_search($array['suburb'], $suburbs);
 		} else {
 			$suburb_id = $array['suburb'];
 		}
 
-		if(!is_numeric($array['location_type'])) {
-			$location_type_id = (int) array_search($array['location_type'], $location_types);
+		if (!is_numeric($array['location_type'])) {
+			$location_type_id = (int)array_search($array['location_type'], $location_types);
 		} else {
 			$location_type_id = $array['location_type'];
 		}
 
-		if(empty($array['location_type']) || !isset($location_types[$location_type_id])) {
+		if (empty($array['location_type']) || !isset($location_types[$location_type_id])) {
 			throw new Exception("Invalid location type");
 		}
 
-		if(empty($array['town']) || !isset($towns[$town_id])) {
+		if (empty($array['town']) || !isset($towns[$town_id])) {
 			throw new Exception("Invalid town");
 		}
 
-		if(empty($array['suburb']) || !isset($suburbs[$suburb_id])) {
+		if (empty($array['suburb']) || !isset($suburbs[$suburb_id])) {
 			throw new Exception("Invalid suburb");
 		}
 
-		if(empty($array['cellphone']) || !is_numeric($array['cellphone'])) {
+		if (empty($array['cellphone']) || !is_numeric($array['cellphone'])) {
 			throw new Exception("Invalid cellphone number");
 		}
 
-		if(empty($array['email']) || !filter_var($array['email'], FILTER_VALIDATE_EMAIL)) {
+		if (empty($array['email']) || !filter_var($array['email'], FILTER_VALIDATE_EMAIL)) {
 			throw new Exception("Invalid email address");
 		}
 
@@ -314,8 +283,7 @@ class MdsColliveryService
 			'custom_id' => 'new_test_custom_id',
 			'email' => $array['email'],
 		);
-		
-	
+
 
 		// Before adding an address lets search MDS and see if we have already added this address
 		$searchAddresses = $this->searchAndMatchAddress([
@@ -324,7 +292,7 @@ class MdsColliveryService
 			'town_id' => $town_id,
 		], $newAddress);
 
-		if(is_array($searchAddresses)) {
+		if (is_array($searchAddresses)) {
 			return $searchAddresses;
 		} else {
 			$this->cache->clear(['addresses', 'contacts']);
@@ -342,7 +310,7 @@ class MdsColliveryService
 	public function searchAndMatchAddress(array $filters, array $newAddress)
 	{
 		$searchAddresses = $this->collivery->getAddresses($filters);
-		if(!empty($searchAddresses)) {
+		if (!empty($searchAddresses)) {
 			$match = true;
 
 			$matchAddressFields = array(
@@ -355,15 +323,15 @@ class MdsColliveryService
 				'custom_id' => 'custom_id',
 			);
 
-			foreach($searchAddresses as $address) {
-				foreach($matchAddressFields as $mdsField => $newField) {
-					if($address[$mdsField] != $newAddress[$newField]) {
+			foreach ($searchAddresses as $address) {
+				foreach ($matchAddressFields as $mdsField => $newField) {
+					if ($address[$mdsField] != $newAddress[$newField]) {
 						$match = false;
 					}
 				}
 
-				if($match) {
-					if(!isset($address['contact_id'])) {
+				if ($match) {
+					if (!isset($address['contact_id'])) {
 						$contacts = $this->collivery->getContacts($address['address_id']);
 						list($contact_id) = array_keys($contacts);
 						$address['contact_id'] = $contact_id;
@@ -396,33 +364,26 @@ class MdsColliveryService
 	 */
 	public function returnColliveryClass($settings)
 	{
-	
-		
-		if($settings) {
+
+
+		if ($settings) {
 			$username = $settings['mds_user'];
 			$password = $settings['mds_pass'];
 		} else {
 			$username = $this->settings['mds_user'];
 			$password = $this->settings['mds_pass'];
-			
-		}
-		
-// 		print_r($settings['mds_user']);
-// 		print_r($this->settings['mds_user']);
-// 		
-// 		die('end');
 
-return	$this->collivery = new Collivery(array(
-			'app_name'      => 'Default App Name', // Application Name
-			'app_version'   => '0.0.1',            // Application Version
-			'app_host'      => '', // Framework/CMS name and version, eg 'Wordpress 3.8.1 WooCommerce 2.0.20' / 'Joomla! 2.5.17 VirtueMart 2.0.26d'
-			'app_url'       => '', // URL your site is hosted on
-			'user_email'    =>$username,
-			'user_password' => $password ,
-			'demo'          => false,
-				));
-//		return $this->collivery;
-// 			
+		}
+
+		return $this->collivery = new Collivery(array(
+			'app_name' => 'Default App Name', // Application Name
+			'app_version' => '0.0.1',            // Application Version
+			'app_host' => '', // Framework/CMS name and version, eg 'Wordpress 3.8.1 WooCommerce 2.0.20' / 'Joomla! 2.5.17 VirtueMart 2.0.26d'
+			'app_url' => '', // URL your site is hosted on
+			'user_email' => $username,
+			'user_password' => $password,
+			'demo' => false,
+		)); 			
 	}
 
 	/**
@@ -444,16 +405,6 @@ return	$this->collivery = new Collivery(array(
 	{
 		return $this->converter;
 	}
-
-	/**
-	 * Returns the WC_Mds_Shipping_Method plugin settings
-	 *
-	 * @return array
-	 */
-// 	public function returnPluginSettings()
-// 	{
-// 		return $this->settings;
-// 	}
 
 	/**
 	 * Gets default address of the MDS Account
@@ -514,60 +465,4 @@ return	$this->collivery = new Collivery(array(
 		return ceil($this->format($price));
 	}
 
-	/**
-	 * This function is here so we can get WooCommerce version number to pass on to the API for logs
-	 */
-	private function returnWoocommerceVersionNumber()
-	{
-//		change to joomla version	
-	
-// 		// If get_plugins() isn't available, require it
-// 		if (!function_exists('get_plugins')) {
-// 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-// 		}
-// 
-// 		// Create the plugins folder and file variables
-// 		$plugin_folder = get_plugins('/' . 'woocommerce');
-// 		$plugin_file = 'woocommerce.php';
-// 
-// 		// If the plugin version number is set, return it
-// 		if (isset($plugin_folder[$plugin_file]['Version'])) {
-// 			return $plugin_folder[$plugin_file]['Version'];
-// 		} else {
-// 			// Otherwise return null
-// 			return NULL;
-// 		}
-	}
-	
-	public function updateSuburbsDb(){
-	
-// 				$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('
-// 		SELECT COUNT(`id_order`) AS used
-// 		FROM `'._DB_PREFIX_.'orders`
-// 		WHERE `id_address_delivery` = '.(int)$this->id.'
-// 		OR `id_address_invoice` = '.(int)$this->id);
-// 
-// 		return isset($result['used']) ? $result['used'] : false;
-
-// 			$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('
-// 		SELECT *
-// 		FROM `'._DB_PREFIX_.'state`
-// 		WHERE `id_country` = 30');
-		
-		die('5');
-		
-		if (!$result)
-		{
-				echo "No";
-		}
-		else
-		{
-				echo "yes";
-		}
-
-		return 5;
-			
-// INSERT INTO `ps_state`(`id_state`, `id_country`, `id_zone`, `name`, `iso_code`, `tax_behavior`, `active`) VALUES (1,30,4,'gauteng','za',0,1)
-	
-	}
 }

@@ -12,7 +12,6 @@ if (version_compare(PHP_VERSION, '5.3.0') < 0) {
 
 class Mds extends CarrierModule
 {
-
 	public $id_carrier;
 	private $_html = '';
 	/**
@@ -21,23 +20,6 @@ class Mds extends CarrierModule
 	private $_postErrors = array();
 	private $_moduleName = 'mds';
 	public static $_this = false;
-	protected $cache;
-	protected $db;
-	protected $towns;
-	protected $services;
-	protected $location_types;
-	protected $extension_id;
-	protected $app_name;
-	protected $app_info;
-	protected $collivery;
-	protected $password;
-	protected $username;
-	protected $converter;
-	protected $risk_cover;
-	protected $email;
-	protected $settings;
-	protected $mdsService;
-	protected $errors;
 	public static $orderParams;
 
 	/*
@@ -79,6 +61,11 @@ class Mds extends CarrierModule
 		}
 
 
+		/*
+		** Including MDS method and API
+		**
+		*/
+
 		require_once 'helperClasses/MdsColliveryService.php';
 
 		$settings['mds_user'] = Configuration::get('MDS_EMAIL');
@@ -95,7 +82,6 @@ class Mds extends CarrierModule
 	*/
 	public function install()
 	{
-
 		if (!extension_loaded('soap')) {
 			$warning[] = "'" . $this->l('Class Soap') . "', ";
 		}
@@ -179,8 +165,14 @@ class Mds extends CarrierModule
 		$id_carrier2 = $this->installExternalCarrier($carrierConfig[1]);
 		$id_carrier3 = $this->installExternalCarrier($carrierConfig[2]);
 		$id_carrier5 = $this->installExternalCarrier($carrierConfig[3]);
-		
-		Configuration::updateValue('MYCARRIER1_CARRIER_ID',(int)$id_carrier1);
+
+		copy(dirname(__FILE__) . '/icons/1.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int)$id_carrier1 . '.jpg');
+		copy(dirname(__FILE__) . '/icons/2.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int)$id_carrier2 . '.jpg');
+		copy(dirname(__FILE__) . '/icons/3.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int)$id_carrier3 . '.jpg');
+		copy(dirname(__FILE__) . '/icons/5.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int)$id_carrier5 . '.jpg');
+
+
+		Configuration::updateValue('MYCARRIER1_CARRIER_ID', (int)$id_carrier1);
 		Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int)$id_carrier2);
 		Configuration::updateValue('MYCARRIER3_CARRIER_ID', (int)$id_carrier3);
 		Configuration::updateValue('MYCARRIER5_CARRIER_ID', (int)$id_carrier5);
@@ -218,7 +210,6 @@ class Mds extends CarrierModule
 						`status` int(1) NOT NULL DEFAULT 1,
 						PRIMARY KEY (`id`)
 						) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
-
 		Db::getInstance()->execute($sql);
 
 
@@ -319,11 +310,11 @@ class Mds extends CarrierModule
 		}
 
 		if ($carrier->add()) {
-		
-	
+
+
 			$groups = Group::getGroups(true);
 			foreach ($groups as $group) {
-			Db::getInstance()->autoExecute(
+				Db::getInstance()->autoExecute(
 					_DB_PREFIX_ . 'carrier_group',
 					array('id_carrier' => (int)($carrier->id), 'id_group' => (int)($group['id_group'])),
 					'INSERT'
@@ -361,11 +352,6 @@ class Mds extends CarrierModule
 				);
 			}
 
-			// Copy Logo
-			if (!copy(dirname(__FILE__) . '/carrier.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int)$carrier->id . '.jpg')) {
-				//	return false;
-			}
-
 			return (int)($carrier->id);
 		}
 
@@ -394,6 +380,16 @@ class Mds extends CarrierModule
 		$this->_displayForm();
 
 		return $this->_html;
+	}
+
+	/*
+	** Service and API config settings form 
+	**
+	*/
+	private function checked()
+	{
+
+		if (Configuration::get('MDS_RISK') == 1) return "checked";
 	}
 
 	private function _displayForm()
@@ -498,14 +494,12 @@ class Mds extends CarrierModule
 				Configuration::get('MDS_PASSWORD')
 			) . '" /></div>
 						<label>' . $this->l('MDS risk cover') . ' : </label>
-						<div class="margin-form"><input type="checkbox" name="MDS_RISK" value="' . Tools::getValue(
-				'MDS_RISK',
-				Configuration::get('MDS_RISK')
-			) . '"  /></div>
+						<div class="margin-form">  
+						<input name="MDS_RISK" type="checkbox"  ' . $this->checked() . '  value="1"  />
 					</div>
 				<br /><br />
 				</fieldset>				
-				<div class="margin-form"><input class="button" name="submitSave" type="submit"></div>
+				<div class="margin-form"><input class="button"  name="submitSave" type="submit"></div>
 			</form>
 		</div></div>';
 	}
@@ -525,6 +519,10 @@ class Mds extends CarrierModule
 		}
 	}
 
+	/*
+	** Saving config settings. First checks if login details are changed and are correct then saves, else just saves
+	**
+	*/
 	private function _postProcess()
 	{
 		if ($this->settings['mds_user'] != Tools::getValue('MDS_EMAIL') || $this->settings['mds_pass'] != Tools::getValue('MDS_PASSWORD')) {
@@ -542,6 +540,10 @@ class Mds extends CarrierModule
 				}
 			} else {
 				$this->_html .= (sprintf(Tools::displayError('MDS Collivery account details incorrect.')));
+			}
+		} else {
+			if ($this->updateSettings(Tools::getAllValues())) {
+				$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
 			}
 		}
 	}
@@ -562,7 +564,8 @@ class Mds extends CarrierModule
 			Configuration::updateValue('MYCARRIER3_OVERCOST', Tools::getValue('mycarrier3_overcost')) &&
 			Configuration::updateValue('MYCARRIER5_OVERCOST', Tools::getValue('mycarrier5_overcost')) &&
 			Configuration::updateValue('MDS_EMAIL', Tools::getValue('MDS_EMAIL')) &&
-			Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD'))
+			Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD')) &&
+			Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
 		) {
 			return $success;
 		} else {
@@ -637,13 +640,15 @@ class Mds extends CarrierModule
 	public function buildColliveryDataArray($params)
 	{
 		$service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
-		
+
 		$colliveryAddressTo = $this->addColliveryAddressTo($params);
 		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
 
 		$cart = $params['cart'];
 		$cartProducts = $cart->getProducts();
-		
+
+		if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
+
 		$colliveryParams['service'] = $service;
 		$colliveryParams['collivery_to'] = $colliveryAddressTo['address_id'];
 		$colliveryParams['contact_to'] = $colliveryAddressTo['contact_id'];
@@ -672,13 +677,13 @@ class Mds extends CarrierModule
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
 		$addressRow = Db::getInstance()->getRow($sql);
 
- 		$town_id = $addressRow['id_state'];
+		$town_id = $addressRow['id_state'];
 		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
-		WHERE `id_state` = "' . $town_id  . '" ';
+		WHERE `id_state` = "' . $town_id . '" ';
 		$mds_town_id = Db::getInstance()->getValue($sql);
-		
+
 		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
-		
+
 		$cartProducts = $params->getProducts();
 
 		$colliveryGetPriceArray = Array();
@@ -706,19 +711,32 @@ class Mds extends CarrierModule
 
 	public function getOrderShippingCost($params, $shipping_cost)
 	{
+		return false;
+	}
+
+
+	public function getPackageShippingCost($params, $shipping_cost, $products)
+	{
+
 		try {
 			$orderParams = $this->buildColliveryGetPriceArray($params);
 			$service = $this->getServiceFromCarrierId($this->id_carrier);
 			$orderParams['service'] = $service;
 
+			if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
+
 			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
 
-			return Configuration::get('MYCARRIER' . $service . '_OVERCOST') + $colliveryPrice;
+			$price = Configuration::get('MYCARRIER' . $service . '_OVERCOST') + $colliveryPrice;
+
+			return $shipping_cost + $price;
 		} catch (InvalidArgumentException $e) {
 			return false;
 		}
+
 	}
+
 
 	public function getOrderShippingCostExternal($params)
 	{
@@ -735,7 +753,7 @@ class Mds extends CarrierModule
 		if ($numberOfTowns != count($towns)) {
 			$sql = 'UPDATE `' . _DB_PREFIX_ . 'state` SET `active` = 0 where `id_country` = 30';
 			Db::getInstance()->execute($sql);
-			
+
 			foreach ($towns as $index => $town) {
 				$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'state (id_country,id_zone,name,iso_code,id_mds,tax_behavior,active)
 				VALUES 
@@ -793,7 +811,7 @@ class Mds extends CarrierModule
 		$serviceMappings = [
 			Configuration::get('MYCARRIER1_CARRIER_ID') => 1,
 			Configuration::get('MYCARRIER2_CARRIER_ID') => 2,
-			Configuration::get('MYCARRIER3_CARRIER_ID')=> 3,
+			Configuration::get('MYCARRIER3_CARRIER_ID') => 3,
 			Configuration::get('MYCARRIER5_CARRIER_ID') => 5,
 		];
 
