@@ -2,6 +2,8 @@
 
 // Avoid direct access to the file
 use Mds\MdsColliveryService;
+use Mds\Prestashop\Exceptions\UpdatingConfigurationException;
+use Mds\Prestashop\Installer;
 
 if (!defined('_PS_VERSION_')) {
 	exit;
@@ -66,10 +68,9 @@ class Mds extends CarrierModule
 		$this->cache = $this->mdsService->returnCacheClass();
 	}
 
-	/*
-	** Install / Uninstall Methods
-	**
-	*/
+	/**
+	 * Prestashop Installer
+	 */
 	public function install()
 	{
 		if (version_compare(PHP_VERSION, '5.3.0') < 0) {
@@ -77,140 +78,40 @@ class Mds extends CarrierModule
 		}
 
 		if (!extension_loaded('soap')) {
-			$warning[] = "'" . $this->l('Class Soap') . "', ";
+			$warning[] = '\'' . $this->l('Class Soap') . '\', ';
 		}
 
-		$carrierConfig = array(
-			0 => array(
-				'name' => 'Overnight before 10:00',
-				'id_tax_rules_group' => 0,
-				'active' => true,
-				'deleted' => 0,
-				'shipping_handling' => true,
-				'range_behavior' => 0,
-				'delay' => array(
-					'fr' => 'Overnight before 10:00', 'en' => 'Overnight before 10:00', Language::getIsoById(
-						Configuration::get('PS_LANG_DEFAULT')
-					) => 'Overnight before 10:00'
-				),
-				'id_zone' => 4,
-				'is_module' => true,
-				'shipping_external' => true,
-				'external_module_name' => 'mds',
-				'need_range' => true
-			),
-			1 => array(
-				'name' => 'Overnight before 16:00',
-				'id_tax_rules_group' => 0,
-				'active' => true,
-				'deleted' => 0,
-				'shipping_handling' => true,
-				'range_behavior' => 0,
-				'delay' => array(
-					'fr' => 'Overnight before 16:00', 'en' => 'Overnight before 16:00', Language::getIsoById(
-						Configuration::get('PS_LANG_DEFAULT')
-					) => 'Overnight before 16:00'
-				),
-				'id_zone' => 4,
-				'is_module' => true,
-				'shipping_external' => true,
-				'external_module_name' => 'mds',
-				'need_range' => true
-			),
-			2 => array(
-				'name' => 'Road Freight',
-				'id_tax_rules_group' => 0,
-				'active' => true,
-				'deleted' => 0,
-				'shipping_handling' => true,
-				'range_behavior' => 0,
-				'delay' => array(
-					'fr' => 'Road Freight', 'en' => 'Road Freight', Language::getIsoById(
-						Configuration::get('PS_LANG_DEFAULT')
-					) => 'Road Freight'
-				),
-				'id_zone' => 4,
-				'is_module' => true,
-				'shipping_external' => true,
-				'external_module_name' => 'mds',
-				'need_range' => true
-			),
-			3 => array(
-				'name' => 'Road Freight Express',
-				'id_tax_rules_group' => 0,
-				'active' => true,
-				'deleted' => 0,
-				'shipping_handling' => true,
-				'range_behavior' => 0,
-				'delay' => array(
-					'fr' => 'Road Freight Express', 'en' => 'Road Freight Express', Language::getIsoById(
-						Configuration::get('PS_LANG_DEFAULT')
-					) => 'Road Freight Express'
-				),
-				'id_zone' => 4,
-				'is_module' => true,
-				'shipping_external' => true,
-				'external_module_name' => 'mds',
-				'need_range' => true
-			),
-		);
-
-		$id_carrier1 = $this->installExternalCarrier($carrierConfig[0]);
-		$id_carrier2 = $this->installExternalCarrier($carrierConfig[1]);
-		$id_carrier3 = $this->installExternalCarrier($carrierConfig[2]);
-		$id_carrier5 = $this->installExternalCarrier($carrierConfig[3]);
-
-		copy(dirname(__FILE__) . '/icons/1.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int)$id_carrier1 . '.jpg');
-		copy(dirname(__FILE__) . '/icons/2.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int)$id_carrier2 . '.jpg');
-		copy(dirname(__FILE__) . '/icons/3.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int)$id_carrier3 . '.jpg');
-		copy(dirname(__FILE__) . '/icons/5.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int)$id_carrier5 . '.jpg');
-
-
-		Configuration::updateValue('MYCARRIER1_CARRIER_ID', (int)$id_carrier1);
-		Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int)$id_carrier2);
-		Configuration::updateValue('MYCARRIER3_CARRIER_ID', (int)$id_carrier3);
-		Configuration::updateValue('MYCARRIER5_CARRIER_ID', (int)$id_carrier5);
-
-		if (!parent::install() ||
-			!Configuration::updateValue('MYCARRIER1_OVERCOST', '0') ||
-			!Configuration::updateValue('MYCARRIER2_OVERCOST', '0') ||
-			!Configuration::updateValue('MYCARRIER3_OVERCOST', '0') ||
-			!Configuration::updateValue('MYCARRIER5_OVERCOST', '0') ||
-			!Configuration::updateValue('MDS_EMAIL', 'api@collivery.co.za') ||
-			!Configuration::updateValue('MDS_PASSWORD', 'api123') ||
-			!Configuration::updateValue('MDS_RISK', '0') ||
-			!$this->registerHook('updateCarrier') ||
-			!$this->registerhook('displayFooter') ||
-			!$this->registerHook('actionOrderStatusPostUpdate') ||
-			!$this->registerHook('displayShoppingCart')
-
-		) {
+		try {
+			$installer = new Installer();
+			$installer->install();
+		} catch (UpdatingConfigurationException $e) {
 			return false;
 		}
 
-		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'state WHERE id_mds';
-		if (!Db::getInstance()->query($sql)) {
-			$sql = 'ALTER TABLE `' . _DB_PREFIX_ . 'state` ADD `id_mds` INT NULL AFTER  `iso_code`';
-			Db::getInstance()->execute($sql);
+		if (!parent::install()) {
+			return false;
 		}
 
-		$sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mds_collivery_processed` (
-						`id` int(11) NOT NULL AUTO_INCREMENT,
-						`waybill` int(11) NOT NULL,
-						`order_id` int(11) NOT NULL,
-						`validation_results` TEXT NOT NULL,
-						`status` int(1) NOT NULL DEFAULT 1,
-						PRIMARY KEY (`id`)
-						) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
-		Db::getInstance()->execute($sql);
-
-
-		$sql = 'UPDATE  `' . _DB_PREFIX_ . 'country` SET `contains_states`= 1 WHERE `iso_code`= "ZA"';
-		Db::getInstance()->execute($sql);
-
+		if (!$this->registerHooks()) {
+			return false;
+		}
 
 		return true;
 	}
+
+
+	/**
+	 * @return bool
+	 * @throws \PrestaShopException
+	 */
+	private function registerHooks()
+	{
+		$hooks = array('updateCarrier', 'displayFooter', 'actionOrderStatusPostUpdate', 'displayShoppingCart');
+		foreach ($hooks as $hook) {
+			if (!$this->registerHook($hook)) return false;
+		}
+	}
+
 
 
 	public function uninstall()
@@ -267,84 +168,6 @@ class Mds extends CarrierModule
 
 		return true;
 
-	}
-
-	public static function installExternalCarrier($config)
-	{
-		$carrier = new Carrier();
-		$carrier->name = $config['name'];
-		$carrier->id_tax_rules_group = $config['id_tax_rules_group'];
-		$carrier->id_zone = $config['id_zone'];
-		$carrier->active = $config['active'];
-		$carrier->deleted = $config['deleted'];
-		$carrier->delay = $config['delay'];
-		$carrier->shipping_handling = $config['shipping_handling'];
-		$carrier->range_behavior = $config['range_behavior'];
-		$carrier->is_module = $config['is_module'];
-		$carrier->shipping_external = $config['shipping_external'];
-		$carrier->external_module_name = $config['external_module_name'];
-		$carrier->need_range = $config['need_range'];
-
-		$languages = Language::getLanguages(true);
-		foreach ($languages as $language) {
-			if ($language['iso_code'] == 'fr') {
-				$carrier->delay[(int)$language['id_lang']] = $config['delay'][$language['iso_code']];
-			}
-			if ($language['iso_code'] == 'en') {
-				$carrier->delay[(int)$language['id_lang']] = $config['delay'][$language['iso_code']];
-			}
-			if ($language['iso_code'] == Language::getIsoById(Configuration::get('PS_LANG_DEFAULT'))) {
-				$carrier->delay[(int)$language['id_lang']] = $config['delay'][$language['iso_code']];
-			}
-		}
-
-		if ($carrier->add()) {
-
-
-			$groups = Group::getGroups(true);
-			foreach ($groups as $group) {
-				Db::getInstance()->autoExecute(
-					_DB_PREFIX_ . 'carrier_group',
-					array('id_carrier' => (int)($carrier->id), 'id_group' => (int)($group['id_group'])),
-					'INSERT'
-				);
-			}
-
-			$rangePrice = new RangePrice();
-			$rangePrice->id_carrier = $carrier->id;
-			$rangePrice->delimiter1 = '0';
-			$rangePrice->delimiter2 = '10000';
-			$rangePrice->add();
-
-			$rangeWeight = new RangeWeight();
-			$rangeWeight->id_carrier = $carrier->id;
-			$rangeWeight->delimiter1 = '0';
-			$rangeWeight->delimiter2 = '10000';
-			$rangeWeight->add();
-
-			$zones = Zone::getZones(true);
-			foreach ($zones as $zone) {
-				Db::getInstance()->autoExecute(
-					_DB_PREFIX_ . 'carrier_zone',
-					array('id_carrier' => (int)($carrier->id), 'id_zone' => (int)($zone['id_zone'])),
-					'INSERT'
-				);
-				Db::getInstance()->autoExecuteWithNullValues(
-					_DB_PREFIX_ . 'delivery',
-					array('id_carrier' => (int)($carrier->id), 'id_range_price' => (int)($rangePrice->id), 'id_range_weight' => null, 'id_zone' => (int)($zone['id_zone']), 'price' => '0'),
-					'INSERT'
-				);
-				Db::getInstance()->autoExecuteWithNullValues(
-					_DB_PREFIX_ . 'delivery',
-					array('id_carrier' => (int)($carrier->id), 'id_range_price' => null, 'id_range_weight' => (int)($rangeWeight->id), 'id_zone' => (int)($zone['id_zone']), 'price' => '0'),
-					'INSERT'
-				);
-			}
-
-			return (int)($carrier->id);
-		}
-
-		return false;
 	}
 
 	/*
