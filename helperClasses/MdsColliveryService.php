@@ -360,12 +360,12 @@ class MdsColliveryService
 	/**
 	 * Returns the MDS Collivery class
 	 *
+	 * @param null $settings
+	 *
 	 * @return \Mds\Collivery
 	 */
 	public function returnColliveryClass($settings = null)
 	{
-
-
 		if ($settings) {
 			$username = $settings['mds_user'];
 			$password = $settings['mds_pass'];
