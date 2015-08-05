@@ -1,4 +1,4 @@
-<?php namespace helperClasses;
+<?php namespace Mds;
 
 use SoapClient; // Use PHP Soap Client
 use SoapFault;  // Use PHP Soap Fault

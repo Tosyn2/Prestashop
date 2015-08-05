@@ -1,4 +1,4 @@
-<?php namespace helperClasses;
+<?php namespace Mds;
 
 class Cache {
 
