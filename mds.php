@@ -99,7 +99,6 @@ class Mds extends CarrierModule
 		return true;
 	}
 
-
 	/**
 	 * @return bool
 	 * @throws \PrestaShopException
@@ -111,8 +110,6 @@ class Mds extends CarrierModule
 			if (!$this->registerHook($hook)) return false;
 		}
 	}
-
-
 
 	public function uninstall()
 	{
@@ -174,7 +171,6 @@ class Mds extends CarrierModule
 	** Form Config Methods
 	**
 	*/
-
 	public function getContent()
 	{
 		$this->_html .= '<h2>' . $this->l('My Carrier') . '</h2>';
@@ -195,12 +191,11 @@ class Mds extends CarrierModule
 	}
 
 	/*
-	** Service and API config settings form 
+	** Service and API config settings form
 	**
 	*/
 	private function checked()
 	{
-
 		if (Configuration::get('MDS_RISK') == 1) return "checked";
 	}
 
@@ -257,7 +252,6 @@ class Mds extends CarrierModule
 			$this->_html .= '<br />' . (isset($alert['account_password']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 6) ' . $this->l(
 					'Correct MDS account password'
 				);
-
 		}
 
 		$this->_html .= '</fieldset><div class="clear">&nbsp;</div>
@@ -306,16 +300,15 @@ class Mds extends CarrierModule
 				Configuration::get('MDS_PASSWORD')
 			) . '" /></div>
 						<label>' . $this->l('MDS risk cover') . ' : </label>
-						<div class="margin-form">  
+						<div class="margin-form">
 						<input name="MDS_RISK" type="checkbox"  ' . $this->checked() . '  value="1"  />
 					</div>
 				<br /><br />
-				</fieldset>				
+				</fieldset>
 				<div class="margin-form"><input class="button"  name="submitSave" type="submit"></div>
 			</form>
 		</div></div>';
 	}
-
 
 	private function _postValidation()
 	{
@@ -360,12 +353,10 @@ class Mds extends CarrierModule
 		}
 	}
 
-
 	/*
 	 * Hook update carrier
 	 *
 	 */
-
 	private function updateSettings(array $array)
 	{
 		$success = true;
@@ -524,7 +515,6 @@ class Mds extends CarrierModule
 		return false;
 	}
 
-
 	public function getPackageShippingCost($params, $shipping_cost, $products)
 	{
 
@@ -547,7 +537,6 @@ class Mds extends CarrierModule
 
 	}
 
-
 	public function getOrderShippingCostExternal($params)
 	{
 		return false;
@@ -566,7 +555,7 @@ class Mds extends CarrierModule
 
 			foreach ($towns as $index => $town) {
 				$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'state (id_country,id_zone,name,iso_code,id_mds,tax_behavior,active)
-				VALUES 
+				VALUES
 				(30,4,\'' . $town . '\',\'ZA\',' . $index . ',0,1)';
 				Db::getInstance()->execute($sql);
 			}
@@ -577,25 +566,17 @@ class Mds extends CarrierModule
 
 	public function hookActionOrderStatusPostUpdate($params)
 	{
-
-
 		if ($params['newOrderStatus']->name == 'Shipped') {
-
-
 			try {
 				$orderParams = $this->buildColliveryDataArray($params);
 				if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
-
 
 				return $this->mdsService->addCollivery($orderParams, true);
 			} catch (InvalidArgumentException $e) {
 				return false;
 			}
 		}
-
-
 	}
-
 
 	public function hookDisplayFooter($params)
 	{
@@ -623,7 +604,6 @@ class Mds extends CarrierModule
 					addDropDownSuburb(suburbs, suburb);
 					addDropDownLocationType(location_types,location_type);
 				</script>';
-
 	}
 
 	protected function getServiceFromCarrierId($carrierId)
