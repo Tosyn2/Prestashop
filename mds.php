@@ -186,11 +186,9 @@ class Mds extends CarrierModule
 			!Configuration::updateValue('MDS_PASSWORD', 'api123') ||
 			!Configuration::updateValue('MDS_RISK', '0') ||
 			!$this->registerHook('updateCarrier') ||
-			!$this->registerHook('actionPaymentConfirmation') ||
-			!$this->registerHook('leftColumn') ||
 			!$this->registerhook('displayFooter') ||
-			!$this->registerHook('header') ||
-			!$this->registerHook('displayBackOfficeFooter')
+			!$this->registerHook('actionOrderStatusPostUpdate') ||
+			!$this->registerHook('displayShoppingCart')
 
 		) {
 			return false;
@@ -233,11 +231,8 @@ class Mds extends CarrierModule
 			!Configuration::deleteByName('MDS_PASSWORD') ||
 			!Configuration::deleteByName('MDS_RISK') ||
 			!$this->unregisterHook('updateCarrier') ||
-			!$this->unregisterHook('actionPaymentConfirmation') ||
-			!$this->unregisterHook('leftColumn') ||
 			!$this->unregisterhook('displayFooter') ||
-			!$this->unregisterHook('header') ||
-			!$this->unregisterHook('backOfficeHeader')
+			!$this->unregisterHook('actionOrderStatusPostUpdate')
 		) {
 			return false;
 		}
@@ -647,9 +642,6 @@ class Mds extends CarrierModule
 		$cart = $params['cart'];
 		$cartProducts = $cart->getProducts();
 
-// 		if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
-
-
 		$colliveryParams['service'] = $service;
 		$colliveryParams['collivery_to'] = $colliveryAddressTo['address_id'];
 		$colliveryParams['contact_to'] = $colliveryAddressTo['contact_id'];
@@ -744,7 +736,7 @@ class Mds extends CarrierModule
 		return false;
 	}
 
-	public function hookLeftColumn()
+	public function hookDisplayShoppingCart()
 	{
 		$towns = $this->collivery->getTowns();
 
@@ -766,18 +758,27 @@ class Mds extends CarrierModule
 
 	}
 
-	public function hookActionPaymentConfirmation($params)
+	public function hookActionOrderStatusPostUpdate($params)
 	{
 
-		try {
-			$orderParams = $this->buildColliveryDataArray($params);
-			if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
-			return $this->mdsService->addCollivery($orderParams, true);
-		} catch (InvalidArgumentException $e) {
-			return false;
+
+		if ($params['newOrderStatus']->name == 'Shipped') {
+
+
+			try {
+				$orderParams = $this->buildColliveryDataArray($params);
+				if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
+
+
+				return $this->mdsService->addCollivery($orderParams, true);
+			} catch (InvalidArgumentException $e) {
+				return false;
+			}
 		}
 
+
 	}
+
 
 	public function hookDisplayFooter($params)
 	{

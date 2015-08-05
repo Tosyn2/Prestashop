@@ -383,7 +383,7 @@ class MdsColliveryService
 			'user_email' => $username,
 			'user_password' => $password,
 			'demo' => false,
-		)); 			
+		));
 	}
 
 	/**
