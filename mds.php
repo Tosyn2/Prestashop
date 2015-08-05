@@ -14,9 +14,6 @@ spl_autoload_register(function($class) {
 		require implode('\\', $classParts) .'.php';
 	}
 }, true);
-if (version_compare(PHP_VERSION, '5.3.0') < 0) {
-	die('Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.');
-}
 
 
 class Mds extends CarrierModule
@@ -75,6 +72,10 @@ class Mds extends CarrierModule
 	*/
 	public function install()
 	{
+		if (version_compare(PHP_VERSION, '5.3.0') < 0) {
+			$warning[] = '\'Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.\'';
+		}
+
 		if (!extension_loaded('soap')) {
 			$warning[] = "'" . $this->l('Class Soap') . "', ";
 		}
