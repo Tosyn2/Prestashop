@@ -1,10 +1,19 @@
 <?php
 
 // Avoid direct access to the file
+use Mds\MdsColliveryService;
+
 if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
+spl_autoload_register(function($class) {
+	$classParts = explode('\\', $class);
+	$vendor = array_shift($classParts);
+	if ($vendor === 'Mds') {
+		require implode('\\', $classParts) .'.php';
+	}
+}, true);
 if (version_compare(PHP_VERSION, '5.3.0') < 0) {
 	die('Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.');
 }
@@ -60,18 +69,10 @@ class Mds extends CarrierModule
 			}
 		}
 
-
-		/*
-		** Including MDS method and API
-		**
-		*/
-
-		require_once 'helperClasses/MdsColliveryService.php';
-
 		$settings['mds_user'] = Configuration::get('MDS_EMAIL');
 		$settings['mds_pass'] = Configuration::get('MDS_PASSWORD');
 
-		$this->mdsService = \helperClasses\MdsColliveryService::getInstance($settings);
+		$this->mdsService = MdsColliveryService::getInstance($settings);
 		$this->collivery = $this->mdsService->returnColliveryClass();
 		$this->cache = $this->mdsService->returnCacheClass();
 	}
@@ -525,7 +526,7 @@ class Mds extends CarrierModule
 			$settings['mds_user'] = Tools::getValue('MDS_EMAIL');
 			$settings['mds_pass'] = Tools::getValue('MDS_PASSWORD');
 
-			$this->mdsService = \helperClasses\MdsColliveryService::getInstance($settings);
+			$this->mdsService = MdsColliveryService::getInstance($settings);
 			$this->collivery = $this->mdsService->returnColliveryClass($settings);
 			if ($this->collivery->isAuthenticated()) {
 				if ($this->updateSettings(Tools::getAllValues())) {

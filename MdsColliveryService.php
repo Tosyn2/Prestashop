@@ -1,6 +1,4 @@
-<?php
-
-namespace helperClasses;
+<?php namespace Mds;
 
 use Exception;
 
@@ -56,10 +54,6 @@ class MdsColliveryService
 
 	private function __construct($settings)
 	{
-		require_once("Cache.php");
-		require_once("Collivery.php");
-		require_once("UnitConverter.php");
-
 		$this->settings = $settings;
 
 		$this->converter = new UnitConverter();
