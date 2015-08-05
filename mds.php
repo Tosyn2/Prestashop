@@ -23,19 +23,11 @@ class Mds extends CarrierModule
 {
 	public $id_carrier;
 	private $_html = '';
+
 	/**
 	 * @type array
 	 */
 	private $_postErrors = array();
-	private $_moduleName = 'mds';
-	public static $_this = false;
-	public static $orderParams;
-
-	/*
-	** Construct Method
-	**
-	*/
-
 
 	public function __construct()
 	{
