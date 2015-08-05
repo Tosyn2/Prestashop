@@ -362,7 +362,7 @@ class MdsColliveryService
 	 *
 	 * @return \Mds\Collivery
 	 */
-	public function returnColliveryClass($settings)
+	public function returnColliveryClass($settings = null)
 	{
 
 
