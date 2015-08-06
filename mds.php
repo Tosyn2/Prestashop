@@ -1,10 +1,6 @@
 <?php
 
 // Avoid direct access to the file
-use Mds\MdsColliveryService;
-use Mds\Prestashop\Exceptions\UpdatingConfigurationException;
-use Mds\Prestashop\Installer;
-
 if (!defined('_PS_VERSION_')) {
 	exit;
 }
@@ -63,7 +59,7 @@ class Mds extends CarrierModule
 		$settings['mds_user'] = Configuration::get('MDS_EMAIL');
 		$settings['mds_pass'] = Configuration::get('MDS_PASSWORD');
 
-		$this->mdsService = MdsColliveryService::getInstance($settings);
+		$this->mdsService = \Mds\MdsColliveryService::getInstance($settings);
 		$this->collivery = $this->mdsService->returnColliveryClass();
 		$this->cache = $this->mdsService->returnCacheClass();
 	}
@@ -89,9 +85,9 @@ class Mds extends CarrierModule
 		}
 
 		try {
-			$installer = new Installer();
+			$installer = new Mds\Prestashop\Installer();
 			$installer->install();
-		} catch (UpdatingConfigurationException $e) {
+		} catch (\Mds\Prestashop\Exceptions\UpdatingConfigurationException $e) {
 			return false;
 		}
 
@@ -342,7 +338,7 @@ class Mds extends CarrierModule
 			$settings['mds_user'] = Tools::getValue('MDS_EMAIL');
 			$settings['mds_pass'] = Tools::getValue('MDS_PASSWORD');
 
-			$this->mdsService = MdsColliveryService::getInstance($settings);
+			$this->mdsService = \Mds\MdsColliveryService::getInstance($settings);
 			$this->collivery = $this->mdsService->returnColliveryClass($settings);
 			if ($this->collivery->isAuthenticated()) {
 				if ($this->updateSettings(Tools::getAllValues())) {
