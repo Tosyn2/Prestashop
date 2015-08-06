@@ -1,4 +1,4 @@
-<?php namespace Mds\Prestashop;
+<?php namespace Mds\Prestashop\Install;
 
 use Carrier;
 use Configuration;
