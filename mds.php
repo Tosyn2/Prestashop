@@ -74,11 +74,18 @@ class Mds extends CarrierModule
 	public function install()
 	{
 		if (version_compare(PHP_VERSION, '5.3.0') < 0) {
-			$warning[] = '\'Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.\'';
+			$warnings[] = '\'Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.\'';
 		}
 
 		if (!extension_loaded('soap')) {
-			$warning[] = '\'' . $this->l('Class Soap') . '\', ';
+			$warnings[] = '\'' . $this->l('Class Soap') . '\', ';
+		}
+
+		if (!empty($warnings)) {
+			foreach ($warnings as $warning) {
+				echo "<p><strong>$warning</strong></p>";
+			}
+			return false;
 		}
 
 		try {
