@@ -334,7 +334,6 @@ class Mds extends CarrierModule
 		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
 
 		$cart = $params['cart'];
-		$cartProducts = $cart->getProducts();
 
 		$colliveryParams['service'] = $service;
 		$colliveryParams['collivery_to'] = $colliveryAddressTo['address_id'];
