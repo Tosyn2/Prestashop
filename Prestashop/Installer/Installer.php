@@ -21,7 +21,6 @@ abstract class Installer {
 
 
 	protected $hooks = array(
-		'updateCarrier',
 		'displayFooter',
 		'actionOrderStatusPostUpdate',
 		'displayShoppingCart');

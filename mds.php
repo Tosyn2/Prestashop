@@ -264,22 +264,6 @@ class Mds extends CarrierModule
 
 	}
 
-	public function hookupdateCarrier($params)
-	{
-		if ((int)($params['id_carrier']) == (int)(Configuration::get('MDS_SERVICE_CARRIER_ID_1'))) {
-			Configuration::updateValue('MDS_SERVICE_CARRIER_ID_1', (int)($params['carrier']->id));
-		}
-		if ((int)($params['id_carrier']) == (int)(Configuration::get('MDS_SERVICE_CARRIER_ID_2'))) {
-			Configuration::updateValue('MDS_SERVICE_CARRIER_ID_2', (int)($params['carrier']->id));
-		}
-		if ((int)($params['id_carrier']) == (int)(Configuration::get('MDS_SERVICE_CARRIER_ID_3'))) {
-			Configuration::updateValue('MDS_SERVICE_CARRIER_ID_3', (int)($params['carrier']->id));
-		}
-		if ((int)($params['id_carrier']) == (int)(Configuration::get('MDS_SERVICE_CARRIER_ID_5'))) {
-			Configuration::updateValue('MDS_SERVICE_CARRIER_ID_5', (int)($params['carrier']->id));
-		}
-	}
-
 	function addColliveryAddressTo($params)
 	{
 		$addAddress1 = $params['cart']->id_address_delivery;
