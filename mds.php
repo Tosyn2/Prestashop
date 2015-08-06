@@ -5,11 +5,13 @@ if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
+define('_MDS_DIR_', dirname(__FILE__));
+
 spl_autoload_register(function($class) {
 	$classParts = explode('\\', $class);
 	$vendor = array_shift($classParts);
 	if ($vendor === 'Mds') {
-		require dirname(__FILE__) .'/'. implode('/', $classParts) .'.php';
+		require _MDS_DIR_ .'/'. implode('/', $classParts) .'.php';
 	}
 }, true);
 
