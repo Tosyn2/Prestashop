@@ -66,7 +66,7 @@ class Mds extends CarrierModule
 	}
 
 	/**
-	 * Prestashop Installer
+	 * Prestashop Function to Install
 	 */
 	public function install()
 	{
@@ -116,6 +116,11 @@ class Mds extends CarrierModule
 		}
 	}
 
+	/**
+	 * Prestashop Function to Uninstall
+	 *
+	 * @return bool
+	 */
 	public function uninstall()
 	{
 		if (!parent::uninstall()) {
