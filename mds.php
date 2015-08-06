@@ -35,7 +35,7 @@ class Mds extends CarrierModule
 
 		parent::__construct();
 
-		$this->displayName = $this->l('Mds Shipping');
+		$this->displayName = $this->l('MDS Collivery');
 		$this->description = $this->l('Offer your customers, different delivery methods that you want');
 
 		if (self::isInstalled($this->name)) {
