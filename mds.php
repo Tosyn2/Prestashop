@@ -115,10 +115,10 @@ class Mds extends CarrierModule
 	{
 		// Uninstall
 		if (!parent::uninstall() ||
-			!Configuration::deleteByName('MYCARRIER1_OVERCOST') ||
-			!Configuration::deleteByName('MYCARRIER2_OVERCOST') ||
-			!Configuration::deleteByName('MYCARRIER3_OVERCOST') ||
-			!Configuration::deleteByName('MYCARRIER5_OVERCOST') ||
+			!Configuration::deleteByName('MDS_SERVICE_SURCHARGE_1') ||
+			!Configuration::deleteByName('MDS_SERVICE_SURCHARGE_2') ||
+			!Configuration::deleteByName('MDS_SERVICE_SURCHARGE_3') ||
+			!Configuration::deleteByName('MDS_SERVICE_SURCHARGE_5') ||
 			!Configuration::deleteByName('MDS_EMAIL') ||
 			!Configuration::deleteByName('MDS_PASSWORD') ||
 			!Configuration::deleteByName('MDS_RISK') ||
@@ -130,10 +130,10 @@ class Mds extends CarrierModule
 		}
 
 		// Delete External Carrier
-		$Carrier1 = new Carrier((int)(Configuration::get('MYCARRIER1_CARRIER_ID')));
-		$Carrier2 = new Carrier((int)(Configuration::get('MYCARRIER2_CARRIER_ID')));
-		$Carrier3 = new Carrier((int)(Configuration::get('MYCARRIER3_CARRIER_ID')));
-		$Carrier5 = new Carrier((int)(Configuration::get('MYCARRIER5_CARRIER_ID')));
+		$Carrier1 = new Carrier((int)(Configuration::get('MDS_SERVICE_CARRIER_ID_1')));
+		$Carrier2 = new Carrier((int)(Configuration::get('MDS_SERVICE_CARRIER_ID_2')));
+		$Carrier3 = new Carrier((int)(Configuration::get('MDS_SERVICE_CARRIER_ID_3')));
+		$Carrier5 = new Carrier((int)(Configuration::get('MDS_SERVICE_CARRIER_ID_5')));
 
 		// If external carrier is default set other one as default
 		if (Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier1->id) || Configuration::get(
@@ -207,13 +207,13 @@ class Mds extends CarrierModule
 			) . '</legend>';
 
 		$alert = array();
-		if (!Configuration::get('MYCARRIER1_OVERCOST') || Configuration::get('MYCARRIER1_OVERCOST') == '') {
+		if (!Configuration::get('MDS_SERVICE_SURCHARGE_1') || Configuration::get('MDS_SERVICE_SURCHARGE_1') == '') {
 			$alert['carrier1'] = 1;
 		}
-		if (!Configuration::get('MYCARRIER2_OVERCOST') || Configuration::get('MYCARRIER2_OVERCOST') == '') {
+		if (!Configuration::get('MDS_SERVICE_SURCHARGE_2') || Configuration::get('MDS_SERVICE_SURCHARGE_2') == '') {
 			$alert['carrier2'] = 1;
 		}
-		if (!Configuration::get('MYCARRIER3_OVERCOST') || Configuration::get('MYCARRIER3_OVERCOST') == '') {
+		if (!Configuration::get('MDS_SERVICE_SURCHARGE_3') || Configuration::get('MDS_SERVICE_SURCHARGE_3') == '') {
 			$alert['carrier3'] = 1;
 		}
 		if (Configuration::get('MDS_EMAIL') != Tools::getValue('MDS_EMAIL')) {
@@ -222,7 +222,7 @@ class Mds extends CarrierModule
 		if (Configuration::get('MDS_PASSWORD') != Tools::getValue('MDS_PASSWORD')) {
 			$alert['account_password'] = 1;
 		}
-		if (!Configuration::get('MYCARRIER5_OVERCOST') || Configuration::get('MYCARRIER5_OVERCOST') == '') {
+		if (!Configuration::get('MDS_SERVICE_SURCHARGE_5') || Configuration::get('MDS_SERVICE_SURCHARGE_5') == '') {
 			$alert['carrier5'] = 1;
 		}
 
@@ -270,24 +270,24 @@ class Mds extends CarrierModule
 					<fieldset style="border: 0px;">
 						<h4>' . $this->l('General configuration') . ' :</h4>
 						<label>' . $this->l('Overnight before 10:00') . ' : </label>
-						<div class="margin-form"><input type="text" size="20" name="mycarrier1_overcost" value="' . Tools::getValue(
-				'mycarrier1_overcost',
-				Configuration::get('MYCARRIER1_OVERCOST')
+						<div class="margin-form"><input type="text" size="20" name="MDS_SERVICE_SURCHARGE_1" value="' . Tools::getValue(
+				'MDS_SERVICE_SURCHARGE_1',
+				Configuration::get('MDS_SERVICE_SURCHARGE_1')
 			) . '" /></div>
 						<label>' . $this->l('Overnight before 16:00') . ' : </label>
-						<div class="margin-form"><input type="text" size="20" name="mycarrier2_overcost" value="' . Tools::getValue(
-				'mycarrier2_overcost',
-				Configuration::get('MYCARRIER2_OVERCOST')
+						<div class="margin-form"><input type="text" size="20" name="MDS_SERVICE_SURCHARGE_2" value="' . Tools::getValue(
+				'MDS_SERVICE_SURCHARGE_2',
+				Configuration::get('MDS_SERVICE_SURCHARGE_2')
 			) . '" /></div>
 						<label>' . $this->l('Road Freight Express') . ' : </label>
-						<div class="margin-form"><input type="text" size="20" name="mycarrier3_overcost" value="' . Tools::getValue(
-				'mycarrier3_overcost',
-				Configuration::get('MYCARRIER3_OVERCOST')
+						<div class="margin-form"><input type="text" size="20" name="MDS_SERVICE_SURCHARGE_3" value="' . Tools::getValue(
+				'MDS_SERVICE_SURCHARGE_3',
+				Configuration::get('MDS_SERVICE_SURCHARGE_3')
 			) . '" /></div>
 						<label>' . $this->l('Road Freight') . ' : </label>
-						<div class="margin-form"><input type="text" size="20" name="mycarrier5_overcost" value="' . Tools::getValue(
-				'mycarrier5_overcost',
-				Configuration::get('MYCARRIER5_OVERCOST')
+						<div class="margin-form"><input type="text" size="20" name="MDS_SERVICE_SURCHARGE_5" value="' . Tools::getValue(
+				'MDS_SERVICE_SURCHARGE_5',
+				Configuration::get('MDS_SERVICE_SURCHARGE_5')
 			) . '" /></div>
 						<label>' . $this->l('MDS account email') . ' : </label>
 						<div class="margin-form"><input type="text" name="MDS_EMAIL" value="' . Tools::getValue(
@@ -313,10 +313,10 @@ class Mds extends CarrierModule
 	private function _postValidation()
 	{
 		// Check configuration values
-		if (Tools::getValue('mycarrier1_overcost') == '' &&
-			Tools::getValue('mycarrier2_overcost') == '' &&
-			Tools::getValue('mycarrier3_overcost') == '' &&
-			Tools::getValue('mycarrier5_overcost') == '' ||
+		if (Tools::getValue('MDS_SERVICE_SURCHARGE_1') == '' &&
+			Tools::getValue('MDS_SERVICE_SURCHARGE_2') == '' &&
+			Tools::getValue('MDS_SERVICE_SURCHARGE_3') == '' &&
+			Tools::getValue('MDS_SERVICE_SURCHARGE_5') == '' ||
 			Tools::getValue('MDS_EMAIL') == '' ||
 			Tools::getValue('MDS_PASSWORD') == ''
 		) {
@@ -361,11 +361,11 @@ class Mds extends CarrierModule
 	{
 		$success = true;
 
-		if (Configuration::updateValue('MYCARRIER1_OVERCOST', Tools::getValue('mycarrier1_overcost')) &&
-			Configuration::updateValue('MYCARRIER1_OVERCOST', Tools::getValue('mycarrier1_overcost')) &&
-			Configuration::updateValue('MYCARRIER2_OVERCOST', Tools::getValue('mycarrier2_overcost')) &&
-			Configuration::updateValue('MYCARRIER3_OVERCOST', Tools::getValue('mycarrier3_overcost')) &&
-			Configuration::updateValue('MYCARRIER5_OVERCOST', Tools::getValue('mycarrier5_overcost')) &&
+		if (Configuration::updateValue('MDS_SERVICE_SURCHARGE_1', Tools::getValue('MDS_SERVICE_SURCHARGE_1')) &&
+			Configuration::updateValue('MDS_SERVICE_SURCHARGE_1', Tools::getValue('MDS_SERVICE_SURCHARGE_1')) &&
+			Configuration::updateValue('MDS_SERVICE_SURCHARGE_2', Tools::getValue('MDS_SERVICE_SURCHARGE_2')) &&
+			Configuration::updateValue('MDS_SERVICE_SURCHARGE_3', Tools::getValue('MDS_SERVICE_SURCHARGE_3')) &&
+			Configuration::updateValue('MDS_SERVICE_SURCHARGE_5', Tools::getValue('MDS_SERVICE_SURCHARGE_5')) &&
 			Configuration::updateValue('MDS_EMAIL', Tools::getValue('MDS_EMAIL')) &&
 			Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD')) &&
 			Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
@@ -380,17 +380,17 @@ class Mds extends CarrierModule
 
 	public function hookupdateCarrier($params)
 	{
-		if ((int)($params['id_carrier']) == (int)(Configuration::get('MYCARRIER1_CARRIER_ID'))) {
-			Configuration::updateValue('MYCARRIER1_CARRIER_ID', (int)($params['carrier']->id));
+		if ((int)($params['id_carrier']) == (int)(Configuration::get('MDS_SERVICE_CARRIER_ID_1'))) {
+			Configuration::updateValue('MDS_SERVICE_CARRIER_ID_1', (int)($params['carrier']->id));
 		}
-		if ((int)($params['id_carrier']) == (int)(Configuration::get('MYCARRIER2_CARRIER_ID'))) {
-			Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int)($params['carrier']->id));
+		if ((int)($params['id_carrier']) == (int)(Configuration::get('MDS_SERVICE_CARRIER_ID_2'))) {
+			Configuration::updateValue('MDS_SERVICE_CARRIER_ID_2', (int)($params['carrier']->id));
 		}
-		if ((int)($params['id_carrier']) == (int)(Configuration::get('MYCARRIER3_CARRIER_ID'))) {
-			Configuration::updateValue('MYCARRIER3_CARRIER_ID', (int)($params['carrier']->id));
+		if ((int)($params['id_carrier']) == (int)(Configuration::get('MDS_SERVICE_CARRIER_ID_3'))) {
+			Configuration::updateValue('MDS_SERVICE_CARRIER_ID_3', (int)($params['carrier']->id));
 		}
-		if ((int)($params['id_carrier']) == (int)(Configuration::get('MYCARRIER5_CARRIER_ID'))) {
-			Configuration::updateValue('MYCARRIER5_CARRIER_ID', (int)($params['carrier']->id));
+		if ((int)($params['id_carrier']) == (int)(Configuration::get('MDS_SERVICE_CARRIER_ID_5'))) {
+			Configuration::updateValue('MDS_SERVICE_CARRIER_ID_5', (int)($params['carrier']->id));
 		}
 	}
 
@@ -528,7 +528,7 @@ class Mds extends CarrierModule
 			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
 
-			$price = Configuration::get('MYCARRIER' . $service . '_OVERCOST') + $colliveryPrice;
+			$price = Configuration::get('MDS_SERVICE_SURCHARGE_'. $service) + $colliveryPrice;
 
 			return $shipping_cost + $price;
 		} catch (InvalidArgumentException $e) {
@@ -609,10 +609,10 @@ class Mds extends CarrierModule
 	protected function getServiceFromCarrierId($carrierId)
 	{
 		$serviceMappings = [
-			Configuration::get('MYCARRIER1_CARRIER_ID') => 1,
-			Configuration::get('MYCARRIER2_CARRIER_ID') => 2,
-			Configuration::get('MYCARRIER3_CARRIER_ID') => 3,
-			Configuration::get('MYCARRIER5_CARRIER_ID') => 5,
+			Configuration::get('MDS_SERVICE_CARRIER_ID_1') => 1,
+			Configuration::get('MDS_SERVICE_CARRIER_ID_2') => 2,
+			Configuration::get('MDS_SERVICE_CARRIER_ID_3') => 3,
+			Configuration::get('MDS_SERVICE_CARRIER_ID_5') => 5,
 		];
 
 		if (!array_key_exists($carrierId, $serviceMappings)) {

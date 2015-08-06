@@ -29,8 +29,8 @@ class Installer {
 		foreach ($this->services as $serviceId => $serviceName) {
 			$carrierId = $this->setupNewCarrier($serviceName);
 			$this->copyServiceLogos($serviceId, $carrierId);
-			$this->updateConfig("MYCARRIER{$serviceId}_CARRIER_ID", $carrierId);
-			$this->updateConfig("MYCARRIER{$serviceId}_OVERCOST", '0');
+			$this->updateConfig("MDS_SERVICE_CARRIER_ID_{$serviceId}", $carrierId);
+			$this->updateConfig("MDS_SERVICE_SURCHARGE_{$serviceId}", '0');
 		}
 
 		$this->updateConfig('MDS_EMAIL', 'api@collivery.co.za');
