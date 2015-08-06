@@ -150,147 +150,45 @@ class Mds extends CarrierModule
 		}
 	}
 
-	/*
-	** Form Config Methods
-	**
-	*/
+	/**
+	 * Prestashop Function to get Settings Form
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
 	public function getContent()
 	{
-		$this->_html .= '<h2>' . $this->l('My Carrier') . '</h2>';
 		if (!empty($_POST) AND Tools::isSubmit('submitSave')) {
 
 			$this->_postValidation();
 			if (!sizeof($this->_postErrors)) {
 				$this->_postProcess();
 			} else {
-				foreach ($this->_postErrors AS $err) {
-					$this->_html .= '<div class="alert error"><img src="' . _PS_IMG_ . 'admin/forbbiden.gif" alt="nok" />&nbsp;' . $err . '</div>';
-				}
+				$errors = $this->_postErrors;
 			}
 		}
-		$this->_displayForm();
 
-		return $this->_html;
-	}
+		$displayName = $this->displayName;
+		$formUrl ='index.php?tab='. Tools::getValue('tab')
+			.'&configure='. Tools::getValue('configure')
+			.'&token='. Tools::getValue('token')
+			.'&tab_module='. Tools::getValue('tab_module')
+			.'&module_name='. Tools::getValue('module_name')
+			.'&id_tab=1&section=general';
 
-	/*
-	** Service and API config settings form
-	**
-	*/
-	private function checked()
-	{
-		if (Configuration::get('MDS_RISK') == 1) return "checked";
-	}
+		$inputs = array(
+			'MDS_SERVICE_SURCHARGE_1' => array('name' => 'Overnight before 10:00', 'type' => 'text'),
+			'MDS_SERVICE_SURCHARGE_2' => array('name' => 'Overnight before 16:00', 'type' => 'text'),
+			'MDS_SERVICE_SURCHARGE_5' => array('name' => 'Road Freight Express', 'type' => 'text'),
+			'MDS_SERVICE_SURCHARGE_3' => array('name' => 'Road Freight', 'type' => 'text'),
+			'MDS_EMAIL'               => array('name' => 'MDS Account Email', 'type' => 'text'),
+			'MDS_PASSWORD'            => array('name' => 'Password', 'type' => 'password'),
+			'MDS_RISK'                => array('name' => 'Risk Cover', 'type' => 'checkbox'),
+		);
 
-	private function _displayForm()
-	{
-		$this->_html .= '<fieldset>
-		<legend><img src="' . $this->_path . 'logo.gif" alt="" /> ' . $this->l(
-				'My Carrier Module Status'
-			) . '</legend>';
+		$configured = true;
 
-		$alert = array();
-		if (!Configuration::get('MDS_SERVICE_SURCHARGE_1') || Configuration::get('MDS_SERVICE_SURCHARGE_1') == '') {
-			$alert['carrier1'] = 1;
-		}
-		if (!Configuration::get('MDS_SERVICE_SURCHARGE_2') || Configuration::get('MDS_SERVICE_SURCHARGE_2') == '') {
-			$alert['carrier2'] = 1;
-		}
-		if (!Configuration::get('MDS_SERVICE_SURCHARGE_3') || Configuration::get('MDS_SERVICE_SURCHARGE_3') == '') {
-			$alert['carrier3'] = 1;
-		}
-		if (Configuration::get('MDS_EMAIL') != Tools::getValue('MDS_EMAIL')) {
-			$alert['account_email'] = 1;
-		}
-		if (Configuration::get('MDS_PASSWORD') != Tools::getValue('MDS_PASSWORD')) {
-			$alert['account_password'] = 1;
-		}
-		if (!Configuration::get('MDS_SERVICE_SURCHARGE_5') || Configuration::get('MDS_SERVICE_SURCHARGE_5') == '') {
-			$alert['carrier5'] = 1;
-		}
-
-		if (!count($alert)) {
-			$this->_html .= '<img src="' . _PS_IMG_ . 'admin/module_install.png" /><strong>' . $this->l(
-					'My Carrier is configured and online!'
-				) . '</strong>';
-		} else {
-			$this->_html .= '<img src="' . _PS_IMG_ . 'admin/warn2.png" /><strong>' . $this->l(
-					'My Carrier is not configured yet, please:'
-				) . '</strong>';
-			$this->_html .= '<br />' . (isset($alert['carrier1']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 1) ' . $this->l(
-					'Overnight before 10:00 overcost price is configured'
-				);
-			$this->_html .= '<br />' . (isset($alert['carrier2']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 2) ' . $this->l(
-					'Overnight before 16:00 overcost is configured'
-				);
-			$this->_html .= '<br />' . (isset($alert['carrier3']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 3) ' . $this->l(
-					'Road Freight Express overcost is configured'
-				);
-			$this->_html .= '<br />' . (isset($alert['carrier5']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 4) ' . $this->l(
-					'Road Freight overcost is connfigured'
-				);
-			$this->_html .= '<br />' . (isset($alert['account_email']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 5) ' . $this->l(
-					'Correct MDS account email'
-				);
-			$this->_html .= '<br />' . (isset($alert['account_password']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 6) ' . $this->l(
-					'Correct MDS account password'
-				);
-		}
-
-		$this->_html .= '</fieldset><div class="clear">&nbsp;</div>
-			<style>
-				#tabList { clear: left; }
-				.tabItem { display: block; background: #FFFFF0; border: 1px solid #CCCCCC; padding: 10px; padding-top: 20px; }
-			</style>
-			<div id="tabList">
-				<div class="tabItem">
-					<form action="index.php?tab=' . Tools::getValue('tab') . '&configure=' . Tools::getValue(
-				'configure'
-			) . '&token=' . Tools::getValue('token') . '&tab_module=' . Tools::getValue(
-				'tab_module'
-			) . '&module_name=' . Tools::getValue('module_name') . '&id_tab=1&section=general" method="post" class="form" id="configForm">
-
-					<fieldset style="border: 0px;">
-						<h4>' . $this->l('General configuration') . ' :</h4>
-						<label>' . $this->l('Overnight before 10:00') . ' : </label>
-						<div class="margin-form"><input type="text" size="20" name="MDS_SERVICE_SURCHARGE_1" value="' . Tools::getValue(
-				'MDS_SERVICE_SURCHARGE_1',
-				Configuration::get('MDS_SERVICE_SURCHARGE_1')
-			) . '" /></div>
-						<label>' . $this->l('Overnight before 16:00') . ' : </label>
-						<div class="margin-form"><input type="text" size="20" name="MDS_SERVICE_SURCHARGE_2" value="' . Tools::getValue(
-				'MDS_SERVICE_SURCHARGE_2',
-				Configuration::get('MDS_SERVICE_SURCHARGE_2')
-			) . '" /></div>
-						<label>' . $this->l('Road Freight Express') . ' : </label>
-						<div class="margin-form"><input type="text" size="20" name="MDS_SERVICE_SURCHARGE_3" value="' . Tools::getValue(
-				'MDS_SERVICE_SURCHARGE_3',
-				Configuration::get('MDS_SERVICE_SURCHARGE_3')
-			) . '" /></div>
-						<label>' . $this->l('Road Freight') . ' : </label>
-						<div class="margin-form"><input type="text" size="20" name="MDS_SERVICE_SURCHARGE_5" value="' . Tools::getValue(
-				'MDS_SERVICE_SURCHARGE_5',
-				Configuration::get('MDS_SERVICE_SURCHARGE_5')
-			) . '" /></div>
-						<label>' . $this->l('MDS account email') . ' : </label>
-						<div class="margin-form"><input type="text" name="MDS_EMAIL" value="' . Tools::getValue(
-				'MDS_EMAIL',
-				Configuration::get('MDS_EMAIL')
-			) . '"  /></div>
-						<label>' . $this->l('MDS account password') . ' : </label>
-						<div class="margin-form"><input type="text" name="MDS_PASSWORD" value="' . Tools::getValue(
-				'MDS_PASSWORD',
-				Configuration::get('MDS_PASSWORD')
-			) . '" /></div>
-						<label>' . $this->l('MDS risk cover') . ' : </label>
-						<div class="margin-form">
-						<input name="MDS_RISK" type="checkbox"  ' . $this->checked() . '  value="1"  />
-					</div>
-				<br /><br />
-				</fieldset>
-				<div class="margin-form"><input class="button"  name="submitSave" type="submit"></div>
-			</form>
-		</div></div>';
+		return \Mds\Prestashop\Helpers\View::make('settings', compact('inputs', 'displayName', 'formUrl', 'configured', 'errors'));
 	}
 
 	private function _postValidation()
