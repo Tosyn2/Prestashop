@@ -94,7 +94,7 @@ class Mds extends CarrierModule
 			return false;
 		}
 
-		if ($this->registerHooks() === false) {
+		if ($this->registerHooks($installer->getHooks()) === false) {
 			return false;
 		}
 
@@ -102,12 +102,13 @@ class Mds extends CarrierModule
 	}
 
 	/**
+	 * @param $hooks
+	 *
 	 * @return bool
 	 * @throws \PrestaShopException
 	 */
-	private function registerHooks()
+	private function registerHooks($hooks)
 	{
-		$hooks = array('updateCarrier', 'displayFooter', 'actionOrderStatusPostUpdate', 'displayShoppingCart');
 		foreach ($hooks as $hook) {
 			if (!$this->registerHook($hook)) return false;
 		}
@@ -115,58 +116,36 @@ class Mds extends CarrierModule
 
 	public function uninstall()
 	{
-		// Uninstall
-		if (!parent::uninstall() ||
-			!Configuration::deleteByName('MDS_SERVICE_SURCHARGE_1') ||
-			!Configuration::deleteByName('MDS_SERVICE_SURCHARGE_2') ||
-			!Configuration::deleteByName('MDS_SERVICE_SURCHARGE_3') ||
-			!Configuration::deleteByName('MDS_SERVICE_SURCHARGE_5') ||
-			!Configuration::deleteByName('MDS_EMAIL') ||
-			!Configuration::deleteByName('MDS_PASSWORD') ||
-			!Configuration::deleteByName('MDS_RISK') ||
-			!$this->unregisterHook('updateCarrier') ||
-			!$this->unregisterhook('displayFooter') ||
-			!$this->unregisterHook('actionOrderStatusPostUpdate')
-		) {
+		if (!parent::uninstall()) {
 			return false;
 		}
 
-		// Delete External Carrier
-		$Carrier1 = new Carrier((int)(Configuration::get('MDS_SERVICE_CARRIER_ID_1')));
-		$Carrier2 = new Carrier((int)(Configuration::get('MDS_SERVICE_CARRIER_ID_2')));
-		$Carrier3 = new Carrier((int)(Configuration::get('MDS_SERVICE_CARRIER_ID_3')));
-		$Carrier5 = new Carrier((int)(Configuration::get('MDS_SERVICE_CARRIER_ID_5')));
-
-		// If external carrier is default set other one as default
-		if (Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier1->id) || Configuration::get(
-				'PS_CARRIER_DEFAULT'
-			) == (int)($Carrier2->id) || Configuration::get(
-				'PS_CARRIER_DEFAULT'
-			) == (int)($Carrier3->id) || Configuration::get(
-				'PS_CARRIER_DEFAULT'
-			) == (int)($Carrier3->id) || Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier5->id)
-		) {
-			global $cookie;
-			$carriersD = Carrier::getCarriers(
-				$cookie->id_lang,
-				true,
-				false,
-				false,
-				null,
-				PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE
-			);
-			foreach ($carriersD as $carrierD) {
-				if ($carrierD['active'] AND !$carrierD['deleted'] AND ($carrierD['name'] != $this->_config['name'])) {
-					Configuration::updateValue('PS_CARRIER_DEFAULT', $carrierD['id_carrier']);
-				}
-			}
+		try {
+			$installer = new Mds\Prestashop\Installer\Uninstall();
+			$installer->uninstall();
+		} catch (\Mds\Prestashop\Exceptions\UpdatingConfigurationException $e) {
+			return false;
 		}
 
-		$sql = 'UPDATE ' . _DB_PREFIX_ . 'carrier SET `deleted` = 1 WHERE `external_module_name` = \'mds\'';
-		Db::getInstance()->execute($sql);
+		if ($this->unregisterHooks($installer->getHooks()) === false) {
+			return false;
+		}
 
 		return true;
 
+	}
+
+	/**
+	 * @param $hooks
+	 *
+	 * @return bool
+	 * @throws \PrestaShopException
+	 */
+	private function unregisterHooks($hooks)
+	{
+		foreach ($hooks as $hook) {
+			if (!$this->registerHook($hook)) return false;
+		}
 	}
 
 	/*
