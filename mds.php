@@ -84,7 +84,7 @@ class Mds extends CarrierModule
 		}
 
 		try {
-			$installer = new Mds\Prestashop\Install\Installer();
+			$installer = new Mds\Prestashop\Installer\Install();
 			$installer->install();
 		} catch (\Mds\Prestashop\Exceptions\UpdatingConfigurationException $e) {
 			return false;

@@ -1,8 +1,7 @@
-<?php namespace Mds\Prestashop\Install;
+<?php namespace Mds\Prestashop\Installer;
 
 use Carrier;
 use Configuration;
-use Db;
 use Group;
 use Language;
 use Mds\Prestashop\Exceptions\UpdatingConfigurationException;
@@ -10,21 +9,7 @@ use RangePrice;
 use RangeWeight;
 use Zone;
 
-class Installer {
-
-	protected $db;
-
-	protected $services = array(
-		1 => 'Overnight before 10:00',
-		2 => 'Overnight before 16:00',
-		5 => 'Road Freight Express',
-		3 => 'Road Freight',
-	);
-
-	public function __construct()
-	{
-		$this->db = Db::getInstance();
-	}
+class Install extends Installer  {
 
 	public function install()
 	{
@@ -35,9 +20,9 @@ class Installer {
 			$this->updateConfig("MDS_SERVICE_SURCHARGE_{$serviceId}", '0');
 		}
 
-		$this->updateConfig('MDS_EMAIL', 'api@collivery.co.za');
-		$this->updateConfig('MDS_PASSWORD', 'api123');
-		$this->updateConfig('MDS_RISK', '0');
+		foreach ($this->config as $key => $value) {
+			$this->updateConfig($key, $value);
+		}
 
 		$this->addIdMdsColumnToStatesTable();
 		$this->setZaContainsStates();
