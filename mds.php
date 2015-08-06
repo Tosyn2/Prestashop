@@ -95,7 +95,7 @@ class Mds extends CarrierModule
 			return false;
 		}
 
-		if (!$this->registerHooks()) {
+		if ($this->registerHooks() === false) {
 			return false;
 		}
 
