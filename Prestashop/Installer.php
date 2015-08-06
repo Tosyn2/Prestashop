@@ -3,10 +3,12 @@
 use Carrier;
 use Configuration;
 use Db;
+use Group;
 use Language;
 use Mds\Prestashop\Exceptions\UpdatingConfigurationException;
 use RangePrice;
 use RangeWeight;
+use Zone;
 
 class Installer {
 
