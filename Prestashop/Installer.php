@@ -106,9 +106,7 @@ class Installer {
 	 */
 	private function addCarrierGroup($carrierId, $groupId)
 	{
-		$this->db->insert(
-			_DB_PREFIX_ . 'carrier_group',
-			array(
+		$this->db->insert('carrier_group', array(
 				'id_carrier' => $carrierId,
 				'id_group'   => $groupId
 			)
@@ -171,8 +169,7 @@ class Installer {
 	 */
 	protected function addCarrierZone($carrierId, $zoneId)
 	{
-		$table = _DB_PREFIX_ .'carrier_zone';
-		$this->db->insert($table, array(
+		$this->db->insert('carrier_zone', array(
 				'id_carrier' => $carrierId,
 				'id_zone'    => $zoneId
 			)
@@ -188,8 +185,7 @@ class Installer {
 	 */
 	protected function addDeliveryPriceRange($carrierId, $rangePriceId, $zoneId)
 	{
-		$table = _DB_PREFIX_ . 'delivery';
-		$this->db->insert($table, array(
+		$this->db->insert('delivery', array(
 				'id_carrier'      => $carrierId,
 				'id_range_price'  => $rangePriceId,
 				'id_range_weight' => null,
@@ -209,8 +205,7 @@ class Installer {
 	 */
 	protected function addDeliveryWeightRange($carrierId, $rangeWeightId, $zoneId)
 	{
-		$table = _DB_PREFIX_ . 'delivery';
-		$this->db->insert($table, array(
+		$this->db->insert('delivery', array(
 				'id_carrier'      => $carrierId,
 				'id_range_price'  => null,
 				'id_range_weight' => $rangeWeightId,
