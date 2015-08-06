@@ -9,10 +9,9 @@ spl_autoload_register(function($class) {
 	$classParts = explode('\\', $class);
 	$vendor = array_shift($classParts);
 	if ($vendor === 'Mds') {
-		require implode('\\', $classParts) .'.php';
+		require dirname(__FILE__) .'/'. implode('/', $classParts) .'.php';
 	}
 }, true);
-
 
 class Mds extends CarrierModule
 {
