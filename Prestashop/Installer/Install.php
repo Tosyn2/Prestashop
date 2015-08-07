@@ -230,7 +230,7 @@ class Install extends Installer  {
 	 */
 	private function copyServiceLogos($serviceId, $carrierId)
 	{
-		$mdsIconsDirectory = dirname(__FILE__) . '/icons';
+		$mdsIconsDirectory = _MDS_DIR_ . '/icons';
 		$prestashopImageDirectory = _PS_SHIP_IMG_DIR_;
 
 		copy("{$mdsIconsDirectory}/{$serviceId}.jpg", "{$prestashopImageDirectory}/{$carrierId}.jpg");
