@@ -214,17 +214,18 @@ class Mds extends CarrierModule
 		return $alerts;
 	}
 
-	private function _postValidation()
+	private function _postValidation($inputs)
 	{
 		// Check configuration values
-		if (Tools::getValue('MDS_SERVICE_SURCHARGE_1') == '' &&
-			Tools::getValue('MDS_SERVICE_SURCHARGE_2') == '' &&
-			Tools::getValue('MDS_SERVICE_SURCHARGE_3') == '' &&
-			Tools::getValue('MDS_SERVICE_SURCHARGE_5') == '' ||
-			Tools::getValue('MDS_EMAIL') == '' ||
-			Tools::getValue('MDS_PASSWORD') == ''
-		) {
-			$this->_postErrors[] = $this->l('You have to configure at least one carrier AND input your MDS account login details');
+		
+		foreach ($inputs as $key => $input){
+
+		if ($key == 'MDS_EMAIL' || $key == 'MDS_PASSWORD')
+					{
+						if(Tools::getValue($key) == '' || Tools::getValue($key) == '') $this->_postErrors[] = $this->l('Please fill in your MDS account details');
+					}else{
+							if(Tools::getValue($key) == '' || Tools::getValue($key) == '' || $key != 'MDS_RISK') Configuration::updateValue($key, '0');
+					}
 		}
 		
 		if ($this->settings['mds_user'] != Tools::getValue('MDS_EMAIL') || $this->settings['mds_pass'] != Tools::getValue('MDS_PASSWORD')) {
