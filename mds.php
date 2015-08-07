@@ -186,7 +186,7 @@ class Mds extends CarrierModule
 		);
 
 		if (!empty($_POST) AND Tools::isSubmit('submitSave')) {
-			$configured = $this->_postValidation();
+			$configured = $this->_postValidation($inputs);
 			$errors = $this->_postErrors;
 		}
 		
