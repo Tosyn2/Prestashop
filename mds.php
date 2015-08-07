@@ -7,11 +7,11 @@ if (!defined('_PS_VERSION_')) {
 
 define('_MDS_DIR_', __DIR__);
 
-spl_autoload_register(function($class) {
+spl_autoload_register(function ($class) {
 	$classParts = explode('\\', $class);
 	$vendor = array_shift($classParts);
 	if ($vendor === 'Mds') {
-		require _MDS_DIR_ .'/'. implode('/', $classParts) .'.php';
+		require _MDS_DIR_ . '/' . implode('/', $classParts) . '.php';
 	}
 }, true);
 
@@ -24,6 +24,7 @@ class Mds extends CarrierModule
 	 * @type array
 	 */
 	private $_postErrors = array();
+	private $_configErrors = array();
 
 	public function __construct()
 	{
@@ -271,8 +272,12 @@ class Mds extends CarrierModule
 			$configured = false;
 			return $configured;
 		}
-
 	}
+
+	/*
+	 * Hook update carrier
+	 *
+	 */
 
 	function addColliveryAddressTo($params)
 	{
