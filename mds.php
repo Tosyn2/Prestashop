@@ -5,7 +5,7 @@ if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
-define('_MDS_DIR_', dirname(__FILE__));
+define('_MDS_DIR_', __DIR__);
 
 spl_autoload_register(function($class) {
 	$classParts = explode('\\', $class);
