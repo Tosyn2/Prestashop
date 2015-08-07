@@ -220,12 +220,11 @@ class Mds extends CarrierModule
 		
 		foreach ($inputs as $key => $input){
 
-		if ($key == 'MDS_EMAIL' || $key == 'MDS_PASSWORD')
-					{
-						if(Tools::getValue($key) == '' || Tools::getValue($key) == '') $this->_postErrors[] = $this->l('Please fill in your MDS account details');
-					}else{
-							if(Tools::getValue($key) == '' || Tools::getValue($key) == '' || $key != 'MDS_RISK') Configuration::updateValue($key, '0');
-					}
+			if ($key == 'MDS_EMAIL' || $key == 'MDS_PASSWORD') {
+				if(Tools::getValue($key) == '' || Tools::getValue($key) == '') $this->_postErrors[] = $this->l('Please fill in your MDS account details');
+			}else{
+					if((Tools::getValue($key) == '' || Tools::getValue($key) == ' ' ) && $key != 'MDS_RISK') Configuration::updateValue($key,'0');
+				}
 		}
 		
 		if ($this->settings['mds_user'] != Tools::getValue('MDS_EMAIL') || $this->settings['mds_pass'] != Tools::getValue('MDS_PASSWORD')) {
@@ -236,16 +235,16 @@ class Mds extends CarrierModule
 			$this->mdsService = \Mds\MdsColliveryService::getInstance($settings);
 			$this->collivery = $this->mdsService->returnColliveryClass($settings);
 			if ($this->collivery->isAuthenticated()) {
-				if ($this->_postProcess(Tools::getAllValues())) {
+				if ($this->_postProcess($inputs)) {
 					$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
 				} else {
-					throw new Exception(sprintf(Tools::displayError('Unable to update Settings')));
+					$this->_postErrors[] = 'Unable to update Settings';
 				}
 			} else {
 				$this->_postErrors[] = 'MDS Collivery account details incorrect.';
 			}
 		} else {
-			if ($this->_postProcess(Tools::getAllValues())) {
+			if ($this->_postProcess($inputs)) {
 				$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
 			}
 		}
@@ -255,25 +254,21 @@ class Mds extends CarrierModule
 	** Saving config settings. First checks if login details are changed and are correct then saves, else just saves
 	**
 	*/
-	private function _postProcess()
+		private function _postProcess($inputs)
 	{
-		$configured = true;
-
-		if (Configuration::updateValue('MDS_SERVICE_SURCHARGE_1', Tools::getValue('MDS_SERVICE_SURCHARGE_1')) &&
-			Configuration::updateValue('MDS_SERVICE_SURCHARGE_1', Tools::getValue('MDS_SERVICE_SURCHARGE_1')) &&
-			Configuration::updateValue('MDS_SERVICE_SURCHARGE_2', Tools::getValue('MDS_SERVICE_SURCHARGE_2')) &&
-			Configuration::updateValue('MDS_SERVICE_SURCHARGE_3', Tools::getValue('MDS_SERVICE_SURCHARGE_3')) &&
-			Configuration::updateValue('MDS_SERVICE_SURCHARGE_5', Tools::getValue('MDS_SERVICE_SURCHARGE_5')) &&
-			Configuration::updateValue('MDS_EMAIL', Tools::getValue('MDS_EMAIL')) &&
-			Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD')) &&
-			Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
-		) {
-			return $configured;
-		} else {
-			$configured = false;
-			return $configured;
+		
+		foreach ($inputs as $key => $input){
+			if (!Configuration::updateValue($key, Tools::getValue($key))) {
+				$configured = false;
+				return $configured;
+			}
 		}
+		$configured = true;
+		return $configured;
+			
+
 	}
+
 
 	/*
 	 * Hook update carrier
