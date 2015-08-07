@@ -163,37 +163,54 @@ class Mds extends CarrierModule
 	 */
 	public function getContent()
 	{
-		if (!empty($_POST) AND Tools::isSubmit('submitSave')) {
-
-			$this->_postValidation();
-			if (!sizeof($this->_postErrors)) {
-				$this->_postProcess();
-			} else {
-				$errors = $this->_postErrors;
-			}
-		}
+		$alerts = Array();
 
 		$displayName = $this->displayName;
-		$formUrl ='index.php?tab='. Tools::getValue('tab')
-			.'&configure='. Tools::getValue('configure')
-			.'&token='. Tools::getValue('token')
-			.'&tab_module='. Tools::getValue('tab_module')
-			.'&module_name='. Tools::getValue('module_name')
-			.'&id_tab=1&section=general';
+		
+		$formUrl = 'index.php?tab=' . Tools::getValue('tab')
+			. '&configure=' . Tools::getValue('configure')
+			. '&token=' . Tools::getValue('token')
+			. '&tab_module=' . Tools::getValue('tab_module')
+			. '&module_name=' . Tools::getValue('module_name')
+			. '&id_tab=1&section=general';
 
 		$inputs = array(
 			'MDS_SERVICE_SURCHARGE_1' => array('name' => 'Overnight before 10:00', 'type' => 'text'),
 			'MDS_SERVICE_SURCHARGE_2' => array('name' => 'Overnight before 16:00', 'type' => 'text'),
 			'MDS_SERVICE_SURCHARGE_5' => array('name' => 'Road Freight Express', 'type' => 'text'),
 			'MDS_SERVICE_SURCHARGE_3' => array('name' => 'Road Freight', 'type' => 'text'),
-			'MDS_EMAIL'               => array('name' => 'MDS Account Email', 'type' => 'text'),
-			'MDS_PASSWORD'            => array('name' => 'Password', 'type' => 'password'),
-			'MDS_RISK'                => array('name' => 'Risk Cover', 'type' => 'checkbox'),
+			'MDS_EMAIL' => array('name' => 'MDS Account Email', 'type' => 'text'),
+			'MDS_PASSWORD' => array('name' => 'Password', 'type' => 'password'),
+			'MDS_RISK' => array('name' => 'Risk Cover', 'type' => 'checkbox'),
 		);
 
-		$configured = true;
+		if (!empty($_POST) AND Tools::isSubmit('submitSave')) {
+			$configured = $this->_postValidation();
+			$errors = $this->_postErrors;
+		}
+		
+		$alerts = $this->displaySettingsStatus($inputs);
 
-		return \Mds\Prestashop\Helpers\View::make('settings', compact('inputs', 'displayName', 'formUrl', 'configured', 'errors'));
+		return \Mds\Prestashop\Helpers\View::make('settings', compact('inputs', 'displayName', 'formUrl', 'configured', 'errors', 'alerts'));
+	}
+
+	public function displaySettingsStatus($inputs)
+	{
+
+		foreach ($inputs as $key => $input) {
+			if (!Configuration::get($key) || Configuration::get($key) == '' || Configuration::get($key) == ' ' || Tools::getValue($key) == '') {
+				$alerts[$key] = $key;
+			}
+
+			if ($key == 'MDS_EMAIL' && (Configuration::get('MDS_EMAIL') != Tools::getValue('MDS_EMAIL'))) {
+				$alerts[$key] = $key;
+			}
+
+			if ($key == 'MDS_PASSWORD' && (Configuration::get('MDS_PASSWORD') != Tools::getValue('MDS_PASSWORD'))) {
+				$alerts[$key] = $key;
+			}
+		}
+		return $alerts;
 	}
 
 	private function _postValidation()
@@ -208,14 +225,7 @@ class Mds extends CarrierModule
 		) {
 			$this->_postErrors[] = $this->l('You have to configure at least one carrier AND input your MDS account login details');
 		}
-	}
-
-	/*
-	** Saving config settings. First checks if login details are changed and are correct then saves, else just saves
-	**
-	*/
-	private function _postProcess()
-	{
+		
 		if ($this->settings['mds_user'] != Tools::getValue('MDS_EMAIL') || $this->settings['mds_pass'] != Tools::getValue('MDS_PASSWORD')) {
 
 			$settings['mds_user'] = Tools::getValue('MDS_EMAIL');
@@ -224,28 +234,28 @@ class Mds extends CarrierModule
 			$this->mdsService = \Mds\MdsColliveryService::getInstance($settings);
 			$this->collivery = $this->mdsService->returnColliveryClass($settings);
 			if ($this->collivery->isAuthenticated()) {
-				if ($this->updateSettings(Tools::getAllValues())) {
+				if ($this->_postProcess(Tools::getAllValues())) {
 					$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
 				} else {
 					throw new Exception(sprintf(Tools::displayError('Unable to update Settings')));
 				}
 			} else {
-				$this->_html .= (sprintf(Tools::displayError('MDS Collivery account details incorrect.')));
+				$this->_postErrors[] = 'MDS Collivery account details incorrect.';
 			}
 		} else {
-			if ($this->updateSettings(Tools::getAllValues())) {
+			if ($this->_postProcess(Tools::getAllValues())) {
 				$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
 			}
 		}
 	}
 
 	/*
-	 * Hook update carrier
-	 *
-	 */
-	private function updateSettings(array $array)
+	** Saving config settings. First checks if login details are changed and are correct then saves, else just saves
+	**
+	*/
+	private function _postProcess()
 	{
-		$success = true;
+		$configured = true;
 
 		if (Configuration::updateValue('MDS_SERVICE_SURCHARGE_1', Tools::getValue('MDS_SERVICE_SURCHARGE_1')) &&
 			Configuration::updateValue('MDS_SERVICE_SURCHARGE_1', Tools::getValue('MDS_SERVICE_SURCHARGE_1')) &&
@@ -256,10 +266,10 @@ class Mds extends CarrierModule
 			Configuration::updateValue('MDS_PASSWORD', Tools::getValue('MDS_PASSWORD')) &&
 			Configuration::updateValue('MDS_RISK', Tools::getValue('MDS_RISK'))
 		) {
-			return $success;
+			return $configured;
 		} else {
-			$success = false;
-			return $success;
+			$configured = false;
+			return $configured;
 		}
 
 	}
@@ -397,7 +407,7 @@ class Mds extends CarrierModule
 			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
 
-			$price = Configuration::get('MDS_SERVICE_SURCHARGE_'. $service) + $colliveryPrice;
+			$price = Configuration::get('MDS_SERVICE_SURCHARGE_' . $service) + $colliveryPrice;
 
 			return $shipping_cost + $price;
 		} catch (InvalidArgumentException $e) {
