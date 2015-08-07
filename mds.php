@@ -455,24 +455,14 @@ class Mds extends CarrierModule
 		$address = Db::getInstance()->getRow($sql);
 
 		$suburb = $address['city'];
-		$location_type = $address['address2'];
+		$suburbs = $this->collivery->getSuburbs('');
+
+		$locationType = $address['address2'];
+		$locationTypes = $this->collivery->getLocationTypes();
 
 		$this->context->controller->addJS(($this->_path) . 'helper.js');
 
-		$suburbs = $this->collivery->getSuburbs('');
-		$location_types = $this->collivery->getLocationTypes();
-
-		return '<script type="text/javascript">
-					var suburbs= ' . json_encode($suburbs) . ';
-					var location_types= ' . json_encode($location_types) . ';
-					var suburb= ' . json_encode($suburb) . ';
-					var location_type= ' . json_encode($location_type) . ';
-					replaceText("State","Town");
-					replaceText("City","Suburb");
-					replaceText("Address (Line 2)","Location Type");
-					addDropDownSuburb(suburbs, suburb);
-					addDropDownLocationType(location_types,location_type);
-				</script>';
+		return \Mds\Prestashop\Helpers\View::make('footer', compact('suburbs', 'suburb', 'locationTypes', 'locationType'));
 	}
 
 	protected function getServiceFromCarrierId($carrierId)
