@@ -54,11 +54,9 @@ endif; ?>
 			<?php endif; ?>
 		<?php endforeach; ?>
 	<?php } ?>
-
 </fieldset>
 
 <div class="clear">&nbsp;</div>
-
 <div id="tabList">
 	<div class="tabItem">
 		<form action="<?= $formUrl ?>" method="post" class="form" id="configForm">
@@ -67,12 +65,17 @@ endif; ?>
 				<?php foreach ($inputs as $key => $value): ?>
 					<label><?= $value['name'] ?>:</label>
 					<div class="margin-form">
-						<input type="<?= $value['type'] ?>" size="20" name="<?= $key ?>" value="<?=
+					
+						<?php if ($value['type'] == "checkbox") {?>
+							<?php if (Configuration::get('MDS_RISK') == 1) $checked = "checked" ?>
+						
+						<input type="<?= $value['type'] ?>" size="20" name="<?= $key ?>" value="1" <?= $checked ?>>
+						<?php } else {?>
+							<input type="<?= $value['type'] ?>" size="20" name="<?= $key ?>" value="<?=
 						Tools::getValue($key, Configuration::get($key))
-						?>">
+						?>"> <?php } ?>
 					</div>
 				<?php endforeach; ?>
-
 				<div class="margin-form">
 					<input class="button" name="submitSave" type="submit">
 				</div>
