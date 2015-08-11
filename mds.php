@@ -202,7 +202,7 @@ class Mds extends CarrierModule
 	{
 
 		foreach ($inputs as $key => $input) {
-			if (!Configuration::get($key) || Configuration::get($key) == '' || Configuration::get($key) == ' ' || Tools::getValue($key) == '') {
+			if ((!Configuration::get($key) || Configuration::get($key) == '' || Configuration::get($key) == ' ' || Tools::getValue($key) == '') && $key != 'MDS_RISK') {
 				$alerts[$key] = $key;
 			}
 
