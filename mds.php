@@ -191,6 +191,7 @@ class Mds extends CarrierModule
 		}
 		
 		$alerts = $this->displaySettingsStatus($inputs);
+		
 
 		if (empty($alerts)) $configured = true;
 		
