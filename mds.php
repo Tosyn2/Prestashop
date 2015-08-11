@@ -192,6 +192,8 @@ class Mds extends CarrierModule
 		
 		$alerts = $this->displaySettingsStatus($inputs);
 
+		if (empty($alerts)) $configured = true;
+		
 		return \Mds\Prestashop\Helpers\View::make('settings', compact('inputs', 'displayName', 'formUrl', 'configured', 'errors', 'alerts'));
 	}
 
