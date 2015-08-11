@@ -1,8 +1,8 @@
 <script>
 	var suburbs        = <?=json_encode($suburbs)?>,
-		location_types = <?=json_encode($location_types)?>,
+		location_types = <?=json_encode($locationTypes)?>,
 		suburb         = <?=json_encode($suburb)?>,
-		location_type  = <?=json_encode($location_type)?>;
+		location_type  = <?=json_encode($locationType)?>;
 
 	replaceText('State', 'Town');
 	replaceText('City', 'Suburb');
