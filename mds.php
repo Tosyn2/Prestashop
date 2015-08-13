@@ -71,13 +71,7 @@ class Mds extends CarrierModule
 	 */
 	public function install()
 	{
-		if (version_compare(PHP_VERSION, '5.3.0') < 0) {
-			$warnings[] = '\'Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.\'';
-		}
-
-		if (!extension_loaded('soap')) {
-			$warnings[] = '\'' . $this->l('Class Soap') . '\', ';
-		}
+		$warnings = $this->checkSystemRequirements();
 
 		if (!empty($warnings)) {
 			foreach ($warnings as $warning) {
@@ -491,6 +485,23 @@ class Mds extends CarrierModule
 		}
 
 		return $serviceMappings[$carrierId];
+	}
+
+	/**
+	 * @return array
+	 */
+	private function checkSystemRequirements()
+	{
+		$warnings = [];
+		if (version_compare(PHP_VERSION, '5.3.0') < 0) {
+			$warnings[] = 'Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.';
+		}
+
+		if ( ! extension_loaded('soap')) {
+			$warnings[] = 'Could not find PHP SOAP, please make sure its enabled before installing.';
+		}
+
+		return $warnings;
 	}
 
 }
