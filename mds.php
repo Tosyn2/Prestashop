@@ -7,16 +7,19 @@ if (!defined('_PS_VERSION_')) {
 
 define('_MDS_DIR_', __DIR__);
 
-spl_autoload_register(function ($class) {
-	$classParts = explode('\\', $class);
-	$vendor = array_shift($classParts);
-	if ($vendor === 'Mds') {
-		require _MDS_DIR_ . '/' . implode('/', $classParts) . '.php';
-	}
-}, true);
+spl_autoload_register(
+	function ($class) {
+		$classParts = explode('\\', $class);
+		$vendor = array_shift($classParts);
+		if ($vendor === 'Mds') {
+			require _MDS_DIR_ . '/' . implode('/', $classParts) . '.php';
+		}
+	},
+	true
+);
 
-class Mds extends CarrierModule
-{
+class Mds extends CarrierModule {
+
 	public $id_carrier;
 	private $_html = '';
 
@@ -76,6 +79,7 @@ class Mds extends CarrierModule
 			foreach ($warnings as $warning) {
 				echo "<p><strong>$warning</strong></p>";
 			}
+
 			return false;
 		}
 
@@ -104,7 +108,9 @@ class Mds extends CarrierModule
 	private function registerHooks($hooks)
 	{
 		foreach ($hooks as $hook) {
-			if (!$this->registerHook($hook)) throw new \Mds\Prestashop\Exceptions\UnableToRegisterHook();
+			if (!$this->registerHook($hook)) {
+				throw new \Mds\Prestashop\Exceptions\UnableToRegisterHook();
+			}
 		}
 	}
 
@@ -143,7 +149,9 @@ class Mds extends CarrierModule
 	private function unregisterHooks($hooks)
 	{
 		foreach ($hooks as $hook) {
-			if (!$this->registerHook($hook)) return false;
+			if (!$this->registerHook($hook)) {
+				return false;
+			}
 		}
 	}
 
@@ -156,7 +164,7 @@ class Mds extends CarrierModule
 	public function getContent()
 	{
 		$displayName = $this->displayName;
-		
+
 		$formUrl = 'index.php?tab=' . Tools::getValue('tab')
 			. '&configure=' . Tools::getValue('configure')
 			. '&token=' . Tools::getValue('token')
@@ -169,22 +177,26 @@ class Mds extends CarrierModule
 			'MDS_SERVICE_SURCHARGE_2' => array('name' => 'Overnight before 16:00', 'type' => 'text'),
 			'MDS_SERVICE_SURCHARGE_5' => array('name' => 'Road Freight Express', 'type' => 'text'),
 			'MDS_SERVICE_SURCHARGE_3' => array('name' => 'Road Freight', 'type' => 'text'),
-			'MDS_EMAIL' => array('name' => 'MDS Account Email', 'type' => 'text'),
-			'MDS_PASSWORD' => array('name' => 'Password', 'type' => 'password'),
-			'MDS_RISK' => array('name' => 'Risk Cover', 'type' => 'checkbox'),
+			'MDS_EMAIL'               => array('name' => 'MDS Account Email', 'type' => 'text'),
+			'MDS_PASSWORD'            => array('name' => 'Password', 'type' => 'password'),
+			'MDS_RISK'                => array('name' => 'Risk Cover', 'type' => 'checkbox'),
 		);
 
 		if (!empty($_POST) AND Tools::isSubmit('submitSave')) {
 			$configured = $this->_postValidation($inputs);
 			$errors = $this->_postErrors;
 		}
-		
-		$alerts = $this->displaySettingsStatus($inputs);
-		
 
-		if (empty($alerts)) $configured = true;
-		
-		return \Mds\Prestashop\Helpers\View::make('settings', compact('inputs', 'displayName', 'formUrl', 'configured', 'errors', 'alerts'));
+		$alerts = $this->displaySettingsStatus($inputs);
+
+		if (empty($alerts)) {
+			$configured = true;
+		}
+
+		return \Mds\Prestashop\Helpers\View::make(
+			'settings',
+			compact('inputs', 'displayName', 'formUrl', 'configured', 'errors', 'alerts')
+		);
 	}
 
 	public function displaySettingsStatus($inputs)
@@ -202,14 +214,13 @@ class Mds extends CarrierModule
 				$alerts[$key] = $key;
 			}
 		}
+
 		return $alerts;
 	}
 
 	private function _postValidation($inputs)
 	{
-		// Check configuration values
-		
-		foreach ($inputs as $key => $input){
+		foreach ($inputs as $key => $input) {
 			if (!trim(Tools::getValue($key))) {
 				if ($key == 'MDS_EMAIL' || $key == 'MDS_PASSWORD') {
 					$this->_postErrors[] = $this->l('Please fill in your MDS account details');
@@ -241,31 +252,34 @@ class Mds extends CarrierModule
 		}
 	}
 
-	/*
-	** Saving config settings. First checks if login details are changed and are correct then saves, else just saves
-	**
-	*/
-		private function _postProcess($inputs)
+	/**
+	 * Saving config settings. First checks if login details are changed and are correct then saves, else just saves
+	 *
+	 * @param $inputs
+	 *
+	 * @return bool
+	 */
+	private function _postProcess($inputs)
 	{
-		
-		foreach ($inputs as $key => $input){
+		foreach ($inputs as $key => $input) {
 			if (!Configuration::updateValue($key, Tools::getValue($key))) {
 				$configured = false;
+
 				return $configured;
 			}
 		}
 		$configured = true;
-		return $configured;
-			
 
+		return $configured;
 	}
 
-
-	/*
+	/**
 	 * Hook update carrier
 	 *
+	 * @param $params
+	 *
+	 * @return array
 	 */
-
 	function addColliveryAddressTo($params)
 	{
 		$addAddress1 = $params['cart']->id_address_delivery;
@@ -330,7 +344,7 @@ class Mds extends CarrierModule
 				$colliveryParams['parcels'][] = array(
 					'weight' => $colliveryProduct['weight'],
 					'height' => $colliveryProduct['height'],
-					'width' => $colliveryProduct['width'],
+					'width'  => $colliveryProduct['width'],
 					'length' => $colliveryProduct['depth']
 				);
 			}
@@ -364,7 +378,7 @@ class Mds extends CarrierModule
 				$colliveryGetPriceArray['parcels'][] = array(
 					'weight' => $colliveryProduct['weight'],
 					'height' => $colliveryProduct['height'],
-					'width' => $colliveryProduct['width'],
+					'width'  => $colliveryProduct['width'],
 					'length' => $colliveryProduct['depth']
 				);
 			}
@@ -385,13 +399,14 @@ class Mds extends CarrierModule
 
 	public function getPackageShippingCost($params, $shipping_cost, $products)
 	{
-
 		try {
 			$orderParams = $this->buildColliveryGetPriceArray($params);
 			$service = $this->getServiceFromCarrierId($this->id_carrier);
 			$orderParams['service'] = $service;
 
-			if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
+			if (Configuration::get('MDS_RISK') == 1) {
+				$orderParams['cover'] = 1;
+			}
 
 			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
@@ -402,7 +417,6 @@ class Mds extends CarrierModule
 		} catch (InvalidArgumentException $e) {
 			return false;
 		}
-
 	}
 
 	public function getOrderShippingCostExternal($params)
@@ -427,9 +441,7 @@ class Mds extends CarrierModule
 				(30,4,\'' . $town . '\',\'ZA\',' . $index . ',0,1)';
 				Db::getInstance()->execute($sql);
 			}
-
 		}
-
 	}
 
 	public function hookActionOrderStatusPostUpdate($params)
@@ -437,7 +449,9 @@ class Mds extends CarrierModule
 		if ($params['newOrderStatus']->name == 'Shipped') {
 			try {
 				$orderParams = $this->buildColliveryDataArray($params);
-				if (Configuration::get('MDS_RISK') == 1) $orderParams['cover'] = 1;
+				if (Configuration::get('MDS_RISK') == 1) {
+					$orderParams['cover'] = 1;
+				}
 
 				return $this->mdsService->addCollivery($orderParams, true);
 			} catch (InvalidArgumentException $e) {
@@ -448,7 +462,7 @@ class Mds extends CarrierModule
 
 	public function hookDisplayFooter($params)
 	{
-		$idAddress = (int)$this->context->cart->id_address_delivery;
+		$idAddress = (int) $this->context->cart->id_address_delivery;
 
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;
 		$address = Db::getInstance()->getRow($sql);
@@ -461,7 +475,10 @@ class Mds extends CarrierModule
 
 		$this->context->controller->addJS(($this->_path) . 'helper.js');
 
-		return \Mds\Prestashop\Helpers\View::make('footer', compact('suburbs', 'suburb', 'locationTypes', 'locationType'));
+		return \Mds\Prestashop\Helpers\View::make(
+			'footer',
+			compact('suburbs', 'suburb', 'locationTypes', 'locationType')
+		);
 	}
 
 	protected function getServiceFromCarrierId($carrierId)
@@ -490,7 +507,7 @@ class Mds extends CarrierModule
 			$warnings[] = 'Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.';
 		}
 
-		if ( ! extension_loaded('soap')) {
+		if (!extension_loaded('soap')) {
 			$warnings[] = 'Could not find PHP SOAP, please make sure its enabled before installing.';
 		}
 
