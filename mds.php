@@ -301,16 +301,13 @@ class Mds extends CarrierModule
 		} catch (Exception $e) {
 			die($e->getMessage());
 		}
-
 	}
 
 	function getDefaultColliveryAddressFrom($params)
 	{
 		$colliveryAddressesFrom = $this->mdsService->returnDefaultAddress();
 
-		foreach ($colliveryAddressesFrom['contacts'] as $colliveryAddressFrom) {
-		}
-		return $colliveryAddressFrom;
+		return array_pop($colliveryAddressesFrom['contacts']);
 	}
 
 	public function buildColliveryDataArray($params)
