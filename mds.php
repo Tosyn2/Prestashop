@@ -189,9 +189,8 @@ class Mds extends CarrierModule
 
 	public function displaySettingsStatus($inputs)
 	{
-
 		foreach ($inputs as $key => $input) {
-			if ((!Configuration::get($key) || Configuration::get($key) == '' || Configuration::get($key) == ' ' || Tools::getValue($key) == '') && $key != 'MDS_RISK') {
+			if ($key != 'MDS_RISK' && (!trim(Configuration::get($key)) || !trim(Tools::getValue($key)))) {
 				$alerts[$key] = $key;
 			}
 
@@ -211,14 +210,14 @@ class Mds extends CarrierModule
 		// Check configuration values
 		
 		foreach ($inputs as $key => $input){
-
-			if ($key == 'MDS_EMAIL' || $key == 'MDS_PASSWORD') {
-				if(Tools::getValue($key) == '' || Tools::getValue($key) == '') $this->_postErrors[] = $this->l('Please fill in your MDS account details');
-			}else{
-					if((Tools::getValue($key) == '' || Tools::getValue($key) == ' ' ) && $key != 'MDS_RISK') Configuration::updateValue($key,'0');
+			if (!trim(Tools::getValue($key))) {
+				if ($key == 'MDS_EMAIL' || $key == 'MDS_PASSWORD') {
+					$this->_postErrors[] = $this->l('Please fill in your MDS account details');
+				} elseif ($key != 'MDS_RISK') {
+					Configuration::updateValue($key, '0');
 				}
+			}
 		}
-		
 		if ($this->settings['mds_user'] != Tools::getValue('MDS_EMAIL') || $this->settings['mds_pass'] != Tools::getValue('MDS_PASSWORD')) {
 
 			$settings['mds_user'] = Tools::getValue('MDS_EMAIL');
