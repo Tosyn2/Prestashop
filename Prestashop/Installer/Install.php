@@ -4,7 +4,7 @@ use Carrier;
 use Configuration;
 use Group;
 use Language;
-use Mds\Prestashop\Exceptions\UpdatingConfigurationException;
+use Mds\Prestashop\Exceptions\UnableToUpdateConfiguration;
 use RangePrice;
 use RangeWeight;
 use Zone;
@@ -204,7 +204,7 @@ class Install extends Installer  {
 	private function updateConfig($key, $value)
 	{
 		if (!Configuration::updateValue($key, $value)) {
-			throw new UpdatingConfigurationException();
+			throw new UnableToUpdateConfiguration();
 		}
 	}
 
