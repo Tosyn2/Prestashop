@@ -24,7 +24,6 @@ class Mds extends CarrierModule
 	 * @type array
 	 */
 	private $_postErrors = array();
-	private $_configErrors = array();
 
 	public function __construct()
 	{
@@ -156,8 +155,6 @@ class Mds extends CarrierModule
 	 */
 	public function getContent()
 	{
-		$alerts = Array();
-
 		$displayName = $this->displayName;
 		
 		$formUrl = 'index.php?tab=' . Tools::getValue('tab')
