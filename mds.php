@@ -483,12 +483,12 @@ class Mds extends CarrierModule {
 
 	protected function getServiceFromCarrierId($carrierId)
 	{
-		$serviceMappings = [
+		$serviceMappings = array(
 			Configuration::get('MDS_SERVICE_CARRIER_ID_1') => 1,
 			Configuration::get('MDS_SERVICE_CARRIER_ID_2') => 2,
 			Configuration::get('MDS_SERVICE_CARRIER_ID_3') => 3,
 			Configuration::get('MDS_SERVICE_CARRIER_ID_5') => 5,
-		];
+		);
 
 		if (!array_key_exists($carrierId, $serviceMappings)) {
 			throw new InvalidArgumentException;
