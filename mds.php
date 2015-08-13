@@ -89,15 +89,13 @@ class Mds extends CarrierModule
 		try {
 			$installer = new Mds\Prestashop\Installer\Install();
 			$installer->install();
+			if (!parent::install()) {
+				return false;
+			}
+			$this->registerHooks($installer->getHooks());
 		} catch (\Mds\Prestashop\Exceptions\UnableToUpdateConfiguration $e) {
 			return false;
-		}
-
-		if (!parent::install()) {
-			return false;
-		}
-
-		if ($this->registerHooks($installer->getHooks()) === false) {
+		} catch (\Mds\Prestashop\Exceptions\UnableToRegisterHook $e) {
 			return false;
 		}
 
@@ -113,7 +111,7 @@ class Mds extends CarrierModule
 	private function registerHooks($hooks)
 	{
 		foreach ($hooks as $hook) {
-			if (!$this->registerHook($hook)) return false;
+			if (!$this->registerHook($hook)) throw new \Mds\Prestashop\Exceptions\UnableToRegisterHook();
 		}
 	}
 
