@@ -19,11 +19,11 @@ abstract class Installer {
 		'MDS_RISK'     => '0',
 	);
 
-
 	protected $hooks = array(
 		'displayFooter',
 		'actionOrderStatusPostUpdate',
-		'displayShoppingCart');
+		'displayShoppingCart'
+	);
 
 	public function __construct()
 	{

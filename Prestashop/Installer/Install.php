@@ -9,7 +9,7 @@ use RangePrice;
 use RangeWeight;
 use Zone;
 
-class Install extends Installer  {
+class Install extends Installer {
 
 	public function install()
 	{
