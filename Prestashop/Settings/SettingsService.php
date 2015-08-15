@@ -48,6 +48,8 @@ class SettingsService {
 
 		$this->updateSurcharges($data['surcharge']);
 
+		RiskCover::setColliveryRiskCover(!empty($data['risk-cover']));
+
 		return $this->errors;
 	}
 
