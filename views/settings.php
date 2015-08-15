@@ -31,7 +31,7 @@
 
 		<div class="form-group">
 			<label for="collivery-password">Password:</label>
-			<input id="collivery-password" class="form-control" type="password" name="password" value="*****">
+			<input id="collivery-password" class="form-control" type="password" name="password" value="">
 		</div>
 
 		<div class="form-group">
