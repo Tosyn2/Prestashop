@@ -7,8 +7,9 @@ class RiskCover extends Settings {
 		return self::getConfig('RISK') == 1;
 	}
 
-	public static function setColliveryRiskCover()
+	public static function setColliveryRiskCover($value)
 	{
-		return self::getConfig('RISK');
+		$value = $value ? 1 : 0;
+		return self::updateConfig('RISK', $value);
 	}
 }
