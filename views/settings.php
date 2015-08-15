@@ -13,7 +13,7 @@
 <?= $errors ?>
 
 <form action="<?= $formUrl ?>" method="post" class="form" id="configForm">
-	<fieldset style="border: 0px;">
+	<fieldset>
 		<legend>General configuration:</legend>
 		<?php foreach ($surcharges as $serviceId => $data): ?>
 			<div class="form-group">
