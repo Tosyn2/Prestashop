@@ -1,5 +1,3 @@
 <?php namespace Mds\Prestashop\Exceptions;
 
-class UnableToRegisterHook extends \RuntimeException {
-
-}
+class UnableToRegisterHook extends ColliveryException {}

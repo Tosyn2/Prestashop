@@ -1,3 +1,3 @@
 <?php namespace Mds\Prestashop\Exceptions;
 
-class UnableToUpdateConfiguration extends \RuntimeException {}
+class UnableToUpdateConfiguration extends ColliveryException {}
