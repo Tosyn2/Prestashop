@@ -42,7 +42,7 @@ class SettingsService {
 
 	public function store($data)
 	{
-		if (isset($data['email']) && isset($data['password'])) {
+		if (!empty($data['email']) && !empty($data['password'])) {
 			$this->updateColliveryCredentials($data['email'], $data['password']);
 		}
 
