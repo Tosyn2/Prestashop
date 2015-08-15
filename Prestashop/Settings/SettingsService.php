@@ -46,7 +46,7 @@ class SettingsService {
 			$this->updateColliveryCredentials($data['email'], $data['password']);
 		}
 
-		$this->updateSurcharges($data['surcharges']);
+		$this->updateSurcharges($data['surcharge']);
 
 		return $this->errors;
 	}
