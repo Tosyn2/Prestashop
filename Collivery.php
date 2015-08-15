@@ -38,7 +38,7 @@ class Collivery
 			'app_url' => '', // URL your site is hosted on
 			'user_email' => 'api@collivery.co.za',
 			'user_password' => 'api123',
-			'demo' => true,
+			'demo' => false,
 		);
 
 		foreach ($config as $key => $value) {
