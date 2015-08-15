@@ -82,9 +82,7 @@ class Mds extends CarrierModule {
 				return false;
 			}
 			$this->registerHooks($installer->getHooks());
-		} catch (\Mds\Prestashop\Exceptions\UnableToUpdateConfiguration $e) {
-			return false;
-		} catch (\Mds\Prestashop\Exceptions\UnableToRegisterHook $e) {
+		} catch (\Mds\Prestashop\Exceptions\ColliveryException $e) {
 			return false;
 		}
 
