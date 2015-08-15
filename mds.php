@@ -60,12 +60,10 @@ class Mds extends CarrierModule {
 			}
 		}
 
-		$settings['mds_user'] = Configuration::get('MDS_EMAIL');
-		$settings['mds_pass'] = Configuration::get('MDS_PASSWORD');
+		$settings = array();
 
 		$this->mdsService = \Mds\MdsColliveryService::getInstance($settings);
-		$this->collivery = $this->mdsService->returnColliveryClass();
-		$this->cache = $this->mdsService->returnCacheClass();
+		$this->collivery = \Mds\Prestashop\Collivery\ColliveryApi::getInstance();
 	}
 
 	/**

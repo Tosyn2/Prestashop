@@ -1,6 +1,7 @@
 <?php namespace Mds;
 
 use Exception;
+use Mds\Prestashop\Collivery\ColliveryApi;
 
 /**
  * MdsColliveryService
@@ -60,31 +61,7 @@ class MdsColliveryService
 
 		$this->cache = new Cache();
 
-		//	$this->collivery = new Collivery();
-
-		$this->initMdsCollivery($this->settings);
-	}
-
-	/**
-	 * Instantiates the MDS Collivery class
-	 *
-	 * @param null|array $settings
-	 */
-	public function initMdsCollivery($settings = null)
-	{
-		if ($settings) {
-			$username = $settings['mds_user'];
-			$password = $settings['mds_pass'];
-		} else {
-			$username = $this->settings['mds_user'];
-			$password = $this->settings['mds_pass'];
-
-		}
-
-		$this->collivery = new Collivery(array(
-
-			'demo' => false,
-		));
+		$this->collivery = ColliveryApi::getInstance();
 	}
 
 	/**
@@ -349,35 +326,6 @@ class MdsColliveryService
 		$towns = $this->collivery->getTowns();
 		$location_types = $this->collivery->getLocationTypes();
 		return array('towns' => array_combine($towns, $towns), 'location_types' => array_combine($location_types, $location_types));
-	}
-
-	/**
-	 * Returns the MDS Collivery class
-	 *
-	 * @param null $settings
-	 *
-	 * @return \Mds\Collivery
-	 */
-	public function returnColliveryClass($settings = null)
-	{
-		if ($settings) {
-			$username = $settings['mds_user'];
-			$password = $settings['mds_pass'];
-		} else {
-			$username = $this->settings['mds_user'];
-			$password = $this->settings['mds_pass'];
-
-		}
-
-		return $this->collivery = new Collivery(array(
-			'app_name' => 'Default App Name', // Application Name
-			'app_version' => '0.0.1',            // Application Version
-			'app_host' => '', // Framework/CMS name and version, eg 'Wordpress 3.8.1 WooCommerce 2.0.20' / 'Joomla! 2.5.17 VirtueMart 2.0.26d'
-			'app_url' => '', // URL your site is hosted on
-			'user_email' => $username,
-			'user_password' => $password,
-			'demo' => false,
-		));
 	}
 
 	/**
