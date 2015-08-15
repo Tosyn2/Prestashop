@@ -18,9 +18,7 @@
 		<?php foreach ($surcharges as $serviceId => $data): ?>
 			<div class="form-group">
 				<label><?= $data['name'] ?> (R):</label>
-				<input class="form-control" type="text" name="surcharge[<?= $serviceId ?>]" value="<?=
-					$_POST['surcharge'][$serviceId]
-				?>">
+				<input class="form-control" type="text" name="surcharge[<?= $serviceId ?>]" value="<?= $data['value'] ?>">
 			</div>
 		<?php endforeach; ?>
 
