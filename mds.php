@@ -21,12 +21,6 @@ spl_autoload_register(
 class Mds extends CarrierModule {
 
 	public $id_carrier;
-	private $_html = '';
-
-	/**
-	 * @type array
-	 */
-	private $_postErrors = array();
 
 	public function __construct()
 	{
@@ -170,105 +164,30 @@ class Mds extends CarrierModule {
 			. '&module_name=' . Tools::getValue('module_name')
 			. '&id_tab=1&section=general';
 
-		$inputs = array(
-			'MDS_SERVICE_SURCHARGE_1' => array('name' => 'Overnight before 10:00', 'type' => 'text'),
-			'MDS_SERVICE_SURCHARGE_2' => array('name' => 'Overnight before 16:00', 'type' => 'text'),
-			'MDS_SERVICE_SURCHARGE_5' => array('name' => 'Road Freight Express', 'type' => 'text'),
-			'MDS_SERVICE_SURCHARGE_3' => array('name' => 'Road Freight', 'type' => 'text'),
-			'MDS_EMAIL'               => array('name' => 'MDS Account Email', 'type' => 'text'),
-			'MDS_PASSWORD'            => array('name' => 'Password', 'type' => 'password'),
-			'MDS_RISK'                => array('name' => 'Risk Cover', 'type' => 'checkbox'),
-		);
+		$errors = array();
+
+		$settingsService = new \Mds\Prestashop\Settings\SettingsService();
 
 		if (!empty($_POST) AND Tools::isSubmit('submitSave')) {
-			$configured = $this->_postValidation($inputs);
-			$errors = $this->_postErrors;
+			$errors = $settingsService->store($_POST);
 		}
 
-		$alerts = $this->displaySettingsStatus($inputs);
+		$surcharges = $settingsService->getSurchargesInfo();
+		$email = $settingsService->getColliveryEmail();
+		$riskCover = $settingsService->hasRiskCover();
 
-		if (empty($alerts)) {
-			$configured = true;
+		try {
+			$settingsService->testCurrentCredentials();
+		} catch (\Mds\Prestashop\Collivery\InvalidCredentials $e) {
+			$errors[] = 'Current Collivery credentials are invalid, plugin not operational';
 		}
+
+		$errors = empty($errors) ? '' : $this->displayError($errors);
 
 		return \Mds\Prestashop\Helpers\View::make(
 			'settings',
-			compact('inputs', 'displayName', 'formUrl', 'configured', 'errors', 'alerts')
+			compact('displayName', 'formUrl', 'errors', 'surcharges', 'email', 'riskCover')
 		);
-	}
-
-	public function displaySettingsStatus($inputs)
-	{
-		foreach ($inputs as $key => $input) {
-			if ($key != 'MDS_RISK' && (!trim(Configuration::get($key)) || !trim(Tools::getValue($key)))) {
-				$alerts[$key] = $key;
-			}
-
-			if ($key == 'MDS_EMAIL' && (Configuration::get('MDS_EMAIL') != Tools::getValue('MDS_EMAIL'))) {
-				$alerts[$key] = $key;
-			}
-
-			if ($key == 'MDS_PASSWORD' && (Configuration::get('MDS_PASSWORD') != Tools::getValue('MDS_PASSWORD'))) {
-				$alerts[$key] = $key;
-			}
-		}
-
-		return $alerts;
-	}
-
-	private function _postValidation($inputs)
-	{
-		foreach ($inputs as $key => $input) {
-			if (!trim(Tools::getValue($key))) {
-				if ($key == 'MDS_EMAIL' || $key == 'MDS_PASSWORD') {
-					$this->_postErrors[] = $this->l('Please fill in your MDS account details');
-				} elseif ($key != 'MDS_RISK') {
-					Configuration::updateValue($key, '0');
-				}
-			}
-		}
-		if ($this->settings['mds_user'] != Tools::getValue('MDS_EMAIL') || $this->settings['mds_pass'] != Tools::getValue('MDS_PASSWORD')) {
-
-			$settings['mds_user'] = Tools::getValue('MDS_EMAIL');
-			$settings['mds_pass'] = Tools::getValue('MDS_PASSWORD');
-
-			$this->mdsService = \Mds\MdsColliveryService::getInstance($settings);
-			$this->collivery = $this->mdsService->returnColliveryClass($settings);
-			if ($this->collivery->isAuthenticated()) {
-				if ($this->_postProcess($inputs)) {
-					$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
-				} else {
-					$this->_postErrors[] = 'Unable to update Settings';
-				}
-			} else {
-				$this->_postErrors[] = 'MDS Collivery account details incorrect.';
-			}
-		} else {
-			if ($this->_postProcess($inputs)) {
-				$this->_html .= $this->displayConfirmation($this->l('Settings updated'));
-			}
-		}
-	}
-
-	/**
-	 * Saving config settings. First checks if login details are changed and are correct then saves, else just saves
-	 *
-	 * @param $inputs
-	 *
-	 * @return bool
-	 */
-	private function _postProcess($inputs)
-	{
-		foreach ($inputs as $key => $input) {
-			if (!Configuration::updateValue($key, Tools::getValue($key))) {
-				$configured = false;
-
-				return $configured;
-			}
-		}
-		$configured = true;
-
-		return $configured;
 	}
 
 	/**
