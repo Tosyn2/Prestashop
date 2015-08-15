@@ -22,4 +22,19 @@ class ColliveryApi {
 
 		return self::$instance;
 	}
+
+	public static function testAuthentication($email, $password)
+	{
+		$settings = array(
+			'user_email' => $email,
+			'user_password' => $password,
+		);
+		$collivery = new Collivery($settings);
+		$collivery->disableCache();
+
+		if (!$collivery->isAuthenticated()) {
+			throw new InvalidCredentials();
+		}
+	}
+
 }
