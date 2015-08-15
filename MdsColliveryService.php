@@ -39,16 +39,15 @@ class MdsColliveryService
 //	var $WC_MDS_Collivery;
 
 	/**
-	 * @param null $settings
+	 * @param array $settings
 	 * @return MdsColliveryService
 	 * @throws Exception
 	 */
 	public static function getInstance($settings = null)
 	{
-		//	if (! self::$instance) {
-
-		self::$instance = new self($settings);
-		//	}
+		if (! self::$instance) {
+			self::$instance = new self($settings);
+		}
 
 		return self::$instance;
 	}
