@@ -329,7 +329,7 @@ class Mds extends CarrierModule {
 			$price = Configuration::get('MDS_SERVICE_SURCHARGE_' . $service) + $colliveryPrice;
 
 			return $shipping_cost + $price;
-		} catch (InvalidArgumentException $e) {
+		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 			return false;
 		}
 	}
@@ -369,7 +369,7 @@ class Mds extends CarrierModule {
 				}
 
 				return $this->mdsService->addCollivery($orderParams, true);
-			} catch (InvalidArgumentException $e) {
+			} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 				return false;
 			}
 		}
@@ -398,18 +398,7 @@ class Mds extends CarrierModule {
 
 	protected function getServiceFromCarrierId($carrierId)
 	{
-		$serviceMappings = array(
-			Configuration::get('MDS_SERVICE_CARRIER_ID_1') => 1,
-			Configuration::get('MDS_SERVICE_CARRIER_ID_2') => 2,
-			Configuration::get('MDS_SERVICE_CARRIER_ID_3') => 3,
-			Configuration::get('MDS_SERVICE_CARRIER_ID_5') => 5,
-		);
-
-		if (!array_key_exists($carrierId, $serviceMappings)) {
-			throw new InvalidArgumentException;
-		}
-
-		return $serviceMappings[$carrierId];
+		return \Mds\Prestashop\Settings\Service::getServiceIdFromCarrierId($carrierId);
 	}
 
 	/**
@@ -430,9 +419,3 @@ class Mds extends CarrierModule {
 	}
 
 }
-
-
-
-
-
-
