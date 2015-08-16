@@ -2,6 +2,10 @@
 
 class View {
 
+	protected $path = '';
+
+	protected $obLevel = 0;
+
 	public static function make($path, $data)
 	{
 		$view = new self;
@@ -20,17 +24,16 @@ class View {
 	 */
 	protected function generate($__path, $__data)
 	{
-		$__path = _MDS_DIR_ .'/views/'. $__path .'.php';
-		$__obLevel = ob_get_level();
-
-		ob_start();
-
+		$this->path = _MDS_DIR_ .'/views/'. $__path .'.php';
 		extract($__data);
 
+		$this->obLevel = ob_get_level();
+		ob_start();
+
 		try {
-			include $__path;
+			include $this->path;
 		} catch (\Exception $e) {
-			while (ob_get_level() > $__obLevel) {
+			while (ob_get_level() > $this->obLevel) {
 				ob_end_clean();
 			}
 
