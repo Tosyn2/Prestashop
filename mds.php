@@ -293,7 +293,7 @@ class Mds extends CarrierModule {
 			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
 
-			$price = Mds_Surcharge::getServiceSurcharge($serviceId) + $colliveryPrice;
+			$price = Mds_Surcharge::get($serviceId) + $colliveryPrice;
 
 			return $shipping_cost + $price;
 		} catch (Mds_InvalidData $e) {
@@ -365,6 +365,6 @@ class Mds extends CarrierModule {
 
 	protected function getServiceFromCarrierId($carrierId)
 	{
-		return Mds_Service::getServiceIdFromCarrierId($carrierId);
+		return Mds_Services::getServiceId($carrierId);
 	}
 }

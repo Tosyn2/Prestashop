@@ -4,7 +4,7 @@ use Carrier;
 use Configuration;
 use Mds\Prestashop\Settings\Credentials;
 use Mds\Prestashop\Settings\RiskCover;
-use Mds\Prestashop\Settings\Service;
+use Mds\Prestashop\Settings\Services;
 use Mds\Prestashop\Settings\Surcharge;
 
 class Uninstall extends Installer {
@@ -19,15 +19,15 @@ class Uninstall extends Installer {
 
 	private function deleteServicesConfig()
 	{
-		$services = Service::getServices();
+		$services = Services::get();
 		foreach ($services as $serviceId => $serviceName) {
 			Surcharge::delete($serviceId);
-			$carrierId = Service::getCarrierIdFromServiceId($serviceId);
+			$carrierId = Services::getCarrierId($serviceId);
 
 			if (Configuration::get('PS_CARRIER_DEFAULT') == $carrierId) {
 				$this->setDefaultCarrierToPsCarrier();
 			}
-			Service::delete($serviceId);
+			Services::delete($serviceId);
 		}
 	}
 

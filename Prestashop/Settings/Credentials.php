@@ -15,7 +15,7 @@ class Credentials extends Settings {
 		return self::getConfig('PASSWORD');
 	}
 
-	public static function update($email, $password)
+	public static function set($email, $password)
 	{
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			throw new InvalidEmail($email);

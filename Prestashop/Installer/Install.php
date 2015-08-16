@@ -8,7 +8,7 @@ use Mds\Prestashop\Exceptions\UnableToUpdateConfiguration;
 use Mds\Prestashop\Exceptions\UnmetSystemRequirements;
 use Mds\Prestashop\Settings\Credentials;
 use Mds\Prestashop\Settings\RiskCover;
-use Mds\Prestashop\Settings\Service;
+use Mds\Prestashop\Settings\Services;
 use Mds\Prestashop\Settings\Surcharge;
 use RangePrice;
 use RangeWeight;
@@ -19,15 +19,15 @@ class Install extends Installer {
 	public function install()
 	{
 		$this->checkSystemRequirements();
-		$services = Service::getServices();
+		$services = Services::get();
 		foreach ($services as $serviceId => $serviceName) {
 			$carrierId = $this->setupNewCarrier($serviceName);
 			$this->copyServiceLogos($serviceId, $carrierId);
-			Service::setCarrierId($serviceId, $carrierId);
-			Surcharge::setServiceSurcharge($serviceId, 10);
+			Services::set($serviceId, $carrierId);
+			Surcharge::set($serviceId, 10);
 		}
 
-		Credentials::update('api@collivery.co.za', 'api123');
+		Credentials::set('api@collivery.co.za', 'api123');
 		RiskCover::set(false);
 
 		$this->addIdMdsColumnToStatesTable();

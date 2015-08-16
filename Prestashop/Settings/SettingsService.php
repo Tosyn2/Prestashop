@@ -11,11 +11,11 @@ class SettingsService {
 
 	public function getSurchargesInfo()
 	{
-		$services = Service::getServices();
+		$services = Services::get();
 		foreach ($services as $serviceId => $serviceName) {
 			$surcharges[$serviceId] = array(
 				'name' => $serviceName .' Surcharge',
-				'value' => Surcharge::getServiceSurcharge($serviceId)
+				'value' => Surcharge::get($serviceId)
 			);
 		}
 
@@ -56,7 +56,7 @@ class SettingsService {
 	private function updateColliveryCredentials($email, $password)
 	{
 		try {
-			Credentials::update($email, $password);
+			Credentials::set($email, $password);
 		} catch (InvalidData $e) {
 			$this->errors[] = $e->getMessage();
 		}
@@ -65,7 +65,7 @@ class SettingsService {
 	private function updateSurcharges($surcharges)
 	{
 		foreach ($surcharges as $serviceId => $surcharge) {
-			Surcharge::setServiceSurcharge($serviceId, $surcharge);
+			Surcharge::set($serviceId, $surcharge);
 		}
 	}
 }

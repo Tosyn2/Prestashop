@@ -2,14 +2,14 @@
 
 use Mds\Prestashop\Exceptions\InvalidData;
 
-class Service extends Settings {
+class Services extends Settings {
 
-	public static function getServices()
+	public static function get()
 	{
 		return self::$services;
 	}
 
-	public static function getServiceIdFromCarrierId($carrierId)
+	public static function getServiceId($carrierId)
 	{
 		$serviceMappings = self::getServiceMappings();
 
@@ -28,7 +28,7 @@ class Service extends Settings {
 		$serviceMappings = array();
 
 		foreach (self::$services as $serviceId => $serviceName) {
-			$carrierId = self::getCarrierIdFromServiceId($serviceId);
+			$carrierId = self::getCarrierId($serviceId);
 			$serviceMappings[$carrierId] = $serviceId;
 		}
 
@@ -40,19 +40,19 @@ class Service extends Settings {
 	 *
 	 * @return string
 	 */
-	public static function getCarrierIdFromServiceId($serviceId)
+	public static function getCarrierId($serviceId)
 	{
-		return self::getConfig(self::getCarrierKey($serviceId));
+		return self::getConfig(self::getConfigKey($serviceId));
 	}
 
 	public static function setCarrierId($serviceId, $carrierId)
 	{
-		self::updateConfig(self::getCarrierKey($serviceId), $carrierId);
+		self::updateConfig(self::getConfigKey($serviceId), $carrierId);
 	}
 
 	public static function delete($serviceId)
 	{
-		self::deleteConfig(self::getCarrierKey($serviceId));
+		self::deleteConfig(self::getConfigKey($serviceId));
 	}
 
 	/**
@@ -60,7 +60,7 @@ class Service extends Settings {
 	 *
 	 * @return string
 	 */
-	private static function getCarrierKey($serviceId)
+	private static function getConfigKey($serviceId)
 	{
 		return 'SERVICE_CARRIER_ID_' . $serviceId;
 	}

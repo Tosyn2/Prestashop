@@ -12,7 +12,7 @@ class Surcharge extends Settings {
 	 *
 	 * @return int
 	 */
-	public static function getServiceSurcharge($serviceId)
+	public static function get($serviceId)
 	{
 		return (int) self::getConfig(self::getSurchargeKey($serviceId));
 	}
@@ -21,7 +21,7 @@ class Surcharge extends Settings {
 	 * @param $serviceId
 	 * @param $value
 	 */
-	public static function setServiceSurcharge($serviceId, $value)
+	public static function set($serviceId, $value)
 	{
 		if (!is_numeric($value) || $value > 100 || $value < -100) {
 			throw new InvalidSurcharge($value);
