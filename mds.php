@@ -12,6 +12,7 @@ include('autoload.php');
 class Mds extends CarrierModule {
 
 	public $id_carrier;
+	protected $db;
 
 	public function __construct()
 	{
@@ -30,6 +31,7 @@ class Mds extends CarrierModule {
 
 		$this->mdsService = \Mds\MdsColliveryService::getInstance($settings);
 		$this->collivery = Mds_ColliveryApi::getInstance();
+		$this->db = Db::getInstance();
 	}
 
 	/**
@@ -172,12 +174,12 @@ class Mds extends CarrierModule {
 		$addAddress1 = $params['cart']->id_address_delivery;
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
-		$addressRow = Db::getInstance()->getRow($sql);
+		$addressRow = $this->db->getRow($sql);
 
 		$town_id = $addressRow['id_state'];
 		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
 		WHERE `id_state` = "' . $town_id . '" ';
-		$mds_town_id = Db::getInstance()->getValue($sql);
+		$mds_town_id = $this->db->getValue($sql);
 
 		$colliveryParams['company_name'] = $addressRow['company'];
 		$colliveryParams['building'] = '';
@@ -194,7 +196,7 @@ class Mds extends CarrierModule {
 		$custId = $colliveryParams['custom_id'];
 		$sql = 'SELECT email FROM ' . _DB_PREFIX_ . 'customer
 		WHERE id_customer = \'' . $custId . '\'';
-		$colliveryParams['email'] = Db::getInstance()->getValue($sql);
+		$colliveryParams['email'] = $this->db->getValue($sql);
 
 		try {
 			return $this->mdsService->addColliveryAddress($colliveryParams);
@@ -245,12 +247,12 @@ class Mds extends CarrierModule {
 		$addAddress1 = $params->id_address_delivery;
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
-		$addressRow = Db::getInstance()->getRow($sql);
+		$addressRow = $this->db->getRow($sql);
 
 		$town_id = $addressRow['id_state'];
 		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
 		WHERE `id_state` = "' . $town_id . '" ';
-		$mds_town_id = Db::getInstance()->getValue($sql);
+		$mds_town_id = $this->db->getValue($sql);
 
 		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
 
@@ -320,13 +322,13 @@ class Mds extends CarrierModule {
 
 		if ($numberOfTowns != count($towns)) {
 			$sql = 'UPDATE `' . _DB_PREFIX_ . 'state` SET `active` = 0 where `id_country` = 30';
-			Db::getInstance()->execute($sql);
+			$this->db->execute($sql);
 
 			foreach ($towns as $index => $town) {
 				$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'state (id_country,id_zone,name,iso_code,id_mds,tax_behavior,active)
 				VALUES
 				(30,4,\'' . $town . '\',\'ZA\',' . $index . ',0,1)';
-				Db::getInstance()->execute($sql);
+				$this->db->execute($sql);
 			}
 		}
 	}
@@ -352,7 +354,7 @@ class Mds extends CarrierModule {
 		$idAddress = (int) $this->context->cart->id_address_delivery;
 
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;
-		$address = Db::getInstance()->getRow($sql);
+		$address = $this->db->getRow($sql);
 
 		$suburb = $address['city'];
 		$suburbs = $this->collivery->getSuburbs('');
