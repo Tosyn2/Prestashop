@@ -12,9 +12,9 @@ abstract class Installer {
 		'displayShoppingCart'
 	);
 
-	public function __construct()
+	public function __construct(Db $db)
 	{
-		$this->db = Db::getInstance();
+		$this->db = $db;
 	}
 
 	/**

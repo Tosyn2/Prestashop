@@ -50,7 +50,7 @@ class Mds extends CarrierModule {
 		}
 
 		try {
-			$installer = new Mds_Install();
+			$installer = new Mds_Install($this->db);
 			$installer->install();
 			if (!parent::install()) {
 				return false;
@@ -90,7 +90,7 @@ class Mds extends CarrierModule {
 		}
 
 		try {
-			$installer = new Mds_Uninstall();
+			$installer = new Mds_Uninstall($this->db);
 			$installer->uninstall();
 		} catch (Mds_UnableToUpdateConfiguration $e) {
 			return false;
