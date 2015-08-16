@@ -2,9 +2,12 @@
 
 class RiskCover extends Settings {
 
+	/**
+	 * @return bool
+	 */
 	public static function hasCover()
 	{
-		return self::getConfig('RISK') == 1;
+		return self::_getConfig() == 1;
 	}
 
 	/**
@@ -13,11 +16,16 @@ class RiskCover extends Settings {
 	public static function set($value)
 	{
 		$value = $value ? 1 : 0;
-		self::updateConfig('RISK', $value);
+		self::_setConfig($value);
 	}
 
 	public static function delete()
 	{
-		self::deleteConfig('RISK');
+		self::_deleteConfig();
+	}
+
+	protected static function getConfigKey($id)
+	{
+		return self::$riskKey;
 	}
 }

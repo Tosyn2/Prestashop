@@ -1,18 +1,22 @@
 <?php namespace Mds\Prestashop\Settings;
 
 use Mds\Prestashop\Collivery\ColliveryApi;
+use Mds\Prestashop\Exceptions\InvalidData;
 use Mds\Prestashop\Exceptions\InvalidEmail;
 
 class Credentials extends Settings {
 
+	const EMAIL = 1;
+	const PASSWORD = 2;
+
 	public static function getEmail()
 	{
-		return self::getConfig('EMAIL');
+		return self::_getConfig(self::EMAIL);
 	}
 
 	public static function getPassword()
 	{
-		return self::getConfig('PASSWORD');
+		return self::_getConfig(self::PASSWORD);
 	}
 
 	public static function set($email, $password)
@@ -22,14 +26,24 @@ class Credentials extends Settings {
 		}
 		ColliveryApi::testAuthentication($email, $password);
 
-		self::updateConfig('EMAIL', $email);
-		self::updateConfig('PASSWORD', $password);
+		self::_setConfig($email, self::EMAIL);
+		self::_setConfig($password, self::PASSWORD);
 	}
 
 	public static function delete()
 	{
-		self::deleteConfig('EMAIL');
-		self::deleteConfig('PASSWORD');
+		self::_deleteConfig(self::EMAIL);
+		self::_deleteConfig(self::PASSWORD);
 	}
 
+	protected static function getConfigKey($id)
+	{
+		if ($id === self::EMAIL) {
+			return self::$emailKey;
+		} elseif ($id === self::PASSWORD) {
+			return self::$passwordKey;
+		} else {
+			throw new InvalidData;
+		}
+	}
 }

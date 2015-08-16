@@ -1,12 +1,18 @@
 <?php namespace Mds\Prestashop\Settings;
 
 use Mds\Prestashop\Exceptions\InvalidData;
+use Mds\Prestashop\Exceptions\InvalidService;
 
 class Services extends Settings {
 
 	public static function get()
 	{
 		return self::$services;
+	}
+
+	public static function set($serviceId, $carrierId)
+	{
+		self::_setConfig($carrierId, $serviceId);
 	}
 
 	public static function getServiceId($carrierId)
@@ -18,6 +24,21 @@ class Services extends Settings {
 		}
 
 		return $serviceMappings[$carrierId];
+	}
+
+	/**
+	 * @param $serviceId
+	 *
+	 * @return string
+	 */
+	public static function getCarrierId($serviceId)
+	{
+		return self::_getConfig($serviceId);
+	}
+
+	public static function delete($serviceId)
+	{
+		self::_deleteConfig($serviceId);
 	}
 
 	/**
@@ -39,29 +60,14 @@ class Services extends Settings {
 	 * @param $serviceId
 	 *
 	 * @return string
+	 * @throws InvalidService
 	 */
-	public static function getCarrierId($serviceId)
+	protected static function getConfigKey($serviceId)
 	{
-		return self::getConfig(self::getConfigKey($serviceId));
-	}
+		if (!array_key_exists($serviceId, self::$services)) {
+			throw new InvalidService($serviceId);
+		}
 
-	public static function setCarrierId($serviceId, $carrierId)
-	{
-		self::updateConfig(self::getConfigKey($serviceId), $carrierId);
-	}
-
-	public static function delete($serviceId)
-	{
-		self::deleteConfig(self::getConfigKey($serviceId));
-	}
-
-	/**
-	 * @param $serviceId
-	 *
-	 * @return string
-	 */
-	private static function getConfigKey($serviceId)
-	{
-		return 'SERVICE_CARRIER_ID_' . $serviceId;
+		return self::$serviceKey . $serviceId;
 	}
 }

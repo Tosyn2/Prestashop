@@ -5,8 +5,6 @@ use Mds\Prestashop\Exceptions\InvalidSurcharge;
 
 class Surcharge extends Settings {
 
-	protected static $surchargePrefix = 'SERVICE_SURCHARGE_';
-
 	/**
 	 * @param $serviceId
 	 *
@@ -14,7 +12,7 @@ class Surcharge extends Settings {
 	 */
 	public static function get($serviceId)
 	{
-		return (int) self::getConfig(self::getSurchargeKey($serviceId));
+		return (int) self::_getConfig($serviceId);
 	}
 
 	/**
@@ -26,12 +24,12 @@ class Surcharge extends Settings {
 		if (!is_numeric($value) || $value > 100 || $value < -100) {
 			throw new InvalidSurcharge($value);
 		}
-		self::updateConfig(self::getSurchargeKey($serviceId), $value);
+		self::_setConfig($value, $serviceId);
 	}
 
 	public static function delete($serviceId)
 	{
-		self::deleteConfig(self::getSurchargeKey($serviceId));
+		self::_deleteConfig($serviceId);
 	}
 
 	/**
@@ -40,12 +38,12 @@ class Surcharge extends Settings {
 	 * @return string
 	 * @throws InvalidService
 	 */
-	private static function getSurchargeKey($serviceId)
+	protected static function getConfigKey($serviceId)
 	{
 		if (!array_key_exists($serviceId, self::$services)) {
 			throw new InvalidService($serviceId);
 		}
 
-		return self::$surchargePrefix . (int) $serviceId;
+		return self::$surchargeKey . (int) $serviceId;
 	}
 }
