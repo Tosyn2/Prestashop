@@ -5,6 +5,7 @@ use Configuration;
 use Group;
 use Language;
 use Mds\Prestashop\Exceptions\UnableToUpdateConfiguration;
+use Mds\Prestashop\Exceptions\UnmetSystemRequirements;
 use Mds\Prestashop\Settings\Credentials;
 use Mds\Prestashop\Settings\RiskCover;
 use Mds\Prestashop\Settings\Service;
@@ -17,6 +18,7 @@ class Install extends Installer {
 
 	public function install()
 	{
+		$this->checkSystemRequirements();
 		$services = Service::getServices();
 		foreach ($services as $serviceId => $serviceName) {
 			$carrierId = $this->setupNewCarrier($serviceName);
@@ -30,6 +32,25 @@ class Install extends Installer {
 
 		$this->addIdMdsColumnToStatesTable();
 		$this->setZaContainsStates();
+	}
+
+	/**
+	 * @return array
+	 */
+	private function checkSystemRequirements()
+	{
+		$errors = array();
+		if (version_compare(PHP_VERSION, '5.3.0') < 0) {
+			$errors[] = 'MDS Collivery requires PHP 5.3 in order to run. Please upgrade before installing.';
+		}
+
+		if (!extension_loaded('soap')) {
+			$errors[] = 'MDS Collivery requires SOAP to be enabled on the server. Please make sure its enabled before installing.';
+		}
+
+		if (!empty($errors)) {
+			throw new UnmetSystemRequirements($errors);
+		}
 	}
 
 	private function setupNewCarrier($serviceName)

@@ -19,6 +19,7 @@ class MdsColliveryAutoloader {
 
 		// Exceptions
 		'Mds_ColliveryException'          => '\Mds\Prestashop\Exceptions\ColliveryException',
+		'Mds_UnmetSystemRequirements'     => '\Mds\Prestashop\Exceptions\UnmetSystemRequirements',
 		'Mds_InvalidData'                 => '\Mds\Prestashop\Exceptions\InvalidData',
 		'Mds_UnableToRegisterHook'        => '\Mds\Prestashop\Exceptions\UnableToRegisterHook',
 		'Mds_UnableToUpdateConfiguration' => '\Mds\Prestashop\Exceptions\UnableToUpdateConfiguration',

@@ -39,16 +39,6 @@ class Mds extends CarrierModule {
 	 */
 	public function install()
 	{
-		$warnings = $this->checkSystemRequirements();
-
-		if (!empty($warnings)) {
-			foreach ($warnings as $warning) {
-				echo "<p><strong>$warning</strong></p>";
-			}
-
-			return false;
-		}
-
 		try {
 			$installer = new Mds_Install($this->db);
 			$installer->install();
@@ -56,6 +46,9 @@ class Mds extends CarrierModule {
 				return false;
 			}
 			$this->registerHooks($installer->getHooks());
+		} catch (Mds_UnmetSystemRequirements $e) {
+			echo $this->displayError($e->getErrors());
+			return false;
 		} catch (Mds_ColliveryException $e) {
 			return false;
 		}
@@ -374,22 +367,4 @@ class Mds extends CarrierModule {
 	{
 		return Mds_Service::getServiceIdFromCarrierId($carrierId);
 	}
-
-	/**
-	 * @return array
-	 */
-	private function checkSystemRequirements()
-	{
-		$warnings = array();
-		if (version_compare(PHP_VERSION, '5.3.0') < 0) {
-			$warnings[] = 'Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.';
-		}
-
-		if (!extension_loaded('soap')) {
-			$warnings[] = 'Could not find PHP SOAP, please make sure its enabled before installing.';
-		}
-
-		return $warnings;
-	}
-
 }
