@@ -2,45 +2,39 @@
 
 use Carrier;
 use Configuration;
+use Mds\Prestashop\Settings\Credentials;
+use Mds\Prestashop\Settings\RiskCover;
+use Mds\Prestashop\Settings\Service;
+use Mds\Prestashop\Settings\Surcharge;
 
 class Uninstall extends Installer {
 
 	public function uninstall()
 	{
 		$this->deleteServicesConfig();
-		$this->deleteMdsConfig();
+		Credentials::delete();
+		RiskCover::delete();
 		$this->setCarriersDeleted();
 	}
 
 	private function deleteServicesConfig()
 	{
-		foreach ($this->services as $serviceId => $serviceName) {
-			$this->deleteConfig('MDS_SERVICE_SURCHARGE_' . $serviceId);
-			$carrierId = Configuration::get('MDS_SERVICE_CARRIER_ID_' . $serviceId);
+		$services = Service::getServices();
+		foreach ($services as $serviceId => $serviceName) {
+			Surcharge::delete($serviceId);
+			$carrierId = Service::getCarrierIdFromServiceId($serviceId);
 
 			if (Configuration::get('PS_CARRIER_DEFAULT') == $carrierId) {
 				$this->setDefaultCarrierToPsCarrier();
 			}
-			$this->deleteConfig('MDS_SERVICE_CARRIER_ID_' . $serviceId);
+			Service::delete($serviceId);
 		}
-	}
-
-	private function deleteConfig($key)
-	{
-		Configuration::deleteByName($key);
 	}
 
 	private function setCarriersDeleted()
 	{
 		$sql = 'UPDATE '. _DB_PREFIX_ .'carrier SET `deleted` = 1 WHERE `external_module_name` = "mds";';
 		$this->db->execute($sql);
-	}
-
-	private function deleteMdsConfig()
-	{
-		foreach ($this->config as $key => $value) {
-			$this->deleteConfig($key);
-		}
 	}
 
 	private function setDefaultCarrierToPsCarrier()

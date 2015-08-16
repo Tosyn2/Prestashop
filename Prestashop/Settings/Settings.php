@@ -25,4 +25,9 @@ abstract class Settings {
 		}
 	}
 
+	protected static function deleteConfig($key)
+	{
+		Configuration::deleteByName(self::$prefix . $key);
+	}
+
 }

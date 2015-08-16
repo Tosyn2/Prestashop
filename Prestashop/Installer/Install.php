@@ -5,6 +5,10 @@ use Configuration;
 use Group;
 use Language;
 use Mds\Prestashop\Exceptions\UnableToUpdateConfiguration;
+use Mds\Prestashop\Settings\Credentials;
+use Mds\Prestashop\Settings\RiskCover;
+use Mds\Prestashop\Settings\Service;
+use Mds\Prestashop\Settings\Surcharge;
 use RangePrice;
 use RangeWeight;
 use Zone;
@@ -13,16 +17,16 @@ class Install extends Installer {
 
 	public function install()
 	{
-		foreach ($this->services as $serviceId => $serviceName) {
+		$services = Service::getServices();
+		foreach ($services as $serviceId => $serviceName) {
 			$carrierId = $this->setupNewCarrier($serviceName);
 			$this->copyServiceLogos($serviceId, $carrierId);
-			$this->updateConfig("MDS_SERVICE_CARRIER_ID_{$serviceId}", $carrierId);
-			$this->updateConfig("MDS_SERVICE_SURCHARGE_{$serviceId}", '0');
+			Service::setCarrierId($serviceId, $carrierId);
+			Surcharge::setServiceSurcharge($serviceId, 10);
 		}
 
-		foreach ($this->config as $key => $value) {
-			$this->updateConfig($key, $value);
-		}
+		Credentials::update('api@collivery.co.za', 'api123');
+		RiskCover::set(false);
 
 		$this->addIdMdsColumnToStatesTable();
 		$this->setZaContainsStates();
@@ -199,13 +203,6 @@ class Install extends Installer {
 			),
 			true // Null Values
 		);
-	}
-
-	private function updateConfig($key, $value)
-	{
-		if (!Configuration::updateValue($key, $value)) {
-			throw new UnableToUpdateConfiguration();
-		}
 	}
 
 	/**

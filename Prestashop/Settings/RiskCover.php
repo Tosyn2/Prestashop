@@ -15,4 +15,9 @@ class RiskCover extends Settings {
 		$value = $value ? 1 : 0;
 		self::updateConfig('RISK', $value);
 	}
+
+	public static function delete()
+	{
+		self::deleteConfig('RISK');
+	}
 }

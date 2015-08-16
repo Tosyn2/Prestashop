@@ -26,4 +26,10 @@ class Credentials extends Settings {
 		self::updateConfig('PASSWORD', $password);
 	}
 
+	public static function delete()
+	{
+		self::deleteConfig('EMAIL');
+		self::deleteConfig('PASSWORD');
+	}
+
 }

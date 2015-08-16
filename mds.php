@@ -288,17 +288,17 @@ class Mds extends CarrierModule {
 	{
 		try {
 			$orderParams = $this->buildColliveryGetPriceArray($params);
-			$service = $this->getServiceFromCarrierId($this->id_carrier);
-			$orderParams['service'] = $service;
+			$serviceId = $this->getServiceFromCarrierId($this->id_carrier);
+			$orderParams['service'] = $serviceId;
 
-			if (Configuration::get('MDS_RISK') == 1) {
+			if (Mds_RiskCover::hasCover()) {
 				$orderParams['cover'] = 1;
 			}
 
 			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
 
-			$price = Configuration::get('MDS_SERVICE_SURCHARGE_' . $service) + $colliveryPrice;
+			$price = Mds_Surcharge::getServiceSurcharge($serviceId) + $colliveryPrice;
 
 			return $shipping_cost + $price;
 		} catch (Mds_InvalidData $e) {
@@ -336,7 +336,7 @@ class Mds extends CarrierModule {
 		if ($params['newOrderStatus']->name == 'Shipped') {
 			try {
 				$orderParams = $this->buildColliveryDataArray($params);
-				if (Configuration::get('MDS_RISK') == 1) {
+				if (Mds_RiskCover::hasCover()) {
 					$orderParams['cover'] = 1;
 				}
 

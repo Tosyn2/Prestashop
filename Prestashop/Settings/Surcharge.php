@@ -10,7 +10,7 @@ class Surcharge extends Settings {
 	/**
 	 * @param $serviceId
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public static function getServiceSurcharge($serviceId)
 	{
@@ -27,6 +27,11 @@ class Surcharge extends Settings {
 			throw new InvalidSurcharge($value);
 		}
 		self::updateConfig(self::getSurchargeKey($serviceId), $value);
+	}
+
+	public static function delete($serviceId)
+	{
+		self::deleteConfig(self::getSurchargeKey($serviceId));
 	}
 
 	/**

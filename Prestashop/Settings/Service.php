@@ -45,6 +45,16 @@ class Service extends Settings {
 		return self::getConfig(self::getCarrierKey($serviceId));
 	}
 
+	public static function setCarrierId($serviceId, $carrierId)
+	{
+		self::updateConfig(self::getCarrierKey($serviceId), $carrierId);
+	}
+
+	public static function delete($serviceId)
+	{
+		self::deleteConfig(self::getCarrierKey($serviceId));
+	}
+
 	/**
 	 * @param $serviceId
 	 *
