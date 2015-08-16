@@ -2,6 +2,13 @@
 
 class View {
 
+	public static function make($path, $data)
+	{
+		$view = new self;
+
+		return $view->generate($path, $data);
+	}
+
 	/**
 	 * Get the evaluated contents of the view at the given path.
 	 *
@@ -11,7 +18,7 @@ class View {
 	 * @return string
 	 * @throws \Exception
 	 */
-	public static function make($__path, $__data)
+	protected function generate($__path, $__data)
 	{
 		$__path = _MDS_DIR_ .'/views/'. $__path .'.php';
 		$__obLevel = ob_get_level();
