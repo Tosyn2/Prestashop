@@ -7,12 +7,31 @@ if (!defined('_PS_VERSION_')) {
 
 define('_MDS_DIR_', __DIR__);
 
+// Hack for "use" statements
+$colliveryClassMap = array(
+	'Mds_View'                        => '\Mds\Prestashop\Helpers\View',
+	'Mds_ColliveryApi'                => '\Mds\Prestashop\Collivery\ColliveryApi',
+	'Mds_Install'                     => '\Mds\Prestashop\Installer\Install',
+	'Mds_Uninstall'                   => '\Mds\Prestashop\Installer\Uninstall',
+	'Mds_Service'                     => '\Mds\Prestashop\Settings\Service',
+	'Mds_SettingsService'             => '\Mds\Prestashop\Settings\SettingsService',
+
+	// Exceptions
+	'Mds_ColliveryException'          => '\Mds\Prestashop\Exceptions\ColliveryException',
+	'Mds_InvalidData'                 => '\Mds\Prestashop\Exceptions\InvalidData',
+	'Mds_UnableToRegisterHook'        => '\Mds\Prestashop\Exceptions\UnableToRegisterHook',
+	'Mds_UnableToUpdateConfiguration' => '\Mds\Prestashop\Exceptions\UnableToUpdateConfiguration',
+	'Mds_InvalidCredentials'          => '\Mds\Prestashop\Collivery\InvalidCredentials',
+);
+
 spl_autoload_register(
-	function ($class) {
+	function ($class) use ($colliveryClassMap) {
 		$classParts = explode('\\', $class);
 		$vendor = array_shift($classParts);
 		if ($vendor === 'Mds') {
 			require _MDS_DIR_ . '/' . implode('/', $classParts) . '.php';
+		} elseif (array_key_exists($class, $colliveryClassMap)) {
+			class_alias($colliveryClassMap[$class], $class);
 		}
 	},
 	true
@@ -57,7 +76,7 @@ class Mds extends CarrierModule {
 		$settings = array();
 
 		$this->mdsService = \Mds\MdsColliveryService::getInstance($settings);
-		$this->collivery = \Mds\Prestashop\Collivery\ColliveryApi::getInstance();
+		$this->collivery = Mds_ColliveryApi::getInstance();
 	}
 
 	/**
@@ -76,13 +95,13 @@ class Mds extends CarrierModule {
 		}
 
 		try {
-			$installer = new Mds\Prestashop\Installer\Install();
+			$installer = new Mds_Install();
 			$installer->install();
 			if (!parent::install()) {
 				return false;
 			}
 			$this->registerHooks($installer->getHooks());
-		} catch (\Mds\Prestashop\Exceptions\ColliveryException $e) {
+		} catch (Mds_ColliveryException $e) {
 			return false;
 		}
 
@@ -99,7 +118,7 @@ class Mds extends CarrierModule {
 	{
 		foreach ($hooks as $hook) {
 			if (!$this->registerHook($hook)) {
-				throw new \Mds\Prestashop\Exceptions\UnableToRegisterHook();
+				throw new Mds_UnableToRegisterHook();
 			}
 		}
 	}
@@ -116,9 +135,9 @@ class Mds extends CarrierModule {
 		}
 
 		try {
-			$installer = new Mds\Prestashop\Installer\Uninstall();
+			$installer = new Mds_Uninstall();
 			$installer->uninstall();
-		} catch (\Mds\Prestashop\Exceptions\UnableToUpdateConfiguration $e) {
+		} catch (Mds_UnableToUpdateConfiguration $e) {
 			return false;
 		}
 
@@ -164,7 +183,7 @@ class Mds extends CarrierModule {
 
 		$errors = array();
 
-		$settingsService = new \Mds\Prestashop\Settings\SettingsService();
+		$settingsService = new Mds_SettingsService();
 
 		if (!empty($_POST) AND Tools::isSubmit('submitSave')) {
 			$errors = $settingsService->store($_POST);
@@ -176,13 +195,13 @@ class Mds extends CarrierModule {
 
 		try {
 			$settingsService->testCurrentCredentials();
-		} catch (\Mds\Prestashop\Collivery\InvalidCredentials $e) {
+		} catch (Mds_InvalidCredentials $e) {
 			$errors[] = 'Current Collivery credentials are invalid, plugin not operational';
 		}
 
 		$errors = empty($errors) ? '' : $this->displayError($errors);
 
-		return \Mds\Prestashop\Helpers\View::make(
+		return Mds_View::make(
 			'settings',
 			compact('displayName', 'formUrl', 'errors', 'surcharges', 'email', 'riskCover')
 		);
@@ -329,7 +348,7 @@ class Mds extends CarrierModule {
 			$price = Configuration::get('MDS_SERVICE_SURCHARGE_' . $service) + $colliveryPrice;
 
 			return $shipping_cost + $price;
-		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
+		} catch (Mds_InvalidData $e) {
 			return false;
 		}
 	}
@@ -369,7 +388,7 @@ class Mds extends CarrierModule {
 				}
 
 				return $this->mdsService->addCollivery($orderParams, true);
-			} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
+			} catch (Mds_InvalidData $e) {
 				return false;
 			}
 		}
@@ -390,7 +409,7 @@ class Mds extends CarrierModule {
 
 		$this->context->controller->addJS(($this->_path) . 'helper.js');
 
-		return \Mds\Prestashop\Helpers\View::make(
+		return Mds_View::make(
 			'footer',
 			compact('suburbs', 'suburb', 'locationTypes', 'locationType')
 		);
@@ -398,7 +417,7 @@ class Mds extends CarrierModule {
 
 	protected function getServiceFromCarrierId($carrierId)
 	{
-		return \Mds\Prestashop\Settings\Service::getServiceIdFromCarrierId($carrierId);
+		return Mds_Service::getServiceIdFromCarrierId($carrierId);
 	}
 
 	/**
