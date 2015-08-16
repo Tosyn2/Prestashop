@@ -54,25 +54,6 @@ class Mds extends CarrierModule {
 		$this->displayName = $this->l('MDS Collivery');
 		$this->description = $this->l('Offer your customers, different delivery methods that you want');
 
-		if (self::isInstalled($this->name)) {
-			// Getting carrier list
-			global $cookie;
-			$carriers = Carrier::getCarriers(
-				$cookie->id_lang,
-				true,
-				false,
-				false,
-				null,
-				PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE
-			);
-
-			// Saving id carrier list
-			$id_carrier_list = array();
-			foreach ($carriers as $carrier) {
-				$id_carrier_list[] .= $carrier['id_carrier'];
-			}
-		}
-
 		$settings = array();
 
 		$this->mdsService = \Mds\MdsColliveryService::getInstance($settings);
