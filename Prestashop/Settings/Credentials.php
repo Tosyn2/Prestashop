@@ -5,12 +5,12 @@ use Mds\Prestashop\Exceptions\InvalidEmail;
 
 class Credentials extends Settings {
 
-	public static function getColliveryEmail()
+	public static function getEmail()
 	{
 		return self::getConfig('EMAIL');
 	}
 
-	public static function getColliveryPassword()
+	public static function getPassword()
 	{
 		return self::getConfig('PASSWORD');
 	}

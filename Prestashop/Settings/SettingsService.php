@@ -24,7 +24,7 @@ class SettingsService {
 
 	public function getColliveryEmail()
 	{
-		return Credentials::getColliveryEmail();
+		return Credentials::getEmail();
 	}
 
 	public function hasRiskCover()
@@ -34,8 +34,8 @@ class SettingsService {
 
 	public function testCurrentCredentials()
 	{
-		$email = Credentials::getColliveryEmail();
-		$password = Credentials::getColliveryPassword();
+		$email = Credentials::getEmail();
+		$password = Credentials::getPassword();
 
 		ColliveryApi::testAuthentication($email, $password);
 	}
@@ -48,7 +48,7 @@ class SettingsService {
 
 		$this->updateSurcharges($data['surcharge']);
 
-		RiskCover::setColliveryRiskCover(!empty($data['risk-cover']));
+		RiskCover::set(!empty($data['risk-cover']));
 
 		return $this->errors;
 	}

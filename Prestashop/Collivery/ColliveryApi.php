@@ -14,8 +14,8 @@ class ColliveryApi {
 	{
 		if (!self::$instance) {
 			$settings = array(
-				'user_email' => Credentials::getColliveryEmail(),
-				'user_password' => Credentials::getColliveryPassword(),
+				'user_email' => Credentials::getEmail(),
+				'user_password' => Credentials::getPassword(),
 			);
 			self::$instance = new Collivery($settings);
 		}
