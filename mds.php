@@ -380,7 +380,7 @@ class Mds extends CarrierModule {
 	 */
 	private function checkSystemRequirements()
 	{
-		$warnings = [];
+		$warnings = array();
 		if (version_compare(PHP_VERSION, '5.3.0') < 0) {
 			$warnings[] = 'Your PHP version is not able to run this plugin, update to the latest version before installing this plugin.';
 		}
