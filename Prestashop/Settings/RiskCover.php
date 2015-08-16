@@ -13,6 +13,6 @@ class RiskCover extends Settings {
 	public static function set($value)
 	{
 		$value = $value ? 1 : 0;
-		return self::updateConfig('RISK', $value);
+		self::updateConfig('RISK', $value);
 	}
 }
