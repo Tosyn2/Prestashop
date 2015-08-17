@@ -135,7 +135,11 @@ class Mds extends CarrierModule {
 		$settingsService = new Mds_SettingsService();
 
 		if (!empty($_POST) AND Tools::isSubmit('submitSave')) {
-			$errors = $settingsService->store($_POST);
+			try {
+				$errors = $settingsService->store($_POST);
+			} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
+				$errors[] = $e->getMessage();
+			}
 		}
 
 		$surcharges = $settingsService->getSurchargesInfo();
