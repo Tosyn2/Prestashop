@@ -12,7 +12,7 @@ class MdsColliveryAutoloader {
 		'Mds_ColliveryApi'                => '\Mds\Prestashop\Collivery\ColliveryApi',
 		'Mds_Install'                     => '\Mds\Prestashop\Installer\Install',
 		'Mds_Uninstall'                   => '\Mds\Prestashop\Installer\Uninstall',
-		'Mds_Service'                     => '\Mds\Prestashop\Settings\Service',
+		'Mds_Services'                     => '\Mds\Prestashop\Settings\Services',
 		'Mds_Surcharge'                   => '\Mds\Prestashop\Settings\Surcharge',
 		'Mds_RiskCover'                   => '\Mds\Prestashop\Settings\RiskCover',
 		'Mds_SettingsService'             => '\Mds\Prestashop\Settings\SettingsService',
