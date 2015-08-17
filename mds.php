@@ -294,7 +294,8 @@ class Mds extends CarrierModule {
 			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
 
-			$price = Mds_Surcharge::get($serviceId) + $colliveryPrice;
+			$surchargePerc = Mds_Surcharge::get($serviceId);
+			$price = $colliveryPrice * (1 + ($surchargePerc / 100));
 
 			return $shipping_cost + $price;
 		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
