@@ -16,17 +16,9 @@ class MdsColliveryAutoloader {
 		'Mds_Surcharge'                   => '\Mds\Prestashop\Settings\Surcharge',
 		'Mds_RiskCover'                   => '\Mds\Prestashop\Settings\RiskCover',
 		'Mds_SettingsService'             => '\Mds\Prestashop\Settings\SettingsService',
-
-		// Exceptions
-		'Mds_ColliveryException'          => '\Mds\Prestashop\Exceptions\ColliveryException',
-		'Mds_UnmetSystemRequirements'     => '\Mds\Prestashop\Exceptions\UnmetSystemRequirements',
-		'Mds_InvalidData'                 => '\Mds\Prestashop\Exceptions\InvalidData',
-		'Mds_UnableToRegisterHook'        => '\Mds\Prestashop\Exceptions\UnableToRegisterHook',
-		'Mds_UnableToUpdateConfiguration' => '\Mds\Prestashop\Exceptions\UnableToUpdateConfiguration',
-		'Mds_InvalidCredentials'          => '\Mds\Prestashop\Collivery\InvalidCredentials',
 	);
 
-	public static function autoload ($class)
+	public static function autoload($class)
 	{
 		$classParts = explode('\\', $class);
 		$vendor = array_shift($classParts);

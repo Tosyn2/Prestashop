@@ -8,9 +8,3 @@ class Mds_Services extends \Mds\Prestashop\Settings\Services {}
 class Mds_Surcharge extends Mds\Prestashop\Settings\Surcharge {}
 class Mds_RiskCover extends \Mds\Prestashop\Settings\RiskCover {}
 class Mds_SettingsService extends \Mds\Prestashop\Settings\SettingsService {}
-class Mds_ColliveryException extends \Mds\Prestashop\Exceptions\ColliveryException {}
-class Mds_UnmetSystemRequirements extends \Mds\Prestashop\Exceptions\UnmetSystemRequirements {}
-class Mds_InvalidData extends \Mds\Prestashop\Exceptions\InvalidData {}
-class Mds_UnableToRegisterHook extends \Mds\Prestashop\Exceptions\UnableToRegisterHook {}
-class Mds_UnableToUpdateConfiguration extends \Mds\Prestashop\Exceptions\UnableToUpdateConfiguration {}
-class Mds_InvalidCredentials extends \Mds\Prestashop\Collivery\InvalidCredentials {}

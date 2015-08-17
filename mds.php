@@ -52,10 +52,10 @@ class Mds extends CarrierModule {
 				return false;
 			}
 			$this->registerHooks();
-		} catch (Mds_UnmetSystemRequirements $e) {
+		} catch (\Mds\Prestashop\Exceptions\UnmetSystemRequirements $e) {
 			echo $this->displayError($e->getErrors());
 			return false;
-		} catch (Mds_ColliveryException $e) {
+		} catch (\Mds\Prestashop\Exceptions\ColliveryException $e) {
 			return false;
 		}
 
@@ -88,7 +88,7 @@ class Mds extends CarrierModule {
 		try {
 			$installer = new Mds_Uninstall($this->db);
 			$installer->uninstall();
-		} catch (Mds_UnableToUpdateConfiguration $e) {
+		} catch (\Mds\Prestashop\Exceptions\UnableToUpdateConfiguration $e) {
 			return false;
 		}
 
@@ -144,7 +144,7 @@ class Mds extends CarrierModule {
 
 		try {
 			$settingsService->testCurrentCredentials();
-		} catch (Mds_InvalidCredentials $e) {
+		} catch (\Mds\Prestashop\Collivery\InvalidCredentials $e) {
 			$errors[] = 'Current Collivery credentials are invalid, plugin not operational';
 		}
 
@@ -297,7 +297,7 @@ class Mds extends CarrierModule {
 			$price = Mds_Surcharge::get($serviceId) + $colliveryPrice;
 
 			return $shipping_cost + $price;
-		} catch (Mds_InvalidData $e) {
+		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 			return false;
 		}
 	}
@@ -337,7 +337,7 @@ class Mds extends CarrierModule {
 				}
 
 				return $this->mdsService->addCollivery($orderParams, true);
-			} catch (Mds_InvalidData $e) {
+			} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 				return false;
 			}
 		}
