@@ -32,6 +32,7 @@ class Install extends Installer {
 
 		$this->addIdMdsColumnToStatesTable();
 		$this->setZaContainsStates();
+		$this->addMdsTransactionTable();
 	}
 
 	/**
