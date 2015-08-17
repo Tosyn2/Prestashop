@@ -14,6 +14,12 @@ class Mds extends CarrierModule {
 	public $id_carrier;
 	protected $db;
 
+	protected $hooks = array(
+		'displayFooter',
+		'actionOrderStatusPostUpdate',
+		'displayShoppingCart'
+	);
+
 	public function __construct()
 	{
 		$this->name = 'mds';
@@ -45,7 +51,7 @@ class Mds extends CarrierModule {
 			if (!parent::install()) {
 				return false;
 			}
-			$this->registerHooks($installer->getHooks());
+			$this->registerHooks();
 		} catch (Mds_UnmetSystemRequirements $e) {
 			echo $this->displayError($e->getErrors());
 			return false;
@@ -57,14 +63,11 @@ class Mds extends CarrierModule {
 	}
 
 	/**
-	 * @param $hooks
-	 *
-	 * @return bool
 	 * @throws \PrestaShopException
 	 */
-	private function registerHooks($hooks)
+	private function registerHooks()
 	{
-		foreach ($hooks as $hook) {
+		foreach ($this->hooks as $hook) {
 			if (!$this->registerHook($hook)) {
 				throw new Mds_UnableToRegisterHook();
 			}
@@ -89,7 +92,7 @@ class Mds extends CarrierModule {
 			return false;
 		}
 
-		if ($this->unregisterHooks($installer->getHooks()) === false) {
+		if ($this->unregisterHooks() === false) {
 			return false;
 		}
 
@@ -98,14 +101,12 @@ class Mds extends CarrierModule {
 	}
 
 	/**
-	 * @param $hooks
-	 *
 	 * @return bool
 	 * @throws \PrestaShopException
 	 */
-	private function unregisterHooks($hooks)
+	private function unregisterHooks()
 	{
-		foreach ($hooks as $hook) {
+		foreach ($this->hooks as $hook) {
 			if (!$this->registerHook($hook)) {
 				return false;
 			}
