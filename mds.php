@@ -144,7 +144,7 @@ class Mds extends CarrierModule {
 
 		$surcharges = $settingsService->getSurchargesInfo();
 		$email = $settingsService->getColliveryEmail();
-		$riskCover = $settingsService->hasRiskCover();
+		$riskCover = Mds_RiskCover::hasCover();
 
 		try {
 			$settingsService->testCurrentCredentials();

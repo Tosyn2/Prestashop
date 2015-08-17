@@ -27,11 +27,6 @@ class SettingsService {
 		return Credentials::getEmail();
 	}
 
-	public function hasRiskCover()
-	{
-		return RiskCover::hasCover();
-	}
-
 	public function testCurrentCredentials()
 	{
 		$email = Credentials::getEmail();
