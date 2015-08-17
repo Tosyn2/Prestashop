@@ -18,13 +18,13 @@
 		<?php foreach ($surcharges as $serviceId => $data): ?>
 			<div class="form-group">
 				<label><?= $data['name'] ?> (%):</label>
-				<input class="form-control" type="text" name="surcharge[<?= $serviceId ?>]" value="<?= $data['value'] ?>">
+				<input class="form-control" type="number" name="surcharge[<?= $serviceId ?>]" value="<?= $data['value'] ?>">
 			</div>
 		<?php endforeach; ?>
 
 		<div class="form-group">
 			<label for="collivery-email">Email:</label>
-			<input id="collivery-email" class="form-control" type="text" name="email" value="<?= $email ?>">
+			<input id="collivery-email" class="form-control" type="email" name="email" value="<?= $email ?>">
 		</div>
 
 		<div class="form-group">
