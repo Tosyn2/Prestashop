@@ -34,11 +34,6 @@ class MdsColliveryService
 	var $settings;
 
 	/**
-	 * @type
-	 */
-//	var $WC_MDS_Collivery;
-
-	/**
 	 * @param array $settings
 	 * @return MdsColliveryService
 	 * @throws Exception
@@ -62,46 +57,6 @@ class MdsColliveryService
 
 		$this->collivery = ColliveryApi::getInstance();
 	}
-
-	/**
-	 * Work through our shopping cart
-	 * Convert lengths and weights to desired unit
-	 *
-	 * @param $package
-	 * @return null|array
-	 */
-
-
-	/**
-	 * Validate the package before using the package to get prices
-	 *
-	 * @param $package
-	 * @return bool
-	 */
-
-
-	/**
-	 * Used to build the package for use out of the shipping class
-	 *
-	 * @return array
-	 */
-
-
-	/**
-	 * Work through our order items and return an array of parcels
-	 *
-	 * @param $items
-	 * @return array
-	 */
-
-
-	/**
-	 * @param WC_Order $order
-	 * @param $message
-	 * @param $processing
-	 * @param null $status
-	 */
-
 
 	/**
 	 * Adds the delivery request to MDS Collivery
@@ -181,11 +136,6 @@ class MdsColliveryService
 
 		return $this->collivery->validate($array);
 	}
-
-	/**
-	 * @param $order_id
-	 * @param bool $processing
-	 */
 
 	/**
 	 * Adds an address to MDS Collivery
