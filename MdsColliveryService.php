@@ -256,16 +256,16 @@ class MdsColliveryService
 
 
 		// Before adding an address lets search MDS and see if we have already added this address
-		$searchAddresses = $this->searchAndMatchAddress([
+		$searchAddresses = $this->searchAndMatchAddress(array(
 			'custom_id' => 'new_test_custom_id',
 			'suburb_id' => $suburb_id,
 			'town_id' => $town_id,
-		], $newAddress);
+		), $newAddress);
 
 		if (is_array($searchAddresses)) {
 			return $searchAddresses;
 		} else {
-			$this->cache->clear(['addresses', 'contacts']);
+			$this->cache->clear(array('addresses', 'contacts'));
 			return $this->collivery->addAddress($newAddress);
 		}
 	}
