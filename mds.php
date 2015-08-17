@@ -19,7 +19,7 @@ class Mds extends CarrierModule {
 		'actionOrderStatusPostUpdate',
 		'displayShoppingCart',
 		'displayAdminOrder'
-		'displayShoppingCart'
+		
 	);
 
 	public function __construct()
@@ -368,6 +368,16 @@ class Mds extends CarrierModule {
 		return Mds_View::make(
 			'footer',
 			compact('suburbs', 'suburb', 'locationTypes', 'locationType')
+		);
+	}
+	
+	
+	public function hookDisplayAdminOrder($params)
+	{
+
+		return Mds_View::make(
+			'shipping_control'//,
+			//compact('suburbs', 'suburb', 'locationTypes', 'locationType')
 		);
 	}
 
