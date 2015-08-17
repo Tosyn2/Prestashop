@@ -17,6 +17,8 @@ class Mds extends CarrierModule {
 	protected $hooks = array(
 		'displayFooter',
 		'actionOrderStatusPostUpdate',
+		'displayShoppingCart',
+		'displayAdminOrder'
 		'displayShoppingCart'
 	);
 
