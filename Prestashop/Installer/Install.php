@@ -244,6 +244,26 @@ class Install extends Installer {
 	}
 
 	/**
+	 * @return string
+	 */
+	private function addMdsTransactionTable()
+	{
+		$sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mds_collivery_processed` (
+						`id` int(11) NOT NULL AUTO_INCREMENT,
+						`waybill` int(11) NOT NULL,
+						`order_id` int(11) NOT NULL,
+						`validation_results` TEXT NOT NULL,
+						`status` int(1) NOT NULL DEFAULT 1,
+						PRIMARY KEY (`id`)
+						) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
+		$this->db->execute($sql);
+		return $sql;
+
+	}
+	
+			
+
+	/**
 	 * @param $serviceId
 	 * @param $carrierId
 	 */
