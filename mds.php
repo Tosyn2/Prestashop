@@ -387,7 +387,6 @@ class Mds extends CarrierModule {
 			(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\', \'' . $carrierName . '\')';
 			$this->db->execute($sql);
 			
-		//die($carrierName);
 
 	}
 	
@@ -396,8 +395,6 @@ class Mds extends CarrierModule {
 	{
 	
 		
-
-		echo '<h1>' .$params['id_order'] . '</h1>';
 		$sql = 'SELECT `ps_address_id` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
 		$deliveryAddressId = $this->db->getValue($sql);
 		
@@ -407,8 +404,6 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT `service_id` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
 		$serviceId = $this->db->getValue($sql);
 		
-		$deliveryAddressId;
-		$orderId = $params['id_order'];
 		
 		
 		return Mds_View::make(
