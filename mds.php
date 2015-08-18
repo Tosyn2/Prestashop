@@ -404,11 +404,14 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT `service_id` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
 		$serviceId = $this->db->getValue($sql);
 		
+		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_customer` = ' . $params[cart]->id_customer;
+		$deliveryAddresses = $this->db->ExecuteS($sql);
 		
-		
+		$orderId = $params['id_order'];
+
 		return Mds_View::make(
 			'shipping_control',
-			compact('deliveryAddressId', 'orderId', 'carrierName', 'serviceId')
+			compact('deliveryAddressId', 'orderId', 'carrierName', 'serviceId','deliveryAddresses')
 		);
 		
 	}
