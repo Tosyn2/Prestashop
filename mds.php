@@ -19,6 +19,7 @@ class Mds extends CarrierModule {
 		'actionOrderStatusPostUpdate',
 		'displayShoppingCart',
 		'displayAdminOrder'
+		'orderConfirmation'
 		
 	);
 
@@ -371,10 +372,22 @@ class Mds extends CarrierModule {
 		);
 	}
 	
+	public function hookOrderConfirmation($params)
+	{
+		$orderId = $params[objOrder]->id;
+		$deliveryAddressId = $params[objOrder]->id_address_delivery;
+		$carrierID = $params[objOrder]->id_carrier;
+		
+		
+		
+		die(print_r($params[objOrder]->id_carrier));
+	}
+	
 	
 	public function hookDisplayAdminOrder($params)
 	{
 
+		echo '<h1>' .$params['id_order'] . '</h1>';
 		return Mds_View::make(
 			'shipping_control'//,
 			//compact('suburbs', 'suburb', 'locationTypes', 'locationType')
