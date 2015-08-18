@@ -376,10 +376,17 @@ class Mds extends CarrierModule {
 	{
 		$orderId = $params[objOrder]->id;
 		$deliveryAddressId = $params[objOrder]->id_address_delivery;
-		$carrierID = $params[objOrder]->id_carrier;
 		
+		$carrierId = $params[objOrder]->id_carrier;
+		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'carrier` WHERE `id_carrier` = ' . $carrierId;
+		$carrierName = $this->db->getValue($sql);
+		$serviceId = $this->getServiceFromCarrierId($carrierId);
 		
-		
+		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(order_id,ps_address_id,service_id)
+			VALUES
+			(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\')';
+			$this->db->execute($sql);
+
 	}
 	
 	
