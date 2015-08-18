@@ -380,7 +380,6 @@ class Mds extends CarrierModule {
 		
 		
 		
-		die(print_r($params[objOrder]->id_carrier));
 	}
 	
 	
