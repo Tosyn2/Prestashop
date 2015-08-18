@@ -18,7 +18,7 @@ class Mds extends CarrierModule {
 		'displayFooter',
 		'actionOrderStatusPostUpdate',
 		'displayShoppingCart',
-		'displayAdminOrder'
+		'displayAdminOrder',
 		'orderConfirmation'
 		
 	);
