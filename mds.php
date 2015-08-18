@@ -382,22 +382,40 @@ class Mds extends CarrierModule {
 		$carrierName = $this->db->getValue($sql);
 		$serviceId = $this->getServiceFromCarrierId($carrierId);
 		
-		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(order_id,ps_address_id,service_id)
+		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(order_id,ps_address_id,service_id,service_name)
 			VALUES
-			(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\')';
+			(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\', \'' . $carrierName . '\')';
 			$this->db->execute($sql);
+			
+		//die($carrierName);
 
 	}
 	
 	
 	public function hookDisplayAdminOrder($params)
 	{
+	
+		
 
 		echo '<h1>' .$params['id_order'] . '</h1>';
+		$sql = 'SELECT `ps_address_id` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
+		$deliveryAddressId = $this->db->getValue($sql);
+		
+		$sql = 'SELECT `service_name` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
+		$carrierName = $this->db->getValue($sql);
+		
+		$sql = 'SELECT `service_id` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
+		$serviceId = $this->db->getValue($sql);
+		
+		$deliveryAddressId;
+		$orderId = $params['id_order'];
+		
+		
 		return Mds_View::make(
-			'shipping_control'//,
-			//compact('suburbs', 'suburb', 'locationTypes', 'locationType')
+			'shipping_control',
+			compact('deliveryAddressId', 'orderId', 'carrierName', 'serviceId')
 		);
+		
 	}
 
 	protected function getServiceFromCarrierId($carrierId)
