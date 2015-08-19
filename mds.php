@@ -409,6 +409,7 @@ class Mds extends CarrierModule {
 		
 		$orderId = $params['id_order'];
 
+		global $token;
 		return Mds_View::make(
 			'shipping_control',
 			compact('deliveryAddressId', 'orderId', 'carrierName', 'serviceId','deliveryAddresses')
