@@ -48,6 +48,9 @@
 	})
 </script>
 
+								<?php $sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'state` WHERE `id_state` = ' . $deliveryAddress['id_state'];
+								$stateName = Db::getInstance()->getValue($sql); ?>
+								<?= $stateName ?>
 						<?php foreach ($deliveryAddresses as $deliveryAddress):
 						 if ($deliveryAddress['id_address'] == $deliveryAddressId)
 						 {
