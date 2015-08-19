@@ -48,6 +48,25 @@
 	})
 </script>
 
+						<?php foreach ($deliveryAddresses as $deliveryAddress):
+						 if ($deliveryAddress['id_address'] == $deliveryAddressId)
+						 {
+						 ?>
+						  <a class="btn btn-default pull-right" href="?controller=adminaddresses&amp;id_address=<?=$deliveryAddress['id_address']?>&amp;updateaddress&amp;token=<?= $token ?>">
+							<i class="icon-pencil"></i>
+							Edit
+						</a>
+						<?php
+						   echo
+						   $deliveryAddress['alias'] . "<br>" .
+						   $deliveryAddress['address1']  . "<br>" .
+						   $deliveryAddress['city']  . "<br>" .
+						   $stateName ;
+						 }
+
+						?>
+
+						<?php endforeach; ?>
 <script type="text/javascript">
 	var geocoder = new google.maps.Geocoder();
 	var delivery_map, invoice_map;
