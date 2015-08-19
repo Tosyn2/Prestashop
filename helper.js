@@ -35,26 +35,24 @@ function addDropDownSuburb(suburbs , suburb)
 
 
 
-// function addDropDownSuburbs(suburbs)
-// {
-// 	var text = '';
-// 
-// 	for (var key in suburbs) {
-// 		if (suburbs.hasOwnProperty(key)) {
-// 			text += '<option value="' + suburbs[key] + '">' + suburbs[key] + '</option>';
-// 		}
-// 	}
-// 	
-// 	$("#conf_id_PS_SHOP_CITY")
-// 		.replaceWith(
-// 		'<label class="control-label col-lg-3"> Suburb </label>' +
-// 		'<select id="conf_id_PS_SHOP_CITY" name="PS_SHOP_CITY" >' +
-// 		'<option value="">-</option>' + text +
-// 		'</select>');
-// 		
-// 		
-// 
-// }
+function addDropDownSuburbs(suburbs)
+{
+	var text = '';
+
+	for (var key in suburbs) {
+		if (suburbs.hasOwnProperty(key)) {
+			text += '<option value="' + suburbs[key] + '">' + suburbs[key] + '</option>';
+		}
+	}
+
+	$("#conf_id_PS_SHOP_CITY")
+		.replaceWith(
+		'<label class="control-label col-lg-3"> Suburb </label>' +
+		'<select id="conf_id_PS_SHOP_CITY" name="PS_SHOP_CITY" >' +
+		'<option value="">-</option>' + text +
+		'</select>');
+
+}
 
 
 
