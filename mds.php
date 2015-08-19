@@ -410,9 +410,22 @@ class Mds extends CarrierModule {
 		$orderId = $params['id_order'];
 
 		global $token;
+		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $deliveryAddressId;
+		$address = $this->db->getRow($sql);
+
+		$suburb = $address['city'];
+		$suburbs = $this->collivery->getSuburbs('');
+
+
+		$locationType = $address['address2'];
+		$locationTypes = $this->collivery->getLocationTypes();
+
+		$countryName = "South Africa";
+
+		$this->context->controller->addJS(($this->_path) . 'helper.js');
 		return Mds_View::make(
 			'shipping_control',
-			compact('deliveryAddressId', 'orderId', 'carrierName', 'serviceId','deliveryAddresses')
+			compact('deliveryAddressId', 'orderId', 'carrierName', 'serviceId','deliveryAddresses','suburb','suburbs','locationType','locationTypes','countryName','token')
 		);
 		
 	}
