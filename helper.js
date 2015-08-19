@@ -23,8 +23,6 @@ function addDropDownSuburb(suburbs , suburb)
 			text += '<option value="' + suburbs[key] + '">' + suburbs[key] + '</option>';
 		}
 	}
-	
-	console.log(suburb);
 
 	$("#city")
 		.replaceWith( '<select id="city" name="city" class="form-control">' 
@@ -99,43 +97,4 @@ function addDropDownLocationTypes(location_types)
 
 }
 
-
-// function addMdsShippingAdminOrder()
-// {
-// 	
-// var node = document.createElement("LI");                 // Create a <li> node
-// var textnode = document.createTextNode("MDS Shipping");         // Create a text node
-// node.appendChild(textnode);                              // Append the text to <li>
-// document.getElementById("myTab").appendChild(node);     // Append <li> to <ul> with id="myList"
-// 	
-// }
-
-function displayMdsShippingTabAdminOrder()
-{
-//	$("ul").prepend ('<li><a href="#mds"><i class="icon-truck "></i> MDS Shipping</a></li>');
-
-	
-		$("#myTab").prepend ('<li><a href="#mds"><i class="icon-truck "></i> MDS Shipping</a></li>');
-
-	
- //	$(".tab-content").prepend ('<div class="tab-pane" id="mds"> <p>Yellow</p></div>');
-
-
-	
-}
-
-function displayMdsShippingTabContentAdminOrder()
-{
-//	$("ul").prepend ('<li><a href="#mds"><i class="icon-truck "></i> MDS Shipping</a></li>');
-
-	
-	//	$("#myTab").prepend ('<li><a href="#mds"><i class="icon-truck "></i> MDS Shipping</a></li>');
-// var textnode = document.createTextNode("<div class=\"tab-pane\" id=\"mds\"> <p>Yellow</p></div>");
-// node.appendChild(textnode);  
-	
- 	$(".tab-content panel").append('<div class=\"tab-pane\" id=\"mds\"> <p>Yellow</p></div>');
-
-
-	
-}
 
