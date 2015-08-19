@@ -48,6 +48,7 @@
 	})
 </script>
 
+				<form class="form-horizontal hidden-print" method="post" action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>">
 								<?php $sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'state` WHERE `id_state` = ' . $deliveryAddress['id_state'];
 								$stateName = Db::getInstance()->getValue($sql); ?>
 								<?= $stateName ?>
