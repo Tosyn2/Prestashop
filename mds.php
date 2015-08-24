@@ -403,8 +403,8 @@ class Mds extends CarrierModule {
 		
 		$sql = 'SELECT `service_id` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
 		$serviceId = $this->db->getValue($sql);
-		
-		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_customer` = ' . $params[cart]->id_customer;
+
+		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 2 AND deleted = 0';
 		$deliveryAddresses = $this->db->ExecuteS($sql);
 		
 		$orderId = $params['id_order'];
