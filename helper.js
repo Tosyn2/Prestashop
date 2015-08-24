@@ -43,7 +43,7 @@ function addDropDownSuburbs(suburbs)
 		if (suburbs.hasOwnProperty(key)) {
 			text += '<option value="' + suburbs[key] + '">' + suburbs[key] + '</option>';
 		}
-	}
+  }
 
 	$("#conf_id_PS_SHOP_CITY")
 		.replaceWith(

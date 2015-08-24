@@ -9,7 +9,8 @@ define('_MDS_DIR_', __DIR__);
 
 include('autoload.php');
 
-class Mds extends CarrierModule {
+class Mds extends CarrierModule
+{
 
 	public $id_carrier;
 	protected $db;
@@ -20,7 +21,7 @@ class Mds extends CarrierModule {
 		'displayShoppingCart',
 		'displayAdminOrder',
 		'orderConfirmation'
-		
+
 	);
 
 	public function __construct()
@@ -234,7 +235,7 @@ class Mds extends CarrierModule {
 				$colliveryParams['parcels'][] = array(
 					'weight' => $colliveryProduct['weight'],
 					'height' => $colliveryProduct['height'],
-					'width'  => $colliveryProduct['width'],
+					'width' => $colliveryProduct['width'],
 					'length' => $colliveryProduct['depth']
 				);
 			}
@@ -268,7 +269,7 @@ class Mds extends CarrierModule {
 				$colliveryGetPriceArray['parcels'][] = array(
 					'weight' => $colliveryProduct['weight'],
 					'height' => $colliveryProduct['height'],
-					'width'  => $colliveryProduct['width'],
+					'width' => $colliveryProduct['width'],
 					'length' => $colliveryProduct['depth']
 				);
 			}
@@ -353,7 +354,7 @@ class Mds extends CarrierModule {
 
 	public function hookDisplayFooter($params)
 	{
-		$idAddress = (int) $this->context->cart->id_address_delivery;
+		$idAddress = (int)$this->context->cart->id_address_delivery;
 
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;
 		$address = $this->db->getRow($sql);
@@ -371,45 +372,51 @@ class Mds extends CarrierModule {
 			compact('suburbs', 'suburb', 'locationTypes', 'locationType')
 		);
 	}
-	
+
 	public function hookOrderConfirmation($params)
 	{
 		$orderId = $params[objOrder]->id;
 		$deliveryAddressId = $params[objOrder]->id_address_delivery;
-		
+
 		$carrierId = $params[objOrder]->id_carrier;
 		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'carrier` WHERE `id_carrier` = ' . $carrierId;
 		$carrierName = $this->db->getValue($sql);
 		$serviceId = $this->getServiceFromCarrierId($carrierId);
-		
+
 		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(order_id,ps_address_id,service_id,service_name)
 			VALUES
 			(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\', \'' . $carrierName . '\')';
-			$this->db->execute($sql);
-			
+		$this->db->execute($sql);
+
 
 	}
-	
-	
+
+
 	public function hookDisplayAdminOrder($params)
 	{
-	
-		
+
+
 		$sql = 'SELECT `id_address_delivery` FROM `' . _DB_PREFIX_ . 'orders` WHERE `id_order` = ' . $params['id_order'];
 		$deliveryAddressId = $this->db->getValue($sql);
-		
+
 		$sql = 'SELECT `service_name` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
 		$carrierName = $this->db->getValue($sql);
-		
+
 		$sql = 'SELECT `service_id` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
 		$serviceId = $this->db->getValue($sql);
 
 		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 2 AND deleted = 0';
 		$deliveryAddresses = $this->db->ExecuteS($sql);
-		
+
+
+		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 0 AND deleted = 0';
+		$collectionAdresses = $this->db->ExecuteS($sql);
+
+
 		$orderId = $params['id_order'];
 
 		global $token;
+
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $deliveryAddressId;
 		$address = $this->db->getRow($sql);
 
