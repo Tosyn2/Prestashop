@@ -432,9 +432,9 @@ class Mds extends CarrierModule
 		$this->context->controller->addJS(($this->_path) . 'helper.js');
 		return Mds_View::make(
 			'shipping_control',
-			compact('deliveryAddressId', 'orderId', 'carrierName', 'serviceId','deliveryAddresses','suburb','suburbs','locationType','locationTypes','countryName','token')
+			compact('deliveryAddressId', 'orderId', 'carrierName', 'serviceId', 'deliveryAddresses', 'suburb', 'suburbs', 'locationType', 'locationTypes', 'countryName', 'token', 'collectionAdresses')
 		);
-		
+
 	}
 
 	protected function getServiceFromCarrierId($carrierId)
