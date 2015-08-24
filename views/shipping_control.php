@@ -101,14 +101,16 @@
 									<?= $deliveryAddress['city'] ?> ,
 									<?= $deliveryAddress['name'] ?>
 								</option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-						<div class="col-lg-3">
-							<button class="btn btn-default" type="submit" name="submitAddressShipping"><i class="icon-refresh"></i>Change</button>
-						</div>
+							<?php endforeach; ?>
+						</select>
 					</div>
-				</form>
+					<div class="col-lg-3">
+						<button class="btn btn-default" type="submit" name="submitAddressShipping"><i
+								class="icon-refresh"></i>Change
+						</button>
+					</div>
+				</div>
+			</form>
 			<div class="well">
 				<div class="row">
 					<div class="col-sm-6">
