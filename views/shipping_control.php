@@ -16,15 +16,6 @@
 		</li>
 
 	</ul>
-  <div class="tab-content panel">
-	<div class="tab-pane  in active" id="addressShipping">
-				<form class="form-horizontal hidden-print" method="post" action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>">
-					<div class="form-group">
-						<div class="col-lg-9">
-							<select name="id_address">
-								<?php foreach ($deliveryAddresses as $deliveryAddress):  ?>
-								<?php $sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'state` WHERE `id_state` = ' . $deliveryAddress['id_state'];
-								$stateName = Db::getInstance()->getValue($sql); ?>
 	<div class="tab-content panel">
 		<div class="tab-pane  in active" id="addressShipping">
 
@@ -90,6 +81,17 @@
 		</div>
 	</div>
 
+
+	<div class="tab-content panel">
+		<div class="tab-pane  in active" id="addressShipping">
+			<h2>Delivery Address</h2>
+
+			<form class="form-horizontal hidden-print" method="post"
+			      action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>">
+				<div class="form-group">
+					<div class="col-lg-9">
+						<select name="id_address">
+							<?php foreach ($deliveryAddresses as $deliveryAddress): ?>
 								<option value="<?= $deliveryAddress['id_address'] ?> "
 									<?php if ($deliveryAddress['id_address'] == $deliveryAddressId) {
 										echo "selected";
