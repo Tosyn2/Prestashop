@@ -388,6 +388,59 @@ class Mds extends CarrierModule
 			(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\', \'' . $carrierName . '\')';
 		$this->db->execute($sql);
 
+		if ($defAddress != $mdsDefAddress) {
+
+		$defaultAddressId = $this->collivery->getDefaultAddressId();
+
+		$defaultAddress = $this->collivery->getAddress($defaultAddressId);
+
+		$towns = $this->collivery->getTowns();
+		$location_types = $this->collivery->getLocationTypes();
+
+		$sql = 'SELECT `id_state` FROM ' . _DB_PREFIX_ . 'state where `id_mds` = "' . $defaultAddress['town_id'] . '" AND `active` = 1';
+		$state_id = $this->db->getValue($sql);
+
+		$client_id = $defaultAddress['client_id'];
+
+		$contacts = $this->collivery->getContacts($defaultAddressId);
+
+		$contact = array_pop($contacts);
+
+		$name = explode ( " " , $contact['full_name']);
+
+		$first_name = array_shift($name);
+		$last_name = array_pop($name);
+
+		$streetAddress = $defaultAddress['street'];
+
+		$locationType = $location_types[$defaultAddress['location_type']];
+		$postCode = $defaultAddress['zip_code'];
+
+		$city = $defaultAddress['suburb_name'];
+
+		$phone = $contact['phone'];
+		$mobile = $contact['phone_mobile'];
+
+
+		die('<pre>'.print_r($contact, true));
+		die('<pre>'.print_r($defaultAddress, true));
+
+
+
+		$sql = 'INSERT INTO ' . _DB_PREFIX_ .'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
+		VALUES
+		(30,$state_id,0,0,0,0,"Collection Address","MDS Address",$last_name,$first_name,$streetAddress,$locationType,$postCode,$city,other,$phone,$mobile,1,0)';
+		$this->db->execute($sql);
+
+
+		}
+
+
+
+
+
+
+
 
 	}
 
