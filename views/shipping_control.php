@@ -26,13 +26,13 @@
 								<?php $sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'state` WHERE `id_state` = ' . $deliveryAddress['id_state'];
 								$stateName = Db::getInstance()->getValue($sql); ?>
 								<option value="<?= $deliveryAddress['id_address'] ?> "
-								<?php if ($deliveryAddress['id_address'] == $deliveryAddressId) {
-								   echo "selected";
-								} ?> >
-								<?= $deliveryAddress['alias'] ?> -
-								<?= $deliveryAddress['address1'] ?> ,
-								<?= $deliveryAddress['city'] ?> ,
-								<?= $stateName ?>
+									<?php if ($deliveryAddress['id_address'] == $deliveryAddressId) {
+										echo "selected";
+									} ?> >
+									<?= $deliveryAddress['alias'] ?> -
+									<?= $deliveryAddress['address1'] ?> ,
+									<?= $deliveryAddress['city'] ?> ,
+									<?= $deliveryAddress['name'] ?>
 								</option>
 								<?php endforeach; ?>
 							</select>
@@ -47,22 +47,22 @@
 					<div class="col-sm-6">
 
 						<?php foreach ($deliveryAddresses as $deliveryAddress):
-						 if ($deliveryAddress['id_address'] == $deliveryAddressId)
-						 {
-						 ?>
-						  <a class="btn btn-default pull-right" href="?controller=adminaddresses&amp;id_address=<?=$deliveryAddress['id_address']?>&amp;updateaddress&amp;token=<?= $token ?>">
-							<i class="icon-pencil"></i>
-							Edit
-						</a>
-						<?php
-						   echo
-						   $deliveryAddress['alias'] . "<br>" .
-						   $deliveryAddress['address1']  . "<br>" .
-						   $deliveryAddress['city']  . "<br>" .
-						   $stateName ;
-						 }
+							if ($deliveryAddress['id_address'] == $deliveryAddressId) {
+								?>
+								<a class="btn btn-default pull-right"
+								   href="?controller=adminaddresses&amp;id_address=<?= $deliveryAddress['id_address'] ?>&amp;updateaddress&amp;token=<?= $token ?>">
+									<i class="icon-pencil"></i>
+									Edit
+								</a>
+								<?php
+								echo
+									$deliveryAddress['alias'] . "<br>" .
+									$deliveryAddress['address1'] . "<br>" .
+									$deliveryAddress['city'] . "<br>" .
+									$deliveryAddress['name'];
+							}
 
-						?>
+							?>
 
 						<?php endforeach; ?>
 
