@@ -1,11 +1,3 @@
-
-<script>
-	$('#tabAddresses a').click(function (e) {
-		e.preventDefault()
-		$(this).tab('show')
-	})
-</script>
-
 <div class="row">
 	<ul class="nav nav-tabs" id="tabAddresses">
 		<li class="active">
