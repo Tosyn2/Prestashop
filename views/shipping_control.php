@@ -8,14 +8,14 @@
 
 <div class="row">
 	<ul class="nav nav-tabs" id="tabAddresses">
-						<li class="active">
-							<a href="#addressShipping">
-								<i class="icon-truck"></i>
-								Shipping address
-							</a>
-						</li>
+		<li class="active">
+			<a href="#addressShipping">
+				<i class="icon-truck"></i>
+				Shipping address
+			</a>
+		</li>
 
-					</ul>
+	</ul>
   <div class="tab-content panel">
 	<div class="tab-pane  in active" id="addressShipping">
 				<form class="form-horizontal hidden-print" method="post" action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>">
