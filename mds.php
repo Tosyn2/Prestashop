@@ -183,6 +183,12 @@ class Mds extends CarrierModule
 		WHERE `id_state` = "' . $town_id . '" ';
 		$mds_town_id = $this->db->getValue($sql);
 
+
+		$addressString = $addressRow['address1'] . $addressRow['city'] . $mds_town_id . $addressRow['postcode'] . $addressRow['firstname'] . " " . $addressRow['lastname'];
+		$hash = hash('md5', $addressString);
+		$hash = substr($hash, 0, 15);
+
+
 		$colliveryParams['company_name'] = $addressRow['company'];
 		$colliveryParams['building'] = '';
 		$colliveryParams['street'] = $addressRow['address1'];
@@ -193,7 +199,7 @@ class Mds extends CarrierModule
 		$colliveryParams['full_name'] = $addressRow['firstname'] . " " . $addressRow['lastname'];
 		$colliveryParams['phone'] = $addressRow['phone'];
 		$colliveryParams['cellphone'] = $addressRow['phone_mobile'];
-		$colliveryParams['custom_id'] = $addressRow['id_customer'];
+		$colliveryParams['custom_id'] = $addressRow['id_address'] . "|" . $hash;
 
 		$custId = $colliveryParams['custom_id'];
 		$sql = 'SELECT email FROM ' . _DB_PREFIX_ . 'customer
