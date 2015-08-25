@@ -440,8 +440,15 @@ class Mds extends CarrierModule
 
 
 
+		if ($defAddress != $mdsDefAddress) {
 
+		$sql = 'INSERT INTO ' . _DB_PREFIX_ .'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
+		VALUES
+		(30, \'' .$state_id . '\',0,0,0,0,"Collection Address","MDS Address", \'' .$last_name . '\', \'' . $first_name . '\', \'' .$streetAddress . '\' , \'' .$locationType . '\' , \'' . $postCode . '\' , \'' . $city. '\',other, \'' .$phone . '\', \'' .$mobile . '\',1,0)';
+		$this->db->execute($sql);
 
+		}
+		}
 	}
 
 
