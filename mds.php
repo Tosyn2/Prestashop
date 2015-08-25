@@ -485,8 +485,10 @@ class Mds extends CarrierModule
 
 
 		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 0 AND deleted = 0';
-		$collectionAdresses = $this->db->ExecuteS($sql);
+		$collectionAddresses = $this->db->ExecuteS($sql);
 
+		$sql = 'SELECT `id_collection_address` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
+		$collectionAddressId = $this->db->getValue($sql);
 
 		$orderId = $params['id_order'];
 
