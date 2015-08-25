@@ -1,2 +1,4 @@
 /config*.xml
 /.idea
+/.kdev4
+/mds.kdev4
