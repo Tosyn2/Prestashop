@@ -201,7 +201,6 @@ class Mds extends CarrierModule
 		$colliveryParams['cellphone'] = $addressRow['phone_mobile'];
 		$colliveryParams['custom_id'] = $addressRow['id_address'] . "|" . $hash;
 
-		$custId = $colliveryParams['custom_id'];
 		$sql = 'SELECT email FROM ' . _DB_PREFIX_ . 'customer
 		WHERE id_customer = \'' . $custId . '\'';
 		$colliveryParams['email'] = $this->db->getValue($sql);
