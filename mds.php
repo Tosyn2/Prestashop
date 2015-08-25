@@ -428,10 +428,14 @@ class Mds extends CarrierModule
 
 
 
+		$addressStringMds = $streetAddress.$city.$defaultAddress['town_name'].$postCode.$first_name.$last_name.$phone;
 		}
 
 
+		echo $addressStringMds;
 
+		$hash = hash('md5', 'The quick brown fox jumped over the lazy dog.');
+		print_r($hash);
 
 
 
