@@ -483,7 +483,6 @@ class Mds extends CarrierModule
 		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 2 AND deleted = 0';
 		$deliveryAddresses = $this->db->ExecuteS($sql);
 
-
 		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 0 AND deleted = 0';
 		$collectionAddresses = $this->db->ExecuteS($sql);
 
