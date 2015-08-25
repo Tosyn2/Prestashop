@@ -40,7 +40,7 @@ class MdsColliveryService
 	 */
 	public static function getInstance($settings = null)
 	{
-		if (! self::$instance) {
+		if (!self::$instance) {
 			self::$instance = new self($settings);
 		}
 
