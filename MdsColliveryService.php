@@ -159,6 +159,7 @@ class MdsColliveryService
 		$suburbs = $this->collivery->getSuburbs($town_id);
 
 		$custom_id = $array['custom_id'];
+
 		if (!is_numeric($array['suburb'])) {
 			$suburb_id = (int)array_search($array['suburb'], $suburbs);
 		} else {
