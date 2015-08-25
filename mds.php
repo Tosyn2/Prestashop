@@ -421,6 +421,7 @@ class Mds extends CarrierModule
 		$phone = $contact['phone'];
 		$mobile = $contact['phone_mobile'];
 
+		$date = getdate ();
 
 
 
