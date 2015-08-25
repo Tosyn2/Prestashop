@@ -19,7 +19,7 @@
 				<div class="form-group">
 					<div class="col-lg-9">
 						<select name="id_address">
-							<?php foreach ($collectionAddresses as $deliveryAddress): ?>
+							<?php foreach ($collectionAddresses as $collectionAddress): ?>
 								<option value="<?= $collectionAddress['id_address'] ?> "
 									<?php if ($collectionAddress['id_address'] == $collectionAddressId) {
 										echo "selected";
@@ -43,8 +43,8 @@
 				<div class="row">
 					<div class="col-sm-6">
 
-						<?php foreach ($CollectionAddresses as $collectionAddress):
-							if ($collectionAddress['id_address'] == $deliveryAddressId) {
+								<?php foreach ($collectionAddresses as $collectionAddress):
+							if ($collectionAddress['id_address'] == $collectionAddressId) {
 								?>
 								<a class="btn btn-default pull-right"
 								   href="?controller=adminaddresses&amp;id_address=<?= $collectionAddress['id_address'] ?>&amp;updateaddress&amp;token=<?= $token ?>">
