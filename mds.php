@@ -422,8 +422,6 @@ class Mds extends CarrierModule
 		$mobile = $contact['phone_mobile'];
 
 
-		die('<pre>'.print_r($contact, true));
-		die('<pre>'.print_r($defaultAddress, true));
 
 
 
@@ -438,6 +436,8 @@ class Mds extends CarrierModule
 		print_r($hash);
 
 
+		die('<pre>'.print_r($defaultAddress, true));
+		die('<pre>'.print_r($defaultAddress, true));
 
 		if ($defAddress != $mdsDefAddress) {
 
