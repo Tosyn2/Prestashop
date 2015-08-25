@@ -390,63 +390,59 @@ class Mds extends CarrierModule
 
 		if ($defAddress != $mdsDefAddress) {
 
-		$defaultAddressId = $this->collivery->getDefaultAddressId();
+			$defaultAddressId = $this->collivery->getDefaultAddressId();
 
-		$defaultAddress = $this->collivery->getAddress($defaultAddressId);
+			$defaultAddress = $this->collivery->getAddress($defaultAddressId);
 
-		$towns = $this->collivery->getTowns();
-		$location_types = $this->collivery->getLocationTypes();
+			$towns = $this->collivery->getTowns();
+			$location_types = $this->collivery->getLocationTypes();
 
-		$sql = 'SELECT `id_state` FROM ' . _DB_PREFIX_ . 'state where `id_mds` = "' . $defaultAddress['town_id'] . '" AND `active` = 1';
-		$state_id = $this->db->getValue($sql);
+			$sql = 'SELECT `id_state` FROM ' . _DB_PREFIX_ . 'state where `id_mds` = "' . $defaultAddress['town_id'] . '" AND `active` = 1';
+			$state_id = $this->db->getValue($sql);
 
-		$client_id = $defaultAddress['client_id'];
+			$client_id = $defaultAddress['client_id'];
 
-		$contacts = $this->collivery->getContacts($defaultAddressId);
+			$contacts = $this->collivery->getContacts($defaultAddressId);
 
-		$contact = array_pop($contacts);
+			$contact = array_pop($contacts);
 
-		$name = explode ( " " , $contact['full_name']);
+			$name = explode(" ", $contact['full_name']);
 
-		$first_name = array_shift($name);
-		$last_name = array_pop($name);
+			$first_name = array_shift($name);
+			$last_name = array_pop($name);
 
-		$streetAddress = $defaultAddress['street'];
+			$streetAddress = $defaultAddress['street'];
 
-		$locationType = $location_types[$defaultAddress['location_type']];
-		$postCode = $defaultAddress['zip_code'];
+			$locationType = $location_types[$defaultAddress['location_type']];
+			$postCode = $defaultAddress['zip_code'];
 
-		$city = $defaultAddress['suburb_name'];
+			$city = $defaultAddress['suburb_name'];
 
-		$phone = $contact['phone'];
-		$mobile = $contact['phone_mobile'];
+			$phone = $contact['phone'];
+			$mobile = $contact['phone_mobile'];
 
-		$date = getdate ();
-
-
+			$date = getdate();
 
 
+			$addressStringMds = $streetAddress . $city . $defaultAddress['town_name'] . $postCode . $first_name . $last_name . $phone;
 
-		$addressStringMds = $streetAddress.$city.$defaultAddress['town_name'].$postCode.$first_name.$last_name.$phone;
+			echo $addressStringMds;
 
-
-		echo $addressStringMds;
-
-		$hash = hash('md5', 'The quick brown fox jumped over the lazy dog.');
-		print_r($hash);
+			$hash = hash('md5', 'The quick brown fox jumped over the lazy dog.');
+			print_r($hash);
 
 
-		die('<pre>'.print_r($defaultAddress, true));
-		die('<pre>'.print_r($defaultAddress, true));
+			die('<pre>' . print_r($defaultAddress, true));
+			die('<pre>' . print_r($defaultAddress, true));
 
-		if ($defAddress != $mdsDefAddress) {
+			if ($defAddress != $mdsDefAddress) {
 
-		$sql = 'INSERT INTO ' . _DB_PREFIX_ .'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
+				$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
 		VALUES
-		(30, \'' .$state_id . '\',0,0,0,0,"Collection Address","MDS Address", \'' .$last_name . '\', \'' . $first_name . '\', \'' .$streetAddress . '\' , \'' .$locationType . '\' , \'' . $postCode . '\' , \'' . $city. '\',other, \'' .$phone . '\', \'' .$mobile . '\',1,0)';
-		$this->db->execute($sql);
+		(30, \'' . $state_id . '\',0,0,0,0,"Collection Address","MDS Address", \'' . $last_name . '\', \'' . $first_name . '\', \'' . $streetAddress . '\' , \'' . $locationType . '\' , \'' . $postCode . '\' , \'' . $city . '\',other, \'' . $phone . '\', \'' . $mobile . '\',1,0)';
+				$this->db->execute($sql);
 
-		}
+			}
 		}
 	}
 
