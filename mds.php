@@ -458,9 +458,9 @@ class Mds extends CarrierModule
 		}
 
 
-		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(order_id,ps_address_id,service_id,service_name)
+		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(id_order,id_collection_address,id_service,id_delivery_address,status)
 		VALUES
-		(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\', \'' . $carrierName . '\')';
+		(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\', \'' . $defaultMdsAddressPsId['id_address']  . '\', "Not yet sent")';
 		$this->db->execute($sql);
 
 
