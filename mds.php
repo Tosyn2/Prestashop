@@ -202,7 +202,7 @@ class Mds extends CarrierModule
 		$colliveryParams['custom_id'] = $addressRow['id_address'] . "|" . $hash;
 
 		$sql = 'SELECT email FROM ' . _DB_PREFIX_ . 'customer
-		WHERE id_customer = \'' . $custId . '\'';
+		WHERE id_customer = \'' . $params['cart']->id_customer . '\'';
 		$colliveryParams['email'] = $this->db->getValue($sql);
 
 		try {
