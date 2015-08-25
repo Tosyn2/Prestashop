@@ -428,7 +428,6 @@ class Mds extends CarrierModule
 
 
 		$addressStringMds = $streetAddress.$city.$defaultAddress['town_name'].$postCode.$first_name.$last_name.$phone;
-		}
 
 
 		echo $addressStringMds;
