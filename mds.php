@@ -460,7 +460,7 @@ class Mds extends CarrierModule
 
 		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(id_order,id_collection_address,id_service,id_delivery_address,status)
 		VALUES
-		(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\', \'' . $defaultMdsAddressPsId['id_address']  . '\', "Not yet sent")';
+		(\'' . $orderId . '\',\'' .$defaultMdsAddressPsId['id_address'] . '\',\'' . $serviceId . '\', \'' .  $deliveryAddressId   . '\', "Not yet sent")';
 		$this->db->execute($sql);
 
 
