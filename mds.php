@@ -383,72 +383,87 @@ class Mds extends CarrierModule
 		$orderId = $params[objOrder]->id;
 		$deliveryAddressId = $params[objOrder]->id_address_delivery;
 
+
 		$carrierId = $params[objOrder]->id_carrier;
 		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'carrier` WHERE `id_carrier` = ' . $carrierId;
 		$carrierName = $this->db->getValue($sql);
 		$serviceId = $this->getServiceFromCarrierId($carrierId);
 
-		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(order_id,ps_address_id,service_id,service_name)
+
+		$defaultAddressId = $this->collivery->getDefaultAddressId();
+		$defaultAddress = $this->collivery->getAddress($defaultAddressId);
+
+		$towns = $this->collivery->getTowns();
+		$location_types = $this->collivery->getLocationTypes();
+
+
+		$client_id = $defaultAddress['client_id'];
+
+		$contacts = $this->collivery->getContacts($defaultAddressId);
+
+		$contact = array_pop($contacts);
+
+		$name = explode(" ", $contact['full_name']);
+
+		$first_name = array_shift($name);
+		$last_name = array_pop($name);
+
+		$streetAddress = $defaultAddress['street'];
+
+		$locationType = $location_types[$defaultAddress['location_type']];
+		$postCode = $defaultAddress['zip_code'];
+
+		$city = $defaultAddress['suburb_name'];
+
+		$phone = $contact['phone'];
+		$mobile = $contact['phone_mobile'];
+
+		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'state where `id_mds` = "' . $defaultAddress['town_id'] . '" AND `active` = 1';
+		$state = $this->db->getRow($sql);
+
+		$state_id = $state['id_state'];
+		$state_name = $state['name'];
+
+
+		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `alias` = "Default MDS Collection Address"';
+		$defaultMdsAddressPsId = $this->db->getRow($sql);
+
+		if (!$defaultMdsAddressPsId) {
+
+			$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
 			VALUES
-			(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\', \'' . $carrierName . '\')';
-		$this->db->execute($sql);
+			(30, \'' . $state_id . '\',0,0,0,0,"Default MDS Collection Address","", \'' . $last_name . '\', \'' . $first_name . '\', \'' . $streetAddress . '\' , \'' . $locationType . '\' , \'' . $postCode . '\' , \'' . $city . '\',other, \'' . $phone . '\', \'' . $mobile . '\',1,0)';
+			$this->db->execute($sql);
 
-		if ($defAddress != $mdsDefAddress) {
+		} else {
 
-			$defaultAddressId = $this->collivery->getDefaultAddressId();
-
-			$defaultAddress = $this->collivery->getAddress($defaultAddressId);
-
-			$towns = $this->collivery->getTowns();
-			$location_types = $this->collivery->getLocationTypes();
-
-			$sql = 'SELECT `id_state` FROM ' . _DB_PREFIX_ . 'state where `id_mds` = "' . $defaultAddress['town_id'] . '" AND `active` = 1';
-			$state_id = $this->db->getValue($sql);
-
-			$client_id = $defaultAddress['client_id'];
-
-			$contacts = $this->collivery->getContacts($defaultAddressId);
-
-			$contact = array_pop($contacts);
-
-			$name = explode(" ", $contact['full_name']);
-
-			$first_name = array_shift($name);
-			$last_name = array_pop($name);
-
-			$streetAddress = $defaultAddress['street'];
-
-			$locationType = $location_types[$defaultAddress['location_type']];
-			$postCode = $defaultAddress['zip_code'];
-
-			$city = $defaultAddress['suburb_name'];
-
-			$phone = $contact['phone'];
-			$mobile = $contact['phone_mobile'];
-
-			$date = getdate();
+			$addressStringPs = $defaultMdsAddressPsId['address1'] . $defaultMdsAddressPsId['city'] . $state_name . $defaultMdsAddressPsId['postcode'] . $defaultMdsAddressPsId['firstname'] . " " . $defaultMdsAddressPsId['lastname'];
+			$hashPs = hash('md5', $addressStringPs);
+			$hashPs = substr($hashPs, 0, 15);
 
 
-			$addressStringMds = $streetAddress . $city . $defaultAddress['town_name'] . $postCode . $first_name . $last_name . $phone;
-
-			echo $addressStringMds;
-
-			$hash = hash('md5', 'The quick brown fox jumped over the lazy dog.');
-			print_r($hash);
+			$addressStringMds = $defaultAddress['street'] . $defaultAddress['suburb_name'] . $defaultAddress['town_name'] . $defaultAddress['zip_code'] . $contact['full_name'];
+			$hashMds = hash('md5', $addressStringMds);
+			$hashMds = substr($hashMds, 0, 15);
 
 
-			die('<pre>' . print_r($defaultAddress, true));
-			die('<pre>' . print_r($defaultAddress, true));
+			if ($hashMds != $hashPs) {
 
-			if ($defAddress != $mdsDefAddress) {
-
-				$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
-		VALUES
-		(30, \'' . $state_id . '\',0,0,0,0,"Collection Address","MDS Address", \'' . $last_name . '\', \'' . $first_name . '\', \'' . $streetAddress . '\' , \'' . $locationType . '\' , \'' . $postCode . '\' , \'' . $city . '\',other, \'' . $phone . '\', \'' . $mobile . '\',1,0)';
+				$sql = 'UPDATE ' . _DB_PREFIX_ . 'address SET `id_state` = \'' . $state_id . '\', `lastname` = \'' . $last_name . '\' ,`firstname` =  \'' . $first_name . '\'  ,`address1` =  \'' . $defaultAddress['street'] . '\' , `address2` =  \'' . $defaultAddress['location_type'] . '\',`postcode` =  \'' . $defaultAddress['zip_code'] . '\',`city` =  \'' . $defaultAddress['suburb_name'] . '\' ,`phone` =  \'' . $phone . '\',`phone_mobile` = \'' . $mobile . '\' where `id_address` =  \'' . $defaultMdsAddressPsId['id_address'] . '\'';
 				$this->db->execute($sql);
 
 			}
+
+
 		}
+
+
+		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(order_id,ps_address_id,service_id,service_name)
+		VALUES
+		(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\', \'' . $carrierName . '\')';
+		$this->db->execute($sql);
+
+
 	}
 
 
