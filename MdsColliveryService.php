@@ -158,6 +158,7 @@ class MdsColliveryService
 
 		$suburbs = $this->collivery->getSuburbs($town_id);
 
+		$custom_id = $array['custom_id'];
 		if (!is_numeric($array['suburb'])) {
 			$suburb_id = (int)array_search($array['suburb'], $suburbs);
 		} else {
@@ -200,14 +201,14 @@ class MdsColliveryService
 			'full_name' => $array['full_name'],
 			'phone' => (!empty($array['phone'])) ? $array['phone'] : '',
 			'cellphone' => $array['cellphone'],
-			'custom_id' => 'new_test_custom_id',
+			'custom_id' => $custom_id,
 			'email' => $array['email'],
 		);
 
 
 		// Before adding an address lets search MDS and see if we have already added this address
 		$searchAddresses = $this->searchAndMatchAddress(array(
-			'custom_id' => 'new_test_custom_id',
+			'custom_id' => $custom_id,
 			'suburb_id' => $suburb_id,
 			'town_id' => $town_id,
 		), $newAddress);
@@ -234,8 +235,6 @@ class MdsColliveryService
 			$match = true;
 
 			$matchAddressFields = array(
-				'company_name' => 'company_name',
-				'building_details' => 'building',
 				'street' => 'street',
 				'location_type' => 'location_type',
 				'suburb_id' => 'suburb_id',
