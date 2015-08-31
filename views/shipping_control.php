@@ -132,6 +132,11 @@
 						<div id="map-delivery-canvas" style="height: 190px"></div>
 					</div>
 				</div>
+				<form align="center"
+				      action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=getQuote"
+				      method="post">
+					<button>Get Quote</button>
+				</form>
 
 
 			</div>
