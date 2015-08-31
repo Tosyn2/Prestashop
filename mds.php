@@ -519,6 +519,66 @@ class Mds extends CarrierModule {
 
 		$this->context->controller->addJS(($this->_path) . 'helper.js');
 
+
+		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
+		$waybill = $this->db->getValue($sql);
+
+
+
+		if(!$waybill) {
+
+			return Mds_View::make(
+				'shipping_control',
+				compact(
+					'deliveryAddressId',
+					'orderId',
+					'carrierName',
+					'serviceId',
+					'deliveryAddresses',
+					'suburb',
+					'suburbs',
+					'locationType',
+					'locationTypes',
+					'countryName',
+					'token',
+					'collectionAddresses',
+					'collectionAddressId',
+					'price',
+					'message'
+				)
+			);
+
+
+		} else {
+
+
+			$status = $this->getWayBillStatus($waybill);
+			return Mds_View::make(
+				'delivery_details',
+				compact(
+					'deliveryAddressId',
+					'orderId',
+					'carrierName',
+					'serviceId',
+					'deliveryAddresses',
+					'suburb',
+					'suburbs',
+					'locationType',
+					'locationTypes',
+					'countryName',
+					'token',
+					'collectionAddresses',
+					'collectionAddressId',
+					'price',
+					'message',
+					'status'
+				)
+			);
+		}
+
+
+
+
 		return Mds_View::make(
 			'shipping_control',
 			compact(
@@ -715,6 +775,20 @@ class Mds extends CarrierModule {
 	{
 		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_collection_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
 		$this->db->execute($sql);
+	/**
+	 * @param $params
+	 * @param $waybill
+	 *
+	 * @return array
+	 */
+	public function getWayBillStatus( $waybill)
+	{
+		$status = $this->mdsService->collivery->getStatus($waybill);
+//		$colliveryPriceOptions = $this->collivery->getPrice($params);
+//		array_push($status, $colliveryPriceOptions);
+
+
+		return $status;
 	}
 
 }
