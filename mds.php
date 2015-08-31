@@ -1,7 +1,7 @@
 <?php
 
 // Avoid direct access to the file
-if (!defined('_PS_VERSION_')) {
+if ( ! defined('_PS_VERSION_')) {
 	exit;
 }
 
@@ -9,8 +9,7 @@ define('_MDS_DIR_', __DIR__);
 
 include('autoload.php');
 
-class Mds extends CarrierModule
-{
+class Mds extends CarrierModule {
 
 	public $id_carrier;
 	protected $db;
@@ -52,12 +51,13 @@ class Mds extends CarrierModule
 		try {
 			$installer = new Mds_Install($this->db);
 			$installer->install();
-			if (!parent::install()) {
+			if ( ! parent::install()) {
 				return false;
 			}
 			$this->registerHooks();
 		} catch (\Mds\Prestashop\Exceptions\UnmetSystemRequirements $e) {
 			echo $this->displayError($e->getErrors());
+
 			return false;
 		} catch (\Mds\Prestashop\Exceptions\ColliveryException $e) {
 			return false;
@@ -72,7 +72,7 @@ class Mds extends CarrierModule
 	private function registerHooks()
 	{
 		foreach ($this->hooks as $hook) {
-			if (!$this->registerHook($hook)) {
+			if ( ! $this->registerHook($hook)) {
 				throw new Mds_UnableToRegisterHook();
 			}
 		}
@@ -85,7 +85,7 @@ class Mds extends CarrierModule
 	 */
 	public function uninstall()
 	{
-		if (!parent::uninstall()) {
+		if ( ! parent::uninstall()) {
 			return false;
 		}
 
@@ -111,7 +111,7 @@ class Mds extends CarrierModule
 	private function unregisterHooks()
 	{
 		foreach ($this->hooks as $hook) {
-			if (!$this->registerHook($hook)) {
+			if ( ! $this->registerHook($hook)) {
 				return false;
 			}
 		}
@@ -138,7 +138,7 @@ class Mds extends CarrierModule
 
 		$settingsService = new Mds_SettingsService();
 
-		if (!empty($_POST) AND Tools::isSubmit('submitSave')) {
+		if ( ! empty($_POST) AND Tools::isSubmit('submitSave')) {
 			try {
 				$errors = $settingsService->store($_POST);
 			} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
@@ -183,11 +183,9 @@ class Mds extends CarrierModule
 		WHERE `id_state` = "' . $town_id . '" ';
 		$mds_town_id = $this->db->getValue($sql);
 
-
 		$addressString = $addressRow['address1'] . $addressRow['city'] . $mds_town_id . $addressRow['postcode'] . $addressRow['firstname'] . " " . $addressRow['lastname'];
 		$hash = hash('md5', $addressString);
 		$hash = substr($hash, 0, 15);
-
 
 		$colliveryParams['company_name'] = $addressRow['company'];
 		$colliveryParams['building'] = '';
@@ -240,7 +238,7 @@ class Mds extends CarrierModule
 				$colliveryParams['parcels'][] = array(
 					'weight' => $colliveryProduct['weight'],
 					'height' => $colliveryProduct['height'],
-					'width' => $colliveryProduct['width'],
+					'width'  => $colliveryProduct['width'],
 					'length' => $colliveryProduct['depth']
 				);
 			}
@@ -274,7 +272,7 @@ class Mds extends CarrierModule
 				$colliveryGetPriceArray['parcels'][] = array(
 					'weight' => $colliveryProduct['weight'],
 					'height' => $colliveryProduct['height'],
-					'width' => $colliveryProduct['width'],
+					'width'  => $colliveryProduct['width'],
 					'length' => $colliveryProduct['depth']
 				);
 			}
@@ -359,7 +357,7 @@ class Mds extends CarrierModule
 
 	public function hookDisplayFooter($params)
 	{
-		$idAddress = (int)$this->context->cart->id_address_delivery;
+		$idAddress = (int) $this->context->cart->id_address_delivery;
 
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;
 		$address = $this->db->getRow($sql);
@@ -380,22 +378,19 @@ class Mds extends CarrierModule
 
 	public function hookOrderConfirmation($params)
 	{
-		$orderId = $params[objOrder]->id;
-		$deliveryAddressId = $params[objOrder]->id_address_delivery;
+		$orderId = $params[ objOrder ]->id;
+		$deliveryAddressId = $params[ objOrder ]->id_address_delivery;
 
-
-		$carrierId = $params[objOrder]->id_carrier;
+		$carrierId = $params[ objOrder ]->id_carrier;
 		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'carrier` WHERE `id_carrier` = ' . $carrierId;
 		$carrierName = $this->db->getValue($sql);
 		$serviceId = $this->getServiceFromCarrierId($carrierId);
-
 
 		$defaultAddressId = $this->collivery->getDefaultAddressId();
 		$defaultAddress = $this->collivery->getAddress($defaultAddressId);
 
 		$towns = $this->collivery->getTowns();
 		$location_types = $this->collivery->getLocationTypes();
-
 
 		$client_id = $defaultAddress['client_id'];
 
@@ -410,7 +405,10 @@ class Mds extends CarrierModule
 
 		$streetAddress = $defaultAddress['street'];
 
-		$locationType = $location_types[$defaultAddress['location_type']];
+		$locationType = $location_types[ $defaultAddress['location_type'] ];
+// 		echo $locationType;
+// 		die( '<pre>'.print_r($location_types, true));
+
 		$postCode = $defaultAddress['zip_code'];
 
 		$city = $defaultAddress['suburb_name'];
@@ -424,11 +422,10 @@ class Mds extends CarrierModule
 		$state_id = $state['id_state'];
 		$state_name = $state['name'];
 
-
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `alias` = "Default MDS Collection Address"';
 		$defaultMdsAddressPsId = $this->db->getRow($sql);
 
-		if (!$defaultMdsAddressPsId) {
+		if ( ! $defaultMdsAddressPsId) {
 
 			$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
 			VALUES
@@ -441,35 +438,28 @@ class Mds extends CarrierModule
 			$hashPs = hash('md5', $addressStringPs);
 			$hashPs = substr($hashPs, 0, 15);
 
-
 			$addressStringMds = $defaultAddress['street'] . $defaultAddress['suburb_name'] . $defaultAddress['town_name'] . $defaultAddress['zip_code'] . $contact['full_name'];
 			$hashMds = hash('md5', $addressStringMds);
 			$hashMds = substr($hashMds, 0, 15);
 
-
 			if ($hashMds != $hashPs) {
 
-				$sql = 'UPDATE ' . _DB_PREFIX_ . 'address SET `id_state` = \'' . $state_id . '\', `lastname` = \'' . $last_name . '\' ,`firstname` =  \'' . $first_name . '\'  ,`address1` =  \'' . $defaultAddress['street'] . '\' , `address2` =  \'' . $defaultAddress['location_type'] . '\',`postcode` =  \'' . $defaultAddress['zip_code'] . '\',`city` =  \'' . $defaultAddress['suburb_name'] . '\' ,`phone` =  \'' . $phone . '\',`phone_mobile` = \'' . $mobile . '\' where `id_address` =  \'' . $defaultMdsAddressPsId['id_address'] . '\'';
+				$sql = 'UPDATE ' . _DB_PREFIX_ . 'address SET `id_state` = \'' . $state_id . '\', `lastname` = \'' . $last_name . '\' ,`firstname` =  \'' . $first_name . '\'  ,`address1` =  \'' . $defaultAddress['street'] . '\' , `address2` =  \'' . $locationType . '\',`postcode` =  \'' . $defaultAddress['zip_code'] . '\',`city` =  \'' . $defaultAddress['suburb_name'] . '\' ,`phone` =  \'' . $phone . '\',`phone_mobile` = \'' . $mobile . '\' where `id_address` =  \'' . $defaultMdsAddressPsId['id_address'] . '\'';
 				$this->db->execute($sql);
 
 			}
 
-
 		}
-
 
 		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(id_order,id_collection_address,id_service,id_delivery_address,status)
 		VALUES
-		(\'' . $orderId . '\',\'' .$defaultMdsAddressPsId['id_address'] . '\',\'' . $serviceId . '\', \'' .  $deliveryAddressId   . '\', "Not yet sent")';
+		(\'' . $orderId . '\',\'' . $defaultMdsAddressPsId['id_address'] . '\',\'' . $serviceId . '\', \'' . $deliveryAddressId . '\', "Not yet sent")';
 		$this->db->execute($sql);
-
 
 	}
 
-
 	public function hookDisplayAdminOrder($params)
 	{
-
 
 		$sql = 'SELECT `id_address_delivery` FROM `' . _DB_PREFIX_ . 'orders` WHERE `id_order` = ' . $params['id_order'];
 		$deliveryAddressId = $this->db->getValue($sql);
@@ -499,37 +489,49 @@ class Mds extends CarrierModule
 		$suburb = $address['city'];
 		$suburbs = $this->collivery->getSuburbs('');
 
-
 		$locationType = $address['address2'];
 		$locationTypes = $this->collivery->getLocationTypes();
 
 		if ( ! $_POST['func_name']) {
 
 			$_GET['func_name'];
-
 			$form_action_func = $_GET['func_name'];
 
 			if ($form_action_func === "getQuote") {
-
 				$price = $this->getQuote($params);
 			} elseif ($form_action_func === "addCollivery") {
-		$countryName = "South Africa";
 				$message = $this->despatchDelivery($params);
 			} elseif ($form_action_func === "changeCollectionAddress") {
 				$idOrder = $_GET['id_order'];
-				//$value = Tools::getValue('id_collection_address');
-
 				$value = $_GET['value'];
-
 				$this->changeCollectionAddress($value, $idOrder);
 			} else {
 				echo $_SERVER['PHP_SELF'];
 			}
 
+		}
+
 		$this->context->controller->addJS(($this->_path) . 'helper.js');
+
 		return Mds_View::make(
 			'shipping_control',
-			compact('deliveryAddressId', 'orderId', 'carrierName', 'serviceId', 'deliveryAddresses', 'suburb', 'suburbs', 'locationType', 'locationTypes', 'countryName', 'token', 'collectionAddresses', 'collectionAddressId')
+			compact(
+				'deliveryAddressId',
+				'orderId',
+				'carrierName',
+				'serviceId',
+				'deliveryAddresses',
+				'suburb',
+				'suburbs',
+				'locationType',
+				'locationTypes',
+				'countryName',
+				'token',
+				'collectionAddresses',
+				'collectionAddressId',
+				'price',
+				'message'
+			)
 		);
 
 	}
@@ -538,6 +540,7 @@ class Mds extends CarrierModule
 	{
 		return Mds_Services::getServiceId($carrierId);
 	}
+
 	public function getQuote($params)
 	{
 
@@ -548,9 +551,7 @@ class Mds extends CarrierModule
 			}
 
 			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-
 			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-
 			$price = $colliveryPrice;
 
 			return $price;
@@ -560,6 +561,7 @@ class Mds extends CarrierModule
 		}
 
 	}
+
 	public function despatchDelivery($params)
 	{
 		try {
@@ -574,6 +576,7 @@ class Mds extends CarrierModule
 		}
 
 	}
+
 	public function buildColliveryControlDataArray($params)
 	{
 		$service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
@@ -647,14 +650,9 @@ class Mds extends CarrierModule
 
 	public function addControlColliveryAddressFrom($params)
 	{
-
 		$sql = 'SELECT `id_collection_address` FROM ' . _DB_PREFIX_ . 'mds_collivery_processed
 		WHERE id_order = \'' . $params['id_order'] . '\'';
 		$addAddress1 = $this->db->getValue($sql);
-
-// 		echo $sql;
-//
-// 		die( '<pre>'.print_r($params, true));
 
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
@@ -685,8 +683,6 @@ class Mds extends CarrierModule
 		WHERE id_customer = \'' . $params['cart']->id_customer . '\'';
 		$colliveryParams['email'] = $this->db->getValue($sql);
 
-		//	die( '<pre>'.print_r($colliveryParams, true));
-
 		try {
 			return $this->mdsService->addColliveryAddress($colliveryParams);
 		} catch (Exception $e) {
@@ -694,9 +690,11 @@ class Mds extends CarrierModule
 		}
 
 	}
+
 	public function changeCollectionAddress($value, $idOrder)
 	{
 		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_collection_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
 		$this->db->execute($sql);
 	}
+
 }
