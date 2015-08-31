@@ -137,6 +137,11 @@
 				      method="post">
 					<button>Get Quote</button>
 				</form>
+				<form align="center"
+				      action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=addCollivery"
+				      method="post">
+					<button>Despatch Delivery</button>
+				</form>
 
 
 			</div>

@@ -514,6 +514,8 @@ class Mds extends CarrierModule
 				$price = $this->getQuote($params);
 			} elseif ($form_action_func === "addCollivery") {
 		$countryName = "South Africa";
+				$message = $this->despatchDelivery($params);
+			} elseif ($form_action_func === "changeCollectionAddress") {
 			} else {
 				echo $_SERVER['PHP_SELF'];
 			}
@@ -547,6 +549,20 @@ class Mds extends CarrierModule
 
 			return $price;
 
+		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
+			return false;
+		}
+
+	}
+	public function despatchDelivery($params)
+	{
+		try {
+			$orderParams = $this->buildColliveryControlDataArray($params);
+			if (Mds_RiskCover::hasCover()) {
+				$orderParams['cover'] = 1;
+			}
+
+			return $this->mdsService->addCollivery($orderParams, true);
 		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 			return false;
 		}
