@@ -500,11 +500,17 @@ class Mds extends CarrierModule {
 			if ($form_action_func === "getQuote") {
 				$price = $this->getQuote($params);
 			} elseif ($form_action_func === "addCollivery") {
-				$message = $this->despatchDelivery($params);
+				$idOrder = $_GET['id_order'];
+				$message = $this->despatchDelivery($params,$idOrder);
 			} elseif ($form_action_func === "changeCollectionAddress") {
+
 				$idOrder = $_GET['id_order'];
 				$value = $_GET['value'];
 				$this->changeCollectionAddress($value, $idOrder);
+			} elseif ($form_action_func === "changeDeliveryAddress") {
+				$idOrder = $_GET['id_order'];
+				$value = $_GET['value'];
+				$this->changeDeliveryAddress($value, $idOrder);
 			} else {
 				echo $_SERVER['PHP_SELF'];
 			}
@@ -562,7 +568,7 @@ class Mds extends CarrierModule {
 
 	}
 
-	public function despatchDelivery($params)
+	public function despatchDelivery($params, $idOrder)
 	{
 		try {
 			$orderParams = $this->buildColliveryControlDataArray($params);
@@ -570,7 +576,13 @@ class Mds extends CarrierModule {
 				$orderParams['cover'] = 1;
 			}
 
-			return $this->mdsService->addCollivery($orderParams, true);
+			$waybill = $this->mdsService->addCollivery($orderParams, true);
+
+			$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
+			$this->db->execute($sql);
+
+			return;
+
 		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 			return false;
 		}
@@ -691,6 +703,14 @@ class Mds extends CarrierModule {
 
 	}
 
+	public function changeDeliveryAddress($value, $idOrder)
+	{
+		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_delivery_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
+		$this->db->execute($sql);
+
+		$sql = 'UPDATE ' . _DB_PREFIX_ . 'orders SET `id_address_delivery` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
+		$this->db->execute($sql);
+	}
 	public function changeCollectionAddress($value, $idOrder)
 	{
 		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_collection_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
