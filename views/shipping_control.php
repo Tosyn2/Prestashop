@@ -15,9 +15,13 @@
 			<h2>Collection Address</h2>
 
 			<form class="form-horizontal hidden-print" method="post"
+			      action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=changeCollectionAddress&amp;value=<?= Tools::getValue(
+				      'id_collection_address'
+			      ) ?>">
 			      action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>">
 				<div class="form-group">
 					<div class="col-lg-9">
+						<select name="id_collection_address">
 						<select name="id_address">
 							<?php foreach ($collectionAddresses as $collectionAddress): ?>
 								<option value="<?= $collectionAddress['id_address'] ?> "
@@ -38,6 +42,7 @@
 						</button>
 					</div>
 				</div>
+				<input type="submit" value="Change">
 			</form>
 			<div class="well">
 				<div class="row">

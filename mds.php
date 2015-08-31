@@ -516,6 +516,12 @@ class Mds extends CarrierModule
 		$countryName = "South Africa";
 				$message = $this->despatchDelivery($params);
 			} elseif ($form_action_func === "changeCollectionAddress") {
+				$idOrder = $_GET['id_order'];
+				//$value = Tools::getValue('id_collection_address');
+
+				$value = $_GET['value'];
+
+				$this->changeCollectionAddress($value, $idOrder);
 			} else {
 				echo $_SERVER['PHP_SELF'];
 			}
@@ -687,5 +693,10 @@ class Mds extends CarrierModule
 			die($e->getMessage());
 		}
 
+	}
+	public function changeCollectionAddress($value, $idOrder)
+	{
+		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_collection_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
+		$this->db->execute($sql);
 	}
 }
