@@ -25,6 +25,9 @@
 							<?php endforeach; ?>
 
 
+						<?php if ($status['eta_text']): ?>
+							<div style="pull-right">Collection Time ETA: <?= $status['eta_text'] ?></div>
+						<?php endif ?>
 					</div>
 				</div>
 			</div>
@@ -49,6 +52,9 @@
 								?>
 							<?php endforeach; ?>
 						</div>
+						<?php if ($status['eta_text']): ?>
+							<div style="pull-right">Delivery Time ETA: <?= $status['eta_text'] ?></div>
+						<?php endif ?>
 
 					</div>
 				</div>
