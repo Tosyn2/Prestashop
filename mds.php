@@ -511,7 +511,10 @@ class Mds extends CarrierModule {
 				$idOrder = $_GET['id_order'];
 				$value = $_GET['value'];
 				$this->changeDeliveryAddress($value, $idOrder);
-			} else {
+			} elseif ($form_action_func === "getPod") {
+				$waybill = $_GET['waybill'];
+				$this->collivery->getPod($waybill);
+			}else {
 				echo $_SERVER['PHP_SELF'];
 			}
 

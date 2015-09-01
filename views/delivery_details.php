@@ -5,6 +5,9 @@
 
 
 		<div class="tab-pane  in active" id="addressShipping" style="display:inline-block; width:100%">
+				<?php if($status['status_id'] == 3):?>
+				<li><a href="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=getPod&amp;waybill=<?=$waybill?>" class="btn btn-default">Get POD file</a></li>
+				<?php endif ?>
 			<div style="display:inline-block; width:50%">
 				<h2>Collection Address</h2>
 
