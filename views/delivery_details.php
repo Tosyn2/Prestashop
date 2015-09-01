@@ -1,7 +1,6 @@
 <div class="row">
 	<div class="tab-content panel">
-		<h1>MDS Delivery Status</h1>
-
+		<h1>MDS Delivery Status || Waybill <?=$waybill?></h1>
 
 
 		<div class="tab-pane  in active" id="addressShipping" style="display:inline-block; width:100%">
