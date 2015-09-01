@@ -20,7 +20,6 @@ class Mds extends CarrierModule {
 		'displayShoppingCart',
 		'displayAdminOrder',
 		'orderConfirmation'
-
 	);
 
 	public function __construct()

@@ -101,15 +101,12 @@
 								}
 								?>
 							<?php endforeach; ?>
-
 						</div>
-
 						<a class="btn btn-default pull-right"
 						   href="?controller=adminaddresses&amp;addaddress&amp;token=<?= $token ?>">
 							<i class="icon-pencil"></i> Add Address
 						</a>
 					</div>
-
 				</div>
 			</div>
 			<form align="center"
