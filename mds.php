@@ -565,27 +565,26 @@ class Mds extends CarrierModule {
 
 		} else {
 
+$status = $this ->getDeliveryStatus($waybill);
 
-			$status = $this->getWayBillStatus($waybill);
 			return Mds_View::make(
 				'delivery_details',
 				compact(
 					'deliveryAddressId',
 					'orderId',
-					'carrierName',
 					'serviceId',
 					'deliveryAddresses',
 					'suburb',
 					'suburbs',
 					'locationType',
 					'locationTypes',
-					'countryName',
 					'token',
 					'collectionAddresses',
 					'collectionAddressId',
-					'price',
-					'message',
-					'status'
+					'status',
+					'waybill',
+					'serviceName'
+
 				)
 			);
 		}
@@ -593,26 +592,6 @@ class Mds extends CarrierModule {
 
 
 
-		return Mds_View::make(
-			'shipping_control',
-			compact(
-				'deliveryAddressId',
-				'orderId',
-				'carrierName',
-				'serviceId',
-				'deliveryAddresses',
-				'suburb',
-				'suburbs',
-				'locationType',
-				'locationTypes',
-				'countryName',
-				'token',
-				'collectionAddresses',
-				'collectionAddressId',
-				'price',
-				'message'
-			)
-		);
 
 	}
 
