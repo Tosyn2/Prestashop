@@ -125,7 +125,6 @@
 			<?php echo $price; ?>
 		</div>
 	</div>
-	<!--	</div>-->
 </div>
 </div>
 
