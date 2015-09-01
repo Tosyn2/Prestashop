@@ -459,6 +459,15 @@ class Mds extends CarrierModule {
 
 	public function hookDisplayAdminOrder($params)
 	{
+			try {
+				$this->client = new SoapClient( // Setup the soap client
+					'http://www.collivery.co.za/wsdl/v2', // URL to WSDL File
+					array('cache_wsdl' => WSDL_CACHE_NONE) // Don't cache the WSDL file
+				);
+			} catch (SoapFault $e) {
+				echo "Unable to connect to the API, plugin not operational";
+				return false;
+			}
 
 		$sql = 'SELECT `id_address_delivery` FROM `' . _DB_PREFIX_ . 'orders` WHERE `id_order` = ' . $params['id_order'];
 		$deliveryAddressId = $this->db->getValue($sql);
