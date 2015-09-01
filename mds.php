@@ -473,7 +473,10 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 2 AND deleted = 0';
 		$deliveryAddresses = $this->db->ExecuteS($sql);
 
-		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 0 AND deleted = 0';
+		$sql = 'SELECT `id_manufacturer` FROM `ps_manufacturer` where `name` = "MDS Collection Adresses"';
+		$idManufacturer = $this->db->getValue($sql);
+
+		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_manufacturer` = ' .$idManufacturer . ' AND deleted = 0';
 		$collectionAddresses = $this->db->ExecuteS($sql);
 
 		$sql = 'SELECT `id_collection_address` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
@@ -533,6 +536,7 @@ class Mds extends CarrierModule {
 			return Mds_View::make(
 				'shipping_control',
 				compact(
+					'idManufacturer',
 					'deliveryAddressId',
 					'orderId',
 					'carrierName',
