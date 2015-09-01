@@ -472,11 +472,10 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT `id_address_delivery` FROM `' . _DB_PREFIX_ . 'orders` WHERE `id_order` = ' . $params['id_order'];
 		$deliveryAddressId = $this->db->getValue($sql);
 
-		$sql = 'SELECT `service_name` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
-		$carrierName = $this->db->getValue($sql);
-
-		$sql = 'SELECT `service_id` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
+		$sql = 'SELECT `id_service` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$serviceId = $this->db->getValue($sql);
+		$services = $this->collivery->getServices();
+		$serviceName= $services[$serviceId];
 
 		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 2 AND deleted = 0';
 		$deliveryAddresses = $this->db->ExecuteS($sql);
