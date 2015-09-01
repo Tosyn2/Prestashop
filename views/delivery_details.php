@@ -30,13 +30,6 @@
 								<?php endif; ?>
 							<?php endforeach; ?>
 						</div>
-						<?php if ($status['status_id'] == 10 || $status['status_id'] ==  30 ) { ?>
-							<div style="pull-right">Collection Time ETA: <?= $status['eta_text'] ?></div>
-						<?php }elseif ($status['status_id'] == 7 || $status['status_id'] ==  14 || $status['status_id'] ==  21){?>
-							<div style="pull-right">Collected</div>
-						<?php }elseif ($status['status_id'] == 11) {?>
-							<div style="pull-right">Unable to collect parcel</div>
-						<?php }?>
 					</div>
 				</div>
 			</div>
@@ -59,14 +52,6 @@
 								?>
 							<?php endforeach; ?>
 						</div>
-						<?php if ($status['status_id'] == 15 || $status['status_id'] ==  31) { ?>
-							<div style="pull-right">Delivery Time ETA: <?= $status['eta_text'] ?></div>
-							<?php }elseif ($status['status_id'] == 8 || $status['status_id'] ==  20 || $status['status_id'] ==  32){?>
-							<div style="pull-right">Delivered</div>
-						<?php }elseif ($status['status_id'] == 12) {?>
-							<div style="pull-right">Unable to deliver parcel</div>
-						<?php }?>
-
 					</div>
 				</div>
 			</div>
