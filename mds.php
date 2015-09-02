@@ -424,11 +424,13 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `alias` = "Default MDS Collection Address"';
 		$defaultMdsAddressPsId = $this->db->getRow($sql);
 
+		$sql = 'SELECT `id_manufacturer` FROM ' . _DB_PREFIX_ . 'manufacturer where `name` = "MDS Collection Adresses" AND `active` = 1';
+		$mdsManufacturerId = $this->db->getValue($sql);
 		if ( ! $defaultMdsAddressPsId) {
 
 			$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
 			VALUES
-			(30, \'' . $state_id . '\',0,0,0,0,"Default MDS Collection Address","", \'' . $last_name . '\', \'' . $first_name . '\', \'' . $streetAddress . '\' , \'' . $locationType . '\' , \'' . $postCode . '\' , \'' . $city . '\',other, \'' . $phone . '\', \'' . $mobile . '\',1,0)';
+			(30, \'' . $state_id . '\',0,\'' .$mdsManufacturerId. '\',0,0,"Default MDS Collection Address","", \'' . $last_name . '\', \'' . $first_name . '\', \'' . $streetAddress . '\' , \'' . $locationType . '\' , \'' . $postCode . '\' , \'' . $city . '\',other, \'' . $phone . '\', \'' . $mobile . '\',1,0)';
 			$this->db->execute($sql);
 
 		} else {
