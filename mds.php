@@ -424,7 +424,7 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `alias` = "Default MDS Collection Address"';
 		$defaultMdsAddressPsId = $this->db->getRow($sql);
 
-		$sql = 'SELECT `id_manufacturer` FROM ' . _DB_PREFIX_ . 'manufacturer where `name` = "MDS Collection Adresses" AND `active` = 1';
+		$sql = 'SELECT `id_manufacturer` FROM ' . _DB_PREFIX_ . 'manufacturer where `name` = "MDS Collection Addresses" AND `active` = 1';
 		$mdsManufacturerId = $this->db->getValue($sql);
 		if ( ! $defaultMdsAddressPsId) {
 
