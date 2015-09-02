@@ -33,6 +33,7 @@ class Install extends Installer {
 		$this->addIdMdsColumnToStatesTable();
 		$this->setZaContainsStates();
 		$this->addMdsTransactionTable();
+		$this->addMdsManufacturer();
 	}
 
 	/**
@@ -261,6 +262,42 @@ class Install extends Installer {
 
 	}
 	
+	private function addMdsManufacturer()
+	{
+		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'manufacturer` WHERE `name` = "MDS Collection Addresses" ';
+		$mdsManufacturer = $this->db->getValue($sql);
+
+		if(!$mdsManufacturer) {
+
+			$this->db->insert('manufacturer', array(
+					'name' => "MDS Collection Addresses"
+				)
+			);
+
+			$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'manufacturer` WHERE `name` = "MDS Collection Addresses" ';
+			$mdsManufacturer = $this->db->getValue($sql);
+
+			$sql = 'SELECT `id_shop` FROM `' . _DB_PREFIX_ . 'shop` WHERE `active` = 1 ';
+			$idShop = $this->db->getValue($sql);
+
+			$this->db->insert('manufacturer_shop', array(
+					'id_manufacturer' => $mdsManufacturer,
+					'id_shop' => $idShop
+				)
+			);
+
+			$sql = 'SELECT `id_lang` FROM `' . _DB_PREFIX_ . 'lang_shop` WHERE `id_shop` =' . $idShop;
+			$idLang = $this->db->getValue($sql);
+
+			$this->db->insert('manufacturer_lang', array(
+					'id_manufacturer' => $mdsManufacturer,
+					'id_lang' => $idLang
+				)
+			);
+
+		}
+
+	}
 			
 
 	/**
