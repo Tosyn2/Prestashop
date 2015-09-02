@@ -270,7 +270,8 @@ class Install extends Installer {
 		if(!$mdsManufacturer) {
 
 			$this->db->insert('manufacturer', array(
-					'name' => "MDS Collection Addresses"
+					'name' => "MDS Collection Addresses",
+					'active' => 1
 				)
 			);
 
