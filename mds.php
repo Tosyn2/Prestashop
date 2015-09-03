@@ -783,11 +783,17 @@ class Mds extends CarrierModule {
 
 	public function changeDeliveryAddress($value, $idOrder)
 	{
-		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_delivery_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
-		$this->db->execute($sql);
 
-		$sql = 'UPDATE ' . _DB_PREFIX_ . 'orders SET `id_address_delivery` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
-		$this->db->execute($sql);
+		if ($result = $this->db->update(
+			'mds_collivery_processed',
+			array('id_delivery_address' => trim($value)),
+			'`id_order` = ' . trim($idOrder)
+		)
+		) {
+			$this->db->update('orders', array('id_address_delivery' => trim($value)), '`id_order` = ' . trim($idOrder));
+		}
+
+		return;
 	}
 	public function changeCollectionAddress($value, $idOrder)
 	{
