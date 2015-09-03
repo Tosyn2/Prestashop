@@ -6,7 +6,7 @@
 
 	replaceText('State', 'Town');
 	replaceText('City', 'Suburb');
-	replaceText('Address (Line 2)', 'Location Type');
+	replaceText('Additional information', 'Location Type');
 
 	addDropDownSuburb(suburbs, suburb);
 	addDropDownLocationType(location_types, location_type);

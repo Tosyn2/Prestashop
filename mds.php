@@ -192,7 +192,7 @@ class Mds extends CarrierModule {
 		$colliveryParams['company_name'] = $addressRow['company'];
 		$colliveryParams['building'] = '';
 		$colliveryParams['street'] = $addressRow['address1'];
-		$colliveryParams['location_type'] = $addressRow['address2'];
+		$colliveryParams['location_type'] = $addressRow['other'];
 		$colliveryParams['suburb'] = $addressRow['city'];
 		$colliveryParams['town'] = $mds_town_id;
 		$colliveryParams['zip_code'] = $addressRow['postcode'];
@@ -418,7 +418,7 @@ class Mds extends CarrierModule {
 		$suburb = $address['city'];
 		$suburbs = $this->collivery->getSuburbs('');
 
-		$locationType = $address['address2'];
+		$locationType = $address['other'];
 		$locationTypes = $this->collivery->getLocationTypes();
 
 		$this->context->controller->addJS(($this->_path) . 'helper.js');
@@ -445,7 +445,7 @@ class Mds extends CarrierModule {
 		$suburb = $address['city'];
 		$suburbs = $this->collivery->getSuburbs('');
 
-		$locationType = $address['address2'];
+		$locationType = $address['other'];
 		$locationTypes = $this->collivery->getLocationTypes();
 
 		$this->context->controller->addJS(($this->_path) . 'helper.js');
@@ -513,7 +513,7 @@ class Mds extends CarrierModule {
 
 			$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
 			VALUES
-			(30, \'' . $state_id . '\',0,\'' . $mdsManufacturerId . '\',0,0,"Default MDS Collection Address","", \'' . $last_name . '\', \'' . $first_name . '\', \'' . $streetAddress . '\' , \'' . $locationType . '\' , \'' . $postCode . '\' , \'' . $city . '\',other, \'' . $phone . '\', \'' . $mobile . '\',1,0)';
+			(30, \'' . $state_id . '\',0,\'' . $mdsManufacturerId . '\',0,0,"Default MDS Collection Address","", \'' . $last_name . '\', \'' . $first_name . '\', \'' . $streetAddress . '\' , "", \'' . $postCode . '\' , \'' . $city . '\',\'' . $locationType . '\', \'' . $phone . '\', \'' . $mobile . '\',1,0)';
 			$this->db->execute($sql);
 
 		} else {
@@ -528,7 +528,7 @@ class Mds extends CarrierModule {
 
 			if ($hashMds != $hashPs) {
 
-				$sql = 'UPDATE ' . _DB_PREFIX_ . 'address SET `id_state` = \'' . $state_id . '\', `lastname` = \'' . $last_name . '\' ,`firstname` =  \'' . $first_name . '\'  ,`address1` =  \'' . $defaultAddress['street'] . '\' , `address2` =  \'' . $locationType . '\',`postcode` =  \'' . $defaultAddress['zip_code'] . '\',`city` =  \'' . $defaultAddress['suburb_name'] . '\' ,`phone` =  \'' . $phone . '\',`phone_mobile` = \'' . $mobile . '\' where `id_address` =  \'' . $defaultMdsAddressPsId['id_address'] . '\'';
+				$sql = 'UPDATE ' . _DB_PREFIX_ . 'address SET `id_state` = \'' . $state_id . '\', `lastname` = \'' . $last_name . '\' ,`firstname` =  \'' . $first_name . '\'  ,`address1` =  \'' . $defaultAddress['street'] . '\' , `other` =  \'' . $locationType . '\',`postcode` =  \'' . $defaultAddress['zip_code'] . '\',`city` =  \'' . $defaultAddress['suburb_name'] . '\' ,`phone` =  \'' . $phone . '\',`phone_mobile` = \'' . $mobile . '\' where `id_address` =  \'' . $defaultMdsAddressPsId['id_address'] . '\'';
 				$this->db->execute($sql);
 
 			}
@@ -593,7 +593,7 @@ class Mds extends CarrierModule {
 		$suburb = $address['city'];
 		$suburbs = $this->collivery->getSuburbs('');
 
-		$locationType = $address['address2'];
+		$locationType = $address['other'];
 		$locationTypes = $this->collivery->getLocationTypes();
 
 		$back = "Location: ./index.php?controller=AdminOrders&id_order=" . $params['id_order'] . "&vieworder&token=" . $token;
@@ -832,7 +832,7 @@ class Mds extends CarrierModule {
 		$colliveryParams['company_name'] = $addressRow['company'];
 		$colliveryParams['building'] = '';
 		$colliveryParams['street'] = $addressRow['address1'];
-		$colliveryParams['location_type'] = $addressRow['address2'];
+		$colliveryParams['location_type'] = $addressRow['other'];
 		$colliveryParams['suburb'] = $addressRow['city'];
 		$colliveryParams['town'] = $mds_town_id;
 		$colliveryParams['zip_code'] = $addressRow['postcode'];
@@ -880,7 +880,7 @@ class Mds extends CarrierModule {
 		$colliveryParams['company_name'] = $addressRow['company'];
 		$colliveryParams['building'] = '';
 		$colliveryParams['street'] = $addressRow['address1'];
-		$colliveryParams['location_type'] = $addressRow['address2'];
+		$colliveryParams['location_type'] = $addressRow['other'];
 		$colliveryParams['suburb'] = $addressRow['city'];
 		$colliveryParams['town'] = $mds_town_id;
 		$colliveryParams['zip_code'] = $addressRow['postcode'];

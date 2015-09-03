@@ -63,8 +63,8 @@ function addDropDownLocationType(location_types, location_type) {
 			}
 		}
 
-		$("#address2")
-			.replaceWith('<select id="address2" name="address2" class="form-control">'
+		$("#other")
+			.replaceWith('<select id="other" name="other" class="form-control">'
 			+ '<option value="' + location_type + '">' + location_type + '</option>'
 			+ text
 			+ '</select>'
