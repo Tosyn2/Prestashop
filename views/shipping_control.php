@@ -56,9 +56,8 @@
 				<h2>Delivery Address</h2>
 
 				<form class="form-horizontal hidden-print" method="post"
-				      action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=changeDeliveryAddress&amp;value=<?= Tools::getValue(
-					      'id_address'
-				      ) ?>">
+				      action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=changeDeliveryAddress">
+
 					<div class="form-group">
 						<div class="col-lg-9">
 							<select name="id_address">
@@ -76,7 +75,7 @@
 							</select>
 						</div>
 						<div class="col-lg-3">
-							<input type="submit" value="Changes" class="btn btn-default" class="icon-refresh">
+							<button method="submit" name="id_address_del">Change</button>
 						</div>
 					</div>
 				</form>
