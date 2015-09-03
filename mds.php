@@ -539,8 +539,13 @@ class Mds extends CarrierModule {
 			} elseif ($form_action_func === "changeCollectionAddress") {
 
 				$idOrder = $_GET['id_order'];
-				$value = $_GET['value'];
-				$this->changeCollectionAddress($value, $idOrder);
+
+				if (Tools::isSubmit('id_address_col')) {
+
+					$value = Tools::getValue('id_collection_address');
+
+					$this->changeCollectionAddress($value, $idOrder);
+				}
 			} elseif ($form_action_func === "changeDeliveryAddress") {
 				$idOrder = $_GET['id_order'];
 				$value = $_GET['value'];
