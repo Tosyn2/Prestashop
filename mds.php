@@ -560,7 +560,8 @@ class Mds extends CarrierModule {
 					'collectionAddresses',
 					'collectionAddressId',
 					'price',
-					'message'
+					'message',
+					'mdsManufacturerId'
 				)
 			);
 
