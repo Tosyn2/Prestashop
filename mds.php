@@ -526,6 +526,7 @@ class Mds extends CarrierModule {
 		$locationType = $address['address2'];
 		$locationTypes = $this->collivery->getLocationTypes();
 
+		$back = "Location: ./index.php?controller=AdminOrders&id_order=" . $params['id_order'] . "&vieworder&token=" . $token;
 		if ( ! $_POST['func_name']) {
 
 			$_GET['func_name'];
@@ -538,6 +539,7 @@ class Mds extends CarrierModule {
 				$message = $this->despatchDelivery($params,$idOrder);
 			} elseif ($form_action_func === "changeCollectionAddress") {
 
+				return header($back);
 				$idOrder = $_GET['id_order'];
 
 				if (Tools::isSubmit('id_address_col')) {
@@ -546,6 +548,8 @@ class Mds extends CarrierModule {
 
 					$this->changeCollectionAddress($value, $idOrder);
 				}
+				return header($back);
+
 			} elseif ($form_action_func === "changeDeliveryAddress") {
 				$idOrder = $_GET['id_order'];
 
@@ -555,6 +559,7 @@ class Mds extends CarrierModule {
 
 					$this->changeDeliveryAddress($value, $idOrder);
 				}
+				return header($back);
 			}
 
 		}
