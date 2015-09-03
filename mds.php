@@ -625,21 +625,28 @@ $status = $this ->getDeliveryStatus($waybill);
 
 	public function despatchDelivery($params, $idOrder)
 	{
-		try {
-			$orderParams = $this->buildColliveryControlDataArray($params);
-			if (Mds_RiskCover::hasCover()) {
-				$orderParams['cover'] = 1;
+		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
+		$waybill = $this->db->getValue($sql);
+
+		if(!$waybill) {
+
+			try {
+				$orderParams = $this->buildColliveryControlDataArray($params);
+				if (Mds_RiskCover::hasCover()) {
+					$orderParams['cover'] = 1;
+				}
+				//$status = $this->collivery->validate($orderParams);
+				$waybill = $this->mdsService->addCollivery($orderParams, true);
+
+				$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
+				$this->db->execute($sql);
+
+				return;
+
+			} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
+				return false;
 			}
 
-			$waybill = $this->mdsService->addCollivery($orderParams, true);
-
-			$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
-			$this->db->execute($sql);
-
-			return;
-
-		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
-			return false;
 		}
 
 	}
