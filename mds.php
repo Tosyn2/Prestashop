@@ -19,7 +19,8 @@ class Mds extends CarrierModule {
 		'actionOrderStatusPostUpdate',
 		'displayShoppingCart',
 		'displayAdminOrder',
-		'orderConfirmation'
+		'orderConfirmation',
+		'displayBackOfficeHeader'
 	);
 
 	public function __construct()
