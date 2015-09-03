@@ -482,7 +482,7 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 2 AND deleted = 0';
 		$deliveryAddresses = $this->db->ExecuteS($sql);
 
-		$sql = 'SELECT `id_manufacturer` FROM `ps_manufacturer` where `name` = "MDS Collection Adresses"';
+		$sql = 'SELECT `id_manufacturer` FROM `ps_manufacturer` where `name` = "MDS Collection Addresses"';
 		$idManufacturer = $this->db->getValue($sql);
 
 		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_manufacturer` = ' .$idManufacturer . ' AND deleted = 0';
@@ -677,7 +677,9 @@ $status = $this ->getDeliveryStatus($waybill);
 	public function addControlColliveryAddressTo($params)
 	{
 
-		$addAddress1 = $params['cart']->id_address_delivery;
+		$sql = 'SELECT `id_delivery_address` FROM ' . _DB_PREFIX_ . 'mds_collivery_processed
+		WHERE id_order = \'' . $params['id_order'] . '\'';
+		$addAddress1 = $this->db->getValue($sql);
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
 		$addressRow = $this->db->getRow($sql);
