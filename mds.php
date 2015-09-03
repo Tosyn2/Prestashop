@@ -9,6 +9,9 @@ define('_MDS_DIR_', __DIR__);
 
 include('autoload.php');
 
+/**
+ * Class Mds
+ */
 class Mds extends CarrierModule {
 
 	public $id_carrier;
@@ -165,6 +168,11 @@ class Mds extends CarrierModule {
 		);
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return array
+	 */
 	function addColliveryAddressTo($params)
 	{
 		$addAddress1 = $params['cart']->id_address_delivery;
@@ -204,6 +212,11 @@ class Mds extends CarrierModule {
 		}
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return mixed
+	 */
 	function getDefaultColliveryAddressFrom($params)
 	{
 		$colliveryAddressesFrom = $this->mdsService->returnDefaultAddress();
@@ -211,6 +224,11 @@ class Mds extends CarrierModule {
 		return array_pop($colliveryAddressesFrom['contacts']);
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return mixed
+	 */
 	public function buildColliveryDataArray($params)
 	{
 		$service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
@@ -241,6 +259,11 @@ class Mds extends CarrierModule {
 		return $colliveryParams;
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return array
+	 */
 	public function buildColliveryGetPriceArray($params)
 	{
 		$addAddress1 = $params->id_address_delivery;
@@ -275,16 +298,34 @@ class Mds extends CarrierModule {
 		return $colliveryGetPriceArray;
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return mixed
+	 */
 	public function getCartProducts($params)
 	{
 		return $params->getProducts();
 	}
 
+	/**
+	 * @param $params
+	 * @param $shipping_cost
+	 *
+	 * @return bool
+	 */
 	public function getOrderShippingCost($params, $shipping_cost)
 	{
 		return false;
 	}
 
+	/**
+	 * @param $params
+	 * @param $shipping_cost
+	 * @param $products
+	 *
+	 * @return bool
+	 */
 	public function getPackageShippingCost($params, $shipping_cost, $products)
 	{
 		try {
@@ -308,11 +349,19 @@ class Mds extends CarrierModule {
 		}
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return bool
+	 */
 	public function getOrderShippingCostExternal($params)
 	{
 		return false;
 	}
 
+	/**
+	 *
+	 */
 	public function hookDisplayShoppingCart()
 	{
 		$towns = $this->collivery->getTowns();
@@ -333,6 +382,11 @@ class Mds extends CarrierModule {
 		}
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return bool
+	 */
 	public function hookActionOrderStatusPostUpdate($params)
 	{
 		if ($params['newOrderStatus']->name == 'Shipped') {
@@ -349,6 +403,11 @@ class Mds extends CarrierModule {
 		}
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return string
+	 */
 	public function hookDisplayFooter($params)
 	{
 		$idAddress = (int) $this->context->cart->id_address_delivery;
@@ -370,6 +429,11 @@ class Mds extends CarrierModule {
 		);
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return string
+	 */
 	public function hookDisplayBackOfficeHeader($params)
 	{
 
@@ -392,6 +456,9 @@ class Mds extends CarrierModule {
 		);
 	}
 
+	/**
+	 * @param $params
+	 */
 	public function hookOrderConfirmation($params)
 	{
 		$orderId = $params[ objOrder ]->id;
@@ -475,6 +542,12 @@ class Mds extends CarrierModule {
 
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return string|void
+	 * @throws \PrestaShopDatabaseException
+	 */
 	public function hookDisplayAdminOrder($params)
 	{
 		try {
@@ -627,11 +700,21 @@ class Mds extends CarrierModule {
 
 	}
 
+	/**
+	 * @param $carrierId
+	 *
+	 * @return mixed
+	 */
 	protected function getServiceFromCarrierId($carrierId)
 	{
 		return Mds_Services::getServiceId($carrierId);
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return bool
+	 */
 	public function getQuote($params)
 	{
 
@@ -653,6 +736,12 @@ class Mds extends CarrierModule {
 
 	}
 
+	/**
+	 * @param $params
+	 * @param $idOrder
+	 *
+	 * @return bool|void
+	 */
 	public function despatchDelivery($params, $idOrder)
 	{
 		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
@@ -680,6 +769,11 @@ class Mds extends CarrierModule {
 
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return mixed
+	 */
 	public function buildColliveryControlDataArray($params)
 	{
 		$service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
@@ -710,6 +804,11 @@ class Mds extends CarrierModule {
 		return $colliveryParams;
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return array
+	 */
 	public function addControlColliveryAddressTo($params)
 	{
 
@@ -754,6 +853,11 @@ class Mds extends CarrierModule {
 
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return array
+	 */
 	public function addControlColliveryAddressFrom($params)
 	{
 		$sql = 'SELECT `id_collection_address` FROM ' . _DB_PREFIX_ . 'mds_collivery_processed
@@ -797,6 +901,10 @@ class Mds extends CarrierModule {
 
 	}
 
+	/**
+	 * @param $value
+	 * @param $idOrder
+	 */
 	public function changeDeliveryAddress($value, $idOrder)
 	{
 
@@ -812,6 +920,10 @@ class Mds extends CarrierModule {
 		return;
 	}
 
+	/**
+	 * @param $value
+	 * @param $idOrder
+	 */
 	public function changeCollectionAddress($value, $idOrder)
 	{
 		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_collection_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
@@ -821,6 +933,11 @@ class Mds extends CarrierModule {
 
 	}
 
+	/**
+	 * @param $waybill
+	 *
+	 * @return array
+	 */
 	public function getDeliveryStatus($waybill)
 	{
 		$status = $this->collivery->getStatus($waybill);
