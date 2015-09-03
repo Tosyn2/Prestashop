@@ -499,7 +499,7 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT `id_service` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$serviceId = $this->db->getValue($sql);
 		$services = $this->collivery->getServices();
-		$serviceName= $services[$serviceId];
+		$serviceName = $services[ $serviceId ];
 
 		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_customer` = 2 AND deleted = 0';
 		$deliveryAddresses = $this->db->ExecuteS($sql);
@@ -507,7 +507,7 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT `id_manufacturer` FROM `ps_manufacturer` where `name` = "MDS Collection Addresses"';
 		$idManufacturer = $this->db->getValue($sql);
 
-		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_manufacturer` = ' .$idManufacturer . ' AND deleted = 0';
+		$sql = 'SELECT * FROM `ps_address` LEFT JOIN (`ps_state`) ON (`ps_address`.`id_state`=`ps_state`.`id_state`) where `id_manufacturer` = ' . $idManufacturer . ' AND deleted = 0';
 		$collectionAddresses = $this->db->ExecuteS($sql);
 
 		$sql = 'SELECT `id_collection_address` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
@@ -556,14 +556,11 @@ class Mds extends CarrierModule {
 
 		$this->context->controller->addJS(($this->_path) . 'helper.js');
 
-
 		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$waybill = $this->db->getValue($sql);
 
 
-
-		if(!$waybill) {
-
+		if ( ! $waybill) {
 			return Mds_View::make(
 				'shipping_control',
 				compact(
@@ -587,10 +584,9 @@ class Mds extends CarrierModule {
 				)
 			);
 
-
 		} else {
 
-$status = $this ->getDeliveryStatus($waybill);
+			$status = $this->getDeliveryStatus($waybill);
 
 			return Mds_View::make(
 				'delivery_details',
@@ -613,10 +609,6 @@ $status = $this ->getDeliveryStatus($waybill);
 				)
 			);
 		}
-
-
-
-
 
 	}
 
@@ -651,14 +643,13 @@ $status = $this ->getDeliveryStatus($waybill);
 		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$waybill = $this->db->getValue($sql);
 
-		if(!$waybill) {
+		if ( ! $waybill) {
 
 			try {
 				$orderParams = $this->buildColliveryControlDataArray($params);
 				if (Mds_RiskCover::hasCover()) {
 					$orderParams['cover'] = 1;
 				}
-				//$status = $this->collivery->validate($orderParams);
 				$waybill = $this->mdsService->addCollivery($orderParams, true);
 
 				$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
