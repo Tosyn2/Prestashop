@@ -46,7 +46,7 @@
 							<?php endforeach; ?>
 						</div>
 						<a class="btn btn-default pull-right"
-						   href="?controller=AdminManufacturers&amp;addaddress&amp;token=<?= $token ?>&amp;id_manufacturer=<?=$idManufacturer?>">
+						   href="?controller=AdminManufacturers&amp;addaddress&amp;token=<?= $token ?>&amp;id_manufacturer=<?= $idManufacturer ?>">
 							<i class="icon-pencil"></i> Add Address
 						</a>
 					</div>

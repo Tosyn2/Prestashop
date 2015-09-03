@@ -21,6 +21,7 @@ class Mds extends CarrierModule {
 		'displayAdminOrder',
 		'orderConfirmation',
 		'displayBackOfficeHeader'
+
 	);
 
 	public function __construct()
@@ -164,13 +165,6 @@ class Mds extends CarrierModule {
 		);
 	}
 
-	/**
-	 * Hook update carrier
-	 *
-	 * @param $params
-	 *
-	 * @return array
-	 */
 	function addColliveryAddressTo($params)
 	{
 		$addAddress1 = $params['cart']->id_address_delivery;
@@ -397,6 +391,7 @@ class Mds extends CarrierModule {
 			compact('suburbs', 'suburb', 'locationTypes', 'locationType')
 		);
 	}
+
 	public function hookOrderConfirmation($params)
 	{
 		$orderId = $params[ objOrder ]->id;
@@ -427,8 +422,6 @@ class Mds extends CarrierModule {
 		$streetAddress = $defaultAddress['street'];
 
 		$locationType = $location_types[ $defaultAddress['location_type'] ];
-// 		echo $locationType;
-// 		die( '<pre>'.print_r($location_types, true));
 
 		$postCode = $defaultAddress['zip_code'];
 
@@ -448,11 +441,12 @@ class Mds extends CarrierModule {
 
 		$sql = 'SELECT `id_manufacturer` FROM ' . _DB_PREFIX_ . 'manufacturer where `name` = "MDS Collection Addresses" AND `active` = 1';
 		$mdsManufacturerId = $this->db->getValue($sql);
+
 		if ( ! $defaultMdsAddressPsId) {
 
 			$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
 			VALUES
-			(30, \'' . $state_id . '\',0,\'' .$mdsManufacturerId. '\',0,0,"Default MDS Collection Address","", \'' . $last_name . '\', \'' . $first_name . '\', \'' . $streetAddress . '\' , \'' . $locationType . '\' , \'' . $postCode . '\' , \'' . $city . '\',other, \'' . $phone . '\', \'' . $mobile . '\',1,0)';
+			(30, \'' . $state_id . '\',0,\'' . $mdsManufacturerId . '\',0,0,"Default MDS Collection Address","", \'' . $last_name . '\', \'' . $first_name . '\', \'' . $streetAddress . '\' , \'' . $locationType . '\' , \'' . $postCode . '\' , \'' . $city . '\',other, \'' . $phone . '\', \'' . $mobile . '\',1,0)';
 			$this->db->execute($sql);
 
 		} else {
@@ -483,19 +477,21 @@ class Mds extends CarrierModule {
 
 	public function hookDisplayAdminOrder($params)
 	{
-			try {
-				$this->client = new SoapClient( // Setup the soap client
-					'http://www.collivery.co.za/wsdl/v2', // URL to WSDL File
-					array('cache_wsdl' => WSDL_CACHE_NONE) // Don't cache the WSDL file
-				);
-			} catch (SoapFault $e) {
-				echo "Unable to connect to the API, plugin not operational";
-				return false;
-			}
+		try {
+			$this->client = new SoapClient( // Setup the soap client
+				'http://www.collivery.co.za/wsdl/v2', // URL to WSDL File
+				array('cache_wsdl' => WSDL_CACHE_NONE) // Don't cache the WSDL file
+			);
+		} catch (SoapFault $e) {
+			echo "Unable to connect to the API, plugin not operational";
 
 			return false;
+		}
+
+
 		$sql = 'SELECT `id_delivery_address` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$deliveryAddressId = $this->db->getValue($sql);
+
 
 		$sql = 'SELECT `id_service` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$serviceId = $this->db->getValue($sql);
@@ -528,19 +524,24 @@ class Mds extends CarrierModule {
 		$locationTypes = $this->collivery->getLocationTypes();
 
 		$back = "Location: ./index.php?controller=AdminOrders&id_order=" . $params['id_order'] . "&vieworder&token=" . $token;
+
 		if ( ! $_POST['func_name']) {
 
 			$_GET['func_name'];
 			$form_action_func = $_GET['func_name'];
 
 			if ($form_action_func === "getQuote") {
+
 				$price = $this->getQuote($params);
+
 			} elseif ($form_action_func === "addCollivery") {
+
 				$idOrder = $_GET['id_order'];
-				$message = $this->despatchDelivery($params,$idOrder);
-			} elseif ($form_action_func === "changeCollectionAddress") {
+				$this->despatchDelivery($params, $idOrder);
 
 				return header($back);
+
+			} elseif ($form_action_func === "changeCollectionAddress") {
 				$idOrder = $_GET['id_order'];
 
 				if (Tools::isSubmit('id_address_col')) {
@@ -549,6 +550,7 @@ class Mds extends CarrierModule {
 
 					$this->changeCollectionAddress($value, $idOrder);
 				}
+
 				return header($back);
 
 			} elseif ($form_action_func === "changeDeliveryAddress") {
@@ -560,6 +562,7 @@ class Mds extends CarrierModule {
 
 					$this->changeDeliveryAddress($value, $idOrder);
 				}
+
 				return header($back);
 			}
 
@@ -713,6 +716,7 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT `id_delivery_address` FROM ' . _DB_PREFIX_ . 'mds_collivery_processed
 		WHERE id_order = \'' . $params['id_order'] . '\'';
 		$addAddress1 = $this->db->getValue($sql);
+
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
 		$addressRow = $this->db->getRow($sql);
@@ -807,6 +811,7 @@ class Mds extends CarrierModule {
 
 		return;
 	}
+
 	public function changeCollectionAddress($value, $idOrder)
 	{
 		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_collection_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
