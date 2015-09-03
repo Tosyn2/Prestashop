@@ -37,7 +37,7 @@
 							<?php foreach ($collectionAddresses as $collectionAddress): ?>
 								<?php if ($collectionAddress['id_address'] == $collectionAddressId): ?>
 									<a class="btn btn-default pull-right"
-									   href="?controller=adminaddresses&amp;id_address=<?= $collectionAddress['id_address'] ?>&amp;updateaddress&amp;token=<?= $token ?>">
+									   href="?controller=AdminManufacturers&amp;token=<?= $token ?>&amp;id_address=<?= $collectionAddress['id_address'] ?>&amp;editaddresses=1">
 										<i class="icon-pencil"></i> Edit
 									</a>
 									<?= $collectionAddress['alias'] ?> <br>
