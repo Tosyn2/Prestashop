@@ -376,6 +376,27 @@ class Mds extends CarrierModule {
 		);
 	}
 
+	public function hookDisplayBackOfficeHeader($params)
+	{
+
+		$idAddress = $_GET['id_address'];
+
+		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;
+		$address = $this->db->getRow($sql);
+
+		$suburb = $address['city'];
+		$suburbs = $this->collivery->getSuburbs('');
+
+		$locationType = $address['address2'];
+		$locationTypes = $this->collivery->getLocationTypes();
+
+		$this->context->controller->addJS(($this->_path) . 'helper.js');
+
+		return Mds_View::make(
+			'admin_header',
+			compact('suburbs', 'suburb', 'locationTypes', 'locationType')
+		);
+	}
 	public function hookOrderConfirmation($params)
 	{
 		$orderId = $params[ objOrder ]->id;
