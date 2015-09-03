@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="tab-content panel">
-		<h1>Shipping Control</h1>
+		<h1>MDS Shipping Control</h1>
 
 		<div class="tab-pane  in active" id="addressShipping" style="display:inline-block; width:100%">
 			<div style="display:inline-block">
