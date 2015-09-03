@@ -10,7 +10,8 @@
 				<li>Delivery fee: <?= $status['total_price'] ?></li>
 				<?php if ($status['status_id'] == 32 || $status['status_id'] == 8): ?>
 					<li>
-						<a href="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=getPod&amp;waybill=<?= $waybill ?>"
+						<a href="https://quote.collivery.co.za/waybillpdf.php?wb=<?= $waybillEnc ?>&output=I"
+						   target="_blank"
 						   class="btn btn-default">Get POD file</a></li>
 				<?php endif ?>
 			</ul>

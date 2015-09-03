@@ -559,6 +559,7 @@ class Mds extends CarrierModule {
 		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$waybill = $this->db->getValue($sql);
 
+		$waybillEnc = base64_encode($waybill);
 
 		if ( ! $waybill) {
 			return Mds_View::make(
@@ -604,8 +605,8 @@ class Mds extends CarrierModule {
 					'collectionAddressId',
 					'status',
 					'waybill',
-					'serviceName'
-
+					'serviceName',
+					'waybillEnc'
 				)
 			);
 		}
