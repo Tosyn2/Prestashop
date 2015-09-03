@@ -793,20 +793,17 @@ class Mds extends CarrierModule {
 	{
 		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_collection_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
 		$this->db->execute($sql);
-	/**
-	 * @param $params
-	 * @param $waybill
-	 *
-	 * @return array
-	 */
-	public function getWayBillStatus( $waybill)
-	{
-		$status = $this->mdsService->collivery->getStatus($waybill);
-//		$colliveryPriceOptions = $this->collivery->getPrice($params);
-//		array_push($status, $colliveryPriceOptions);
 
+		return;
+
+	}
+
+	public function getDeliveryStatus($waybill)
+	{
+		$status = $this->collivery->getStatus($waybill);
 
 		return $status;
+
 	}
 
 }
