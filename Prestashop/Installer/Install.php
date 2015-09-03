@@ -261,7 +261,8 @@ class Install extends Installer {
 		return $sql;
 
 	}
-	
+
+
 	private function addMdsManufacturer()
 	{
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'manufacturer` WHERE `name` = "MDS Collection Addresses" ';

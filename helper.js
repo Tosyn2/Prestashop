@@ -1,36 +1,16 @@
+function replaceText(oldText, newText, node) {
+	node = node || document.body;
 
-function replaceText(oldText, newText, node){ 
-  node = node || document.body; 
+	var childs = node.childNodes, i = 0;
 
-  var childs = node.childNodes, i = 0;
-
-  while(node = childs[i]){ 
-    if (node.nodeType == Node.TEXT_NODE){ 
-      node.textContent = node.textContent.replace(oldText, newText); 
-    } else { 
-      replaceText(oldText, newText, node); 
-    } 
-    i++; 
-  } 
-}
-
-function addDropDownSuburb(suburbs , suburb)
-{
-	var text = '';
-
-	for (var key in suburbs) {
-		if (suburbs.hasOwnProperty(key)) {
-			text += '<option value="' + suburbs[key] + '">' + suburbs[key] + '</option>';
+	while (node = childs[i]) {
+		if (node.nodeType == Node.TEXT_NODE) {
+			node.textContent = node.textContent.replace(oldText, newText);
+		} else {
+			replaceText(oldText, newText, node);
 		}
+		i++;
 	}
-
-	$("#city")
-		.replaceWith( '<select id="city" name="city" class="form-control">' 
-							+ '<option value="'+  suburb +'">' +  suburb +'</option>' 
-							+ text
-							+ '</select>'
-							);
-
 }
 
 function replaceAdminText(oldText, newText, node) {
@@ -56,7 +36,6 @@ function replaceAdminText(oldText, newText, node) {
 function addDropDownSuburb(suburbs, suburb) {
 	$(document).ready(function () {
 		var text = '';
-
 
 		for (var key in suburbs) {
 			if (suburbs.hasOwnProperty(key)) {
@@ -92,5 +71,6 @@ function addDropDownLocationType(location_types, location_type) {
 		);
 	});
 }
+
 
 
