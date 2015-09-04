@@ -18,6 +18,7 @@ class MdsColliveryAutoloader {
 		'Mds_SettingsService'  => '\Mds\Prestashop\Settings\SettingsService',
 		'Mds_Transaction'      => '\Mds\Prestashop\Transaction\Transaction',
 		'Mds_TransactionTable' => '\Mds\Prestashop\Transaction\TransactionTable',
+		'Mds_TransactionView' => '\Mds\Prestashop\Transaction\TransactionView',
 
 	);
 

@@ -9,4 +9,6 @@ class Mds_Surcharge extends Mds\Prestashop\Settings\Surcharge {}
 class Mds_RiskCover extends \Mds\Prestashop\Settings\RiskCover {}
 class Mds_SettingsService extends \Mds\Prestashop\Settings\SettingsService {}
 class Mds_TransactionTable extends \Mds\Prestashop\Transaction\TransactionTable {}
+class Mds_TransactionView extends \Mds\Prestashop\Transaction\TransactionView {}
+
 
