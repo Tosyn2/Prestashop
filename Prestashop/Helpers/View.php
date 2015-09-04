@@ -1,5 +1,6 @@
 <?php namespace Mds\Prestashop\Helpers;
 
+
 class View {
 
 	protected $path = '';
