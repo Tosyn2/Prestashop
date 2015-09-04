@@ -6,7 +6,6 @@ use Mds_View;
 use Mds_ColliveryApi;
 use Mds\Prestashop\Settings;
 
-
 class TransactionView extends Transaction {
 
 	protected $collivery;
@@ -58,47 +57,47 @@ class TransactionView extends Transaction {
 
 		if (isset($_POST['func_name'])) {
 
-		$_GET['func_name'];
-		$form_action_func = $_GET['func_name'];
+			$_GET['func_name'];
+			$form_action_func = $_GET['func_name'];
 
-		if ($form_action_func === "getQuote") {
+			if ($form_action_func === "getQuote") {
 
-			$price = $this->getQuote($params);
+				$price = $this->getQuote($params);
 
-		} elseif ($form_action_func === "addCollivery") {
+			} elseif ($form_action_func === "addCollivery") {
 
-			$idOrder = $_GET['id_order'];
-			$this->despatchDelivery($params, $idOrder);
+				$idOrder = $_GET['id_order'];
+				$this->despatchDelivery($params, $idOrder);
 
-			return header($back);
+				return header($back);
 
-		} elseif ($form_action_func === "changeCollectionAddress") {
-			$idOrder = $_GET['id_order'];
+			} elseif ($form_action_func === "changeCollectionAddress") {
+				$idOrder = $_GET['id_order'];
 
-			if (Tools::isSubmit('id_address_col')) {
+				if (Tools::isSubmit('id_address_col')) {
 
-				$value = Tools::getValue('id_collection_address');
+					$value = Tools::getValue('id_collection_address');
 
-				$this->changeCollectionAddress($value, $idOrder);
+					$this->changeCollectionAddress($value, $idOrder);
+				}
+
+				return header($back);
+
+			} elseif ($form_action_func === "changeDeliveryAddress") {
+				$idOrder = $_GET['id_order'];
+
+				if (Tools::isSubmit('id_address_del')) {
+
+					$value = Tools::getValue('id_address');
+
+					$this->changeDeliveryAddress($value, $idOrder);
+				}
+
+				return header($back);
+
 			}
-
-			return header($back);
-
-		} elseif ($form_action_func === "changeDeliveryAddress") {
-			$idOrder = $_GET['id_order'];
-
-			if (Tools::isSubmit('id_address_del')) {
-
-				$value = Tools::getValue('id_address');
-
-				$this->changeDeliveryAddress($value, $idOrder);
-			}
-
-			return header($back);
 
 		}
-
-	}
 		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$waybill = $this->db->getValue($sql);
 
@@ -185,7 +184,7 @@ class TransactionView extends Transaction {
 	public function addFrontEndJs()
 	{
 
-		$this->collivery=Mds_ColliveryApi::getInstance();
+		$this->collivery = Mds_ColliveryApi::getInstance();
 		$idAddress = (int) $this->context->cart->id_address_delivery;
 
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;

@@ -198,8 +198,8 @@ class Mds extends CarrierModule {
 	 */
 	public function getPackageShippingCost($params, $shipping_cost, $products)
 	{
-		$price= new Mds_TransactionTable($this->db);
-		$price->getShoppingCartQuote($params,$shipping_cost);
+		$price = new Mds_TransactionTable($this->db);
+		$price->getShoppingCartQuote($params, $shipping_cost);
 	}
 
 	/**
@@ -217,7 +217,6 @@ class Mds extends CarrierModule {
 	 */
 	public function hookDisplayShoppingCart()
 	{
-
 		$add = new Mds_TransactionTable($this->db);
 		$add->addTownsToPsDb();
 	}
@@ -230,6 +229,7 @@ class Mds extends CarrierModule {
 	public function hookDisplayFooter($params)
 	{
 		$view = new Mds_TransactionView($this->db);
+
 		return $view->addFrontEndJs($params);
 	}
 
@@ -242,6 +242,7 @@ class Mds extends CarrierModule {
 	{
 
 		$view = new Mds_TransactionView($this->db);
+
 		return $view->addAdminJs($params);
 	}
 
@@ -253,7 +254,7 @@ class Mds extends CarrierModule {
 
 		try {
 			$createTransaction = new Mds_TransactionTable($this->db);
-			(string)$createTransaction->createTransaction($params);
+			(string) $createTransaction->createTransaction($params);
 
 		} catch (PrestaShopExceptionCore $e) {
 			return false;
@@ -286,8 +287,13 @@ class Mds extends CarrierModule {
 		}
 
 		$view = new Mds_TransactionView($this->db);
-		return $view->generateView($params,$token);
+
+		return $view->generateView($params, $token);
 	}
+
+
+
+
 
 
 
@@ -302,13 +308,5 @@ class Mds extends CarrierModule {
 //	{
 //		return Mds_Services::getServiceId($carrierId);
 //	}
-
-
-
-
-
-
-
-
 
 }

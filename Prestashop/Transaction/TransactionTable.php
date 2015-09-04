@@ -15,7 +15,6 @@ class TransactionTable extends Transaction {
 	{
 		$collivery = Mds_ColliveryApi::getInstance();
 
-
 		new SoapClient(
 			'http://www.collivery.co.za/wsdl/v2',
 			array('cache_wsdl' => WSDL_CACHE_NONE)
