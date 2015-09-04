@@ -1,4 +1,5 @@
 function replaceText(oldText, newText, node) {
+
 	node = node || document.body;
 
 	var childs = node.childNodes, i = 0;
@@ -11,15 +12,14 @@ function replaceText(oldText, newText, node) {
 		}
 		i++;
 	}
+
 }
 
 function replaceAdminText(oldText, newText, node) {
 
 	$(document).ready(function () {
 		node = node || document.body;
-
 		var childs = node.childNodes, i = 0;
-
 		while (node = childs[i]) {
 			if (node.nodeType == Node.TEXT_NODE) {
 				node.textContent = node.textContent.replace(oldText, newText);
@@ -29,7 +29,6 @@ function replaceAdminText(oldText, newText, node) {
 			i++;
 		}
 	});
-
 
 }
 
