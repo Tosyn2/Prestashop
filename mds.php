@@ -413,10 +413,12 @@ class Mds extends CarrierModule {
 
 		try {
 			$createTransaction = new Mds_TransactionTable($this->db);
-			(string) $createTransaction->createTransaction($params);
+			(string)$createTransaction->createTransaction($params);
 
 		} catch (PrestaShopExceptionCore $e) {
-			echo $e;
+			return false;
+		} catch (SoapFault $e) {
+			echo "Unable to connect to the API, plugin not operational";
 
 			return false;
 		}

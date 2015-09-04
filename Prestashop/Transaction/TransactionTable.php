@@ -5,7 +5,6 @@ use Mds;
 use Mds_Services;
 use Mds_ColliveryApi;
 use SoapClient;
-use SoapFault;
 
 class TransactionTable extends Transaction {
 
@@ -14,18 +13,13 @@ class TransactionTable extends Transaction {
 	 */
 	public function createTransaction($params)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
+		$collivery = Mds_ColliveryApi::getInstance();
 
-		try {
-			$this->client = new SoapClient( // Setup the soap client
-				'http://www.collivery.co.za/wsdl/v2', // URL to WSDL File
-				array('cache_wsdl' => WSDL_CACHE_NONE) // Don't cache the WSDL file
-			);
-		} catch (SoapFault $e) {
-			echo "Unable to connect to the API, plugin not operational";
 
-			return false;
-		}
+		new SoapClient(
+			'http://www.collivery.co.za/wsdl/v2',
+			array('cache_wsdl' => WSDL_CACHE_NONE)
+		);
 
 		$orderId = $params[ objOrder ]->id;
 		$deliveryAddressId = $params[ objOrder ]->id_address_delivery;
