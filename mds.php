@@ -328,25 +328,8 @@ class Mds extends CarrierModule {
 	 */
 	public function getPackageShippingCost($params, $shipping_cost, $products)
 	{
-		try {
-			$orderParams = $this->buildColliveryGetPriceArray($params);
-			$serviceId = $this->getServiceFromCarrierId($this->id_carrier);
-			$orderParams['service'] = $serviceId;
-
-			if (Mds_RiskCover::hasCover()) {
-				$orderParams['cover'] = 1;
-			}
-
-			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-
-			$surchargePerc = Mds_Surcharge::get($serviceId);
-			$price = $colliveryPrice * (1 + ($surchargePerc / 100));
-
-			return $shipping_cost + $price;
-		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
-			return false;
-		}
+		$price= new Mds_TransactionTable($this->db);
+		$price->getShoppingCartQuote($params,$shipping_cost);
 	}
 
 	/**
