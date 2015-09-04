@@ -386,4 +386,134 @@ class TransactionTable extends Transaction {
 		}
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return array
+	 */
+	function addColliveryAddressTo($params)
+	{
+		$addAddress1 = $params['cart']->id_address_delivery;
+		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
+		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
+		$addressRow = $this->db->getRow($sql);
+
+		$town_id = $addressRow['id_state'];
+		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE `id_state` = "' . $town_id . '" ';
+		$mds_town_id = $this->db->getValue($sql);
+
+		$addressString = $addressRow['address1'] . $addressRow['city'] . $mds_town_id . $addressRow['postcode'] . $addressRow['firstname'] . " " . $addressRow['lastname'];
+		$hash = hash('md5', $addressString);
+		$hash = substr($hash, 0, 15);
+
+		$colliveryParams['company_name'] = $addressRow['company'];
+		$colliveryParams['building'] = '';
+		$colliveryParams['street'] = $addressRow['address1'];
+		$colliveryParams['location_type'] = $addressRow['other'];
+		$colliveryParams['suburb'] = $addressRow['city'];
+		$colliveryParams['town'] = $mds_town_id;
+		$colliveryParams['zip_code'] = $addressRow['postcode'];
+		$colliveryParams['full_name'] = $addressRow['firstname'] . " " . $addressRow['lastname'];
+		$colliveryParams['phone'] = $addressRow['phone'];
+		$colliveryParams['cellphone'] = $addressRow['phone_mobile'];
+		$colliveryParams['custom_id'] = $addressRow['id_address'] . "|" . $hash;
+
+		$sql = 'SELECT email FROM ' . _DB_PREFIX_ . 'customer
+		WHERE id_customer = \'' . $params['cart']->id_customer . '\'';
+		$colliveryParams['email'] = $this->db->getValue($sql);
+
+		try {
+			return $this->mdsService->addColliveryAddress($colliveryParams);
+		} catch (Exception $e) {
+			die($e->getMessage());
+		}
+	}
+
+	/**
+	 * @param $params
+	 *
+	 * @return mixed
+	 */
+	function getDefaultColliveryAddressFrom($params)
+	{
+		$colliveryAddressesFrom = $this->mdsService->returnDefaultAddress();
+
+		return array_pop($colliveryAddressesFrom['contacts']);
+	}
+
+	/**
+	 * @param $params
+	 *
+	 * @return mixed
+	 */
+	public function buildColliveryDataArray($params)
+	{
+		$service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
+
+		$colliveryAddressTo = $this->addColliveryAddressTo($params);
+		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
+
+		$cart = $params['cart'];
+
+		$colliveryParams['service'] = $service;
+		$colliveryParams['collivery_to'] = $colliveryAddressTo['address_id'];
+		$colliveryParams['contact_to'] = $colliveryAddressTo['contact_id'];
+		$colliveryParams['collivery_from'] = $colliveryAddressFrom['address_id'];
+		$colliveryParams['contact_from'] = $colliveryAddressFrom['contact_id'];
+		$colliveryParams['collivery_type'] = '2';
+
+		foreach ($cart->getProducts() as $colliveryProduct) {
+			for ($i = 0; $i < $colliveryProduct['cart_quantity']; $i++) {
+				$colliveryParams['parcels'][] = array(
+					'weight' => $colliveryProduct['weight'],
+					'height' => $colliveryProduct['height'],
+					'width'  => $colliveryProduct['width'],
+					'length' => $colliveryProduct['depth']
+				);
+			}
+		}
+
+		return $colliveryParams;
+	}
+
+	/**
+	 * @param $params
+	 *
+	 * @return array
+	 */
+	public function buildColliveryGetPriceArray($params)
+	{
+		$addAddress1 = $params->id_address_delivery;
+		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
+		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
+		$addressRow = $this->db->getRow($sql);
+
+		$town_id = $addressRow['id_state'];
+		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE `id_state` = "' . $town_id . '" ';
+		$mds_town_id = $this->db->getValue($sql);
+
+		$colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
+
+		$cartProducts = $params->getProducts();
+
+		$colliveryGetPriceArray = Array();
+		$colliveryGetPriceArray['to_town_id'] = $mds_town_id;
+		$colliveryGetPriceArray['collivery_from'] = $colliveryAddressFrom['address_id'];
+
+		foreach ($cartProducts as $colliveryProduct) {
+			for ($i = 0; $i < $colliveryProduct['cart_quantity']; $i++) {
+				$colliveryGetPriceArray['parcels'][] = array(
+					'weight' => $colliveryProduct['weight'],
+					'height' => $colliveryProduct['height'],
+					'width'  => $colliveryProduct['width'],
+					'length' => $colliveryProduct['depth']
+				);
+			}
+		}
+
+		return $colliveryGetPriceArray;
+	}
+
 }
