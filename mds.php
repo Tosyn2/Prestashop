@@ -422,9 +422,9 @@ class Mds extends CarrierModule {
 	{
 		global $token;
 		try {
-			$this->client = new SoapClient( // Setup the soap client
-				'http://www.collivery.co.za/wsdl/v2', // URL to WSDL File
-				array('cache_wsdl' => WSDL_CACHE_NONE) // Don't cache the WSDL file
+			$this->client = new SoapClient(
+				'http://www.collivery.co.za/wsdl/v2',
+				array('cache_wsdl' => WSDL_CACHE_NONE)
 			);
 		} catch (SoapFault $e) {
 			echo "Unable to connect to the API, plugin not operational";
