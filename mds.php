@@ -385,27 +385,6 @@ class Mds extends CarrierModule {
 	/**
 	 * @param $params
 	 *
-	 * @return bool
-	 */
-	public function hookActionOrderStatusPostUpdate($params)
-	{
-		if ($params['newOrderStatus']->name == 'Shipped') {
-			try {
-				$orderParams = $this->buildColliveryDataArray($params);
-				if (Mds_RiskCover::hasCover()) {
-					$orderParams['cover'] = 1;
-				}
-
-				return $this->mdsService->addCollivery($orderParams, true);
-			} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
-				return false;
-			}
-		}
-	}
-
-	/**
-	 * @param $params
-	 *
 	 * @return string
 	 */
 	public function hookDisplayFooter($params)
