@@ -29,15 +29,15 @@ class TransactionTable extends Transaction {
 		$carrierName = $this->db->getValue($sql);
 		$serviceId = Mds_Services::getServiceId($carrierId);
 
-		$defaultAddressId = $this->collivery->getDefaultAddressId();
-		$defaultAddress = $this->collivery->getAddress($defaultAddressId);
+		$defaultAddressId = $collivery->getDefaultAddressId();
+		$defaultAddress = $collivery->getAddress($defaultAddressId);
 
-		$towns = $this->collivery->getTowns();
-		$location_types = $this->collivery->getLocationTypes();
+		$towns = $collivery->getTowns();
+		$location_types = $collivery->getLocationTypes();
 
 		$client_id = $defaultAddress['client_id'];
 
-		$contacts = $this->collivery->getContacts($defaultAddressId);
+		$contacts = $collivery->getContacts($defaultAddressId);
 
 		$contact = array_pop($contacts);
 
