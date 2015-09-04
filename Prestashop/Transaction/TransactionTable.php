@@ -337,4 +337,24 @@ class TransactionTable extends Transaction {
 
 	}
 
+	public function addTownsToPsDb()
+	{
+		$towns = $this->collivery->getTowns();
+
+		$sql = 'SELECT count(`id_mds`) FROM  `' . _DB_PREFIX_ . 'state` WHERE  `id_country` = 30 AND `active` = 1';
+		$numberOfTowns = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+
+		if ($numberOfTowns != count($towns)) {
+			$sql = 'UPDATE `' . _DB_PREFIX_ . 'state` SET `active` = 0 where `id_country` = 30';
+			$this->db->execute($sql);
+
+			foreach ($towns as $index => $town) {
+				$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'state (id_country,id_zone,name,iso_code,id_mds,tax_behavior,active)
+				VALUES
+				(30,4,\'' . $town . '\',\'ZA\',' . $index . ',0,1)';
+				$this->db->execute($sql);
+			}
+		}
+	}
+
 }
