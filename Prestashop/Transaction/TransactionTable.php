@@ -21,10 +21,10 @@ class TransactionTable extends Transaction {
 			array('cache_wsdl' => WSDL_CACHE_NONE)
 		);
 
-		$orderId = $params[ objOrder ]->id;
-		$deliveryAddressId = $params[ objOrder ]->id_address_delivery;
+		$orderId = $params['objOrder']->id;
+		$deliveryAddressId = $params['objOrder']->id_address_delivery;
 
-		$carrierId = $params[ objOrder ]->id_carrier;
+		$carrierId = $params['objOrder']->id_carrier;
 		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'carrier` WHERE `id_carrier` = ' . $carrierId;
 		$carrierName = $this->db->getValue($sql);
 		$serviceId = Mds_Services::getServiceId($carrierId);
