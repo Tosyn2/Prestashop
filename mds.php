@@ -433,6 +433,7 @@ class Mds extends CarrierModule {
 	 */
 	public function hookDisplayAdminOrder($params)
 	{
+		global $token;
 		try {
 			$this->client = new SoapClient( // Setup the soap client
 				'http://www.collivery.co.za/wsdl/v2', // URL to WSDL File
