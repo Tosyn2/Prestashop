@@ -107,4 +107,240 @@ class TransactionTable extends Transaction {
 		$this->db->execute($sql);
 	}
 
+	/**
+	 * @param $params
+	 *
+	 * @return mixed
+	 */
+	public function buildColliveryControlDataArray($params)
+	{
+		$service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
+
+		$colliveryAddressTo = $this->addControlColliveryAddressTo($params);
+		$colliveryAddressFrom = $this->addControlColliveryAddressFrom($params);
+
+		$cart = $params['cart'];
+
+		$colliveryParams['service'] = $service;
+		$colliveryParams['collivery_to'] = $colliveryAddressTo['address_id'];
+		$colliveryParams['contact_to'] = $colliveryAddressTo['contact_id'];
+		$colliveryParams['collivery_from'] = $colliveryAddressFrom['address_id'];
+		$colliveryParams['contact_from'] = $colliveryAddressFrom['contact_id'];
+		$colliveryParams['collivery_type'] = '2';
+
+		foreach ($cart->getProducts() as $colliveryProduct) {
+			for ($i = 0; $i < $colliveryProduct['cart_quantity']; $i++) {
+				$colliveryParams['parcels'][] = array(
+					'weight' => $colliveryProduct['weight'],
+					'height' => $colliveryProduct['height'],
+					'width'  => $colliveryProduct['width'],
+					'length' => $colliveryProduct['depth']
+				);
+			}
+		}
+
+		return $colliveryParams;
+	}
+
+	/**
+	 * @param $params
+	 *
+	 * @return array
+	 */
+	public function addControlColliveryAddressTo($params)
+	{
+
+		$sql = 'SELECT `id_delivery_address` FROM ' . _DB_PREFIX_ . 'mds_collivery_processed
+		WHERE id_order = \'' . $params['id_order'] . '\'';
+		$addAddress1 = $this->db->getValue($sql);
+
+		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
+		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
+		$addressRow = $this->db->getRow($sql);
+
+		$town_id = $addressRow['id_state'];
+		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE `id_state` = "' . $town_id . '" ';
+		$mds_town_id = $this->db->getValue($sql);
+
+		$addressString = $addressRow['address1'] . $addressRow['city'] . $mds_town_id . $addressRow['postcode'] . $addressRow['firstname'] . " " . $addressRow['lastname'];
+		$hash = hash('md5', $addressString);
+		$hash = substr($hash, 0, 15);
+
+		$colliveryParams['company_name'] = $addressRow['company'];
+		$colliveryParams['building'] = '';
+		$colliveryParams['street'] = $addressRow['address1'];
+		$colliveryParams['location_type'] = $addressRow['other'];
+		$colliveryParams['suburb'] = $addressRow['city'];
+		$colliveryParams['town'] = $mds_town_id;
+		$colliveryParams['zip_code'] = $addressRow['postcode'];
+		$colliveryParams['full_name'] = $addressRow['firstname'] . " " . $addressRow['lastname'];
+		$colliveryParams['phone'] = $addressRow['phone'];
+		$colliveryParams['cellphone'] = $addressRow['phone_mobile'];
+		$colliveryParams['custom_id'] = $addressRow['id_address'] . "|" . $hash;
+
+		$sql = 'SELECT email FROM ' . _DB_PREFIX_ . 'customer
+		WHERE id_customer = \'' . $params['cart']->id_customer . '\'';
+		$colliveryParams['email'] = $this->db->getValue($sql);
+
+		try {
+			return $this->mdsService->addColliveryAddress($colliveryParams);
+		} catch (Exception $e) {
+			die($e->getMessage());
+		}
+
+	}
+
+	/**
+	 * @param $params
+	 *
+	 * @return array
+	 */
+	public function addControlColliveryAddressFrom($params)
+	{
+		$sql = 'SELECT `id_collection_address` FROM ' . _DB_PREFIX_ . 'mds_collivery_processed
+		WHERE id_order = \'' . $params['id_order'] . '\'';
+		$addAddress1 = $this->db->getValue($sql);
+
+		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
+		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
+		$addressRow = $this->db->getRow($sql);
+
+		$town_id = $addressRow['id_state'];
+		$sql = 'SELECT `id_mds` FROM `' . _DB_PREFIX_ . 'state`
+		WHERE `id_state` = "' . $town_id . '" ';
+		$mds_town_id = $this->db->getValue($sql);
+
+		$addressString = $addressRow['address1'] . $addressRow['city'] . $mds_town_id . $addressRow['postcode'] . $addressRow['firstname'] . " " . $addressRow['lastname'];
+		$hash = hash('md5', $addressString);
+		$hash = substr($hash, 0, 15);
+
+		$colliveryParams['company_name'] = $addressRow['company'];
+		$colliveryParams['building'] = '';
+		$colliveryParams['street'] = $addressRow['address1'];
+		$colliveryParams['location_type'] = $addressRow['other'];
+		$colliveryParams['suburb'] = $addressRow['city'];
+		$colliveryParams['town'] = $mds_town_id;
+		$colliveryParams['zip_code'] = $addressRow['postcode'];
+		$colliveryParams['full_name'] = $addressRow['firstname'] . " " . $addressRow['lastname'];
+		$colliveryParams['phone'] = $addressRow['phone'];
+		$colliveryParams['cellphone'] = $addressRow['phone_mobile'];
+		$colliveryParams['custom_id'] = $addressRow['id_address'] . "|" . $hash;
+
+		$sql = 'SELECT email FROM ' . _DB_PREFIX_ . 'customer
+		WHERE id_customer = \'' . $params['cart']->id_customer . '\'';
+		$colliveryParams['email'] = $this->db->getValue($sql);
+
+		try {
+			return $this->mdsService->addColliveryAddress($colliveryParams);
+		} catch (Exception $e) {
+			die($e->getMessage());
+		}
+
+	}
+
+	/**
+	 * @param $value
+	 * @param $idOrder
+	 */
+	public function changeDeliveryAddress($value, $idOrder)
+	{
+
+		if ($result = $this->db->update(
+			'mds_collivery_processed',
+			array('id_delivery_address' => trim($value)),
+			'`id_order` = ' . trim($idOrder)
+		)
+		) {
+			$this->db->update('orders', array('id_address_delivery' => trim($value)), '`id_order` = ' . trim($idOrder));
+		}
+
+		return;
+	}
+
+	/**
+	 * @param $value
+	 * @param $idOrder
+	 */
+	public function changeCollectionAddress($value, $idOrder)
+	{
+		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_collection_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
+		$this->db->execute($sql);
+
+		return;
+
+	}
+
+	/**
+	 * @param $waybill
+	 *
+	 * @return array
+	 */
+	public function getDeliveryStatus($waybill)
+	{
+		$status = $this->collivery->getStatus($waybill);
+
+		return $status;
+
+	}
+
+	/**
+	 * @param $params
+	 * @param $idOrder
+	 *
+	 * @return bool|void
+	 */
+	public function despatchDelivery($params, $idOrder)
+	{
+		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
+		$waybill = $this->db->getValue($sql);
+
+		if ( ! $waybill) {
+
+			try {
+				$orderParams = $this->buildColliveryControlDataArray($params);
+				if (Mds_RiskCover::hasCover()) {
+					$orderParams['cover'] = 1;
+				}
+				$waybill = $this->mdsService->addCollivery($orderParams, true);
+
+				$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
+				$this->db->execute($sql);
+
+				return;
+
+			} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
+				return false;
+			}
+
+		}
+
+	}
+
+	/**
+	 * @param $params
+	 *
+	 * @return bool
+	 */
+	public function getQuote($params)
+	{
+
+		try {
+			$orderParams = $this->buildColliveryControlDataArray($params);
+			if (Mds_RiskCover::hasCover()) {
+				$orderParams['cover'] = 1;
+			}
+
+			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
+			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+			$price = $colliveryPrice;
+
+			return $price;
+
+		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
+			return false;
+		}
+
+	}
+
 }
