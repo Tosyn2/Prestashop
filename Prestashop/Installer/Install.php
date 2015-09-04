@@ -300,7 +300,6 @@ class Install extends Installer {
 		}
 
 	}
-			
 
 	/**
 	 * @param $serviceId

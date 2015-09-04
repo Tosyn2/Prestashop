@@ -6,8 +6,8 @@ use Mds\Prestashop\Collivery\ColliveryApi;
 /**
  * MdsColliveryService
  */
-class MdsColliveryService
-{
+class MdsColliveryService {
+
 	/**
 	 * self
 	 */
@@ -35,12 +35,13 @@ class MdsColliveryService
 
 	/**
 	 * @param array $settings
+	 *
 	 * @return MdsColliveryService
 	 * @throws Exception
 	 */
 	public static function getInstance($settings = null)
 	{
-		if (!self::$instance) {
+		if ( ! self::$instance) {
 			self::$instance = new self($settings);
 		}
 
@@ -62,7 +63,8 @@ class MdsColliveryService
 	 * Adds the delivery request to MDS Collivery
 	 *
 	 * @param array $array
-	 * @param bool $accept
+	 * @param bool  $accept
+	 *
 	 * @return bool
 	 */
 	public function addCollivery(array $array, $accept = true)
@@ -73,14 +75,22 @@ class MdsColliveryService
 			$id = $this->validated_data['service'];
 			$services = $this->collivery->getServices();
 
-			if (!empty($this->settings["wording_$id"])) {
-				$reason = preg_replace('|' . preg_quote($services[$id]) . '|', $this->settings["wording_$id"], $this->validated_data['time_changed_reason']);
+			if ( ! empty($this->settings["wording_$id"])) {
+				$reason = preg_replace(
+					'|' . preg_quote($services[ $id ]) . '|',
+					$this->settings["wording_$id"],
+					$this->validated_data['time_changed_reason']
+				);
 			} else {
 				$reason = $this->validated_data['time_changed_reason'];
 			}
 
 			$reason = preg_replace('|collivery|i', 'delivery', $reason);
-			$reason = preg_replace('|The delivery time has been CHANGED to|i', 'the approximate delivery day is', $reason);
+			$reason = preg_replace(
+				'|The delivery time has been CHANGED to|i',
+				'the approximate delivery day is',
+				$reason
+			);
 
 		}
 
@@ -97,6 +107,7 @@ class MdsColliveryService
 	 * Validate delivery request before adding the request to MDS Collivery
 	 *
 	 * @param array $array
+	 *
 	 * @throws Exception
 	 * @return bool|array
 	 */
@@ -130,7 +141,7 @@ class MdsColliveryService
 			throw new Exception("Invalid risk cover option");
 		}
 
-		if (empty($array['parcels']) || !is_array($array['parcels'])) {
+		if (empty($array['parcels']) || ! is_array($array['parcels'])) {
 			throw new Exception("Invalid parcels");
 		}
 
@@ -141,6 +152,7 @@ class MdsColliveryService
 	 * Adds an address to MDS Collivery
 	 *
 	 * @param array $array
+	 *
 	 * @return array
 	 * @throws Exception
 	 */
@@ -150,8 +162,8 @@ class MdsColliveryService
 		$towns = $this->collivery->getTowns();
 		$location_types = $this->collivery->getLocationTypes();
 
-		if (!is_numeric($array['town'])) {
-			$town_id = (int)array_search($array['town'], $towns);
+		if ( ! is_numeric($array['town'])) {
+			$town_id = (int) array_search($array['town'], $towns);
 		} else {
 			$town_id = $array['town'];
 		}
@@ -160,64 +172,67 @@ class MdsColliveryService
 
 		$custom_id = $array['custom_id'];
 
-		if (!is_numeric($array['suburb'])) {
-			$suburb_id = (int)array_search($array['suburb'], $suburbs);
+		if ( ! is_numeric($array['suburb'])) {
+			$suburb_id = (int) array_search($array['suburb'], $suburbs);
 		} else {
 			$suburb_id = $array['suburb'];
 		}
 
-		if (!is_numeric($array['location_type'])) {
-			$location_type_id = (int)array_search($array['location_type'], $location_types);
+		if ( ! is_numeric($array['location_type'])) {
+			$location_type_id = (int) array_search($array['location_type'], $location_types);
 		} else {
 			$location_type_id = $array['location_type'];
 		}
 
-		if (empty($array['location_type']) || !isset($location_types[$location_type_id])) {
+		if (empty($array['location_type']) || ! isset($location_types[ $location_type_id ])) {
 			throw new Exception("Invalid location type");
 		}
 
-		if (empty($array['town']) || !isset($towns[$town_id])) {
+		if (empty($array['town']) || ! isset($towns[ $town_id ])) {
 			throw new Exception("Invalid town");
 		}
 
-		if (empty($array['suburb']) || !isset($suburbs[$suburb_id])) {
+		if (empty($array['suburb']) || ! isset($suburbs[ $suburb_id ])) {
 			throw new Exception("Invalid suburb");
 		}
 
-		if (empty($array['cellphone']) || !is_numeric($array['cellphone'])) {
+		if (empty($array['cellphone']) || ! is_numeric($array['cellphone'])) {
 			throw new Exception("Invalid cellphone number");
 		}
 
-		if (empty($array['email']) || !filter_var($array['email'], FILTER_VALIDATE_EMAIL)) {
+		if (empty($array['email']) || ! filter_var($array['email'], FILTER_VALIDATE_EMAIL)) {
 			throw new Exception("Invalid email address");
 		}
 
 		$newAddress = array(
-			'company_name' => $array['company_name'],
-			'building' => $array['building'],
-			'street' => $array['street'],
+			'company_name'  => $array['company_name'],
+			'building'      => $array['building'],
+			'street'        => $array['street'],
 			'location_type' => $location_type_id,
-			'suburb_id' => $suburb_id,
-			'town_id' => $town_id,
-			'full_name' => $array['full_name'],
-			'phone' => (!empty($array['phone'])) ? $array['phone'] : '',
-			'cellphone' => $array['cellphone'],
-			'custom_id' => $custom_id,
-			'email' => $array['email'],
+			'suburb_id'     => $suburb_id,
+			'town_id'       => $town_id,
+			'full_name'     => $array['full_name'],
+			'phone'         => ( ! empty($array['phone'])) ? $array['phone'] : '',
+			'cellphone'     => $array['cellphone'],
+			'custom_id'     => $custom_id,
+			'email'         => $array['email'],
 		);
 
-
 		// Before adding an address lets search MDS and see if we have already added this address
-		$searchAddresses = $this->searchAndMatchAddress(array(
-			'custom_id' => $custom_id,
-			'suburb_id' => $suburb_id,
-			'town_id' => $town_id,
-		), $newAddress);
+		$searchAddresses = $this->searchAndMatchAddress(
+			array(
+				'custom_id' => $custom_id,
+				'suburb_id' => $suburb_id,
+				'town_id'   => $town_id,
+			),
+			$newAddress
+		);
 
 		if (is_array($searchAddresses)) {
 			return $searchAddresses;
 		} else {
 			$this->cache->clear(array('addresses', 'contacts'));
+
 			return $this->collivery->addAddress($newAddress);
 		}
 	}
@@ -227,31 +242,32 @@ class MdsColliveryService
 	 *
 	 * @param array $filters
 	 * @param array $newAddress
+	 *
 	 * @return bool
 	 */
 	public function searchAndMatchAddress(array $filters, array $newAddress)
 	{
 		$searchAddresses = $this->collivery->getAddresses($filters);
-		if (!empty($searchAddresses)) {
+		if ( ! empty($searchAddresses)) {
 			$match = true;
 
 			$matchAddressFields = array(
-				'street' => 'street',
+				'street'        => 'street',
 				'location_type' => 'location_type',
-				'suburb_id' => 'suburb_id',
-				'town_id' => 'town_id',
-				'custom_id' => 'custom_id',
+				'suburb_id'     => 'suburb_id',
+				'town_id'       => 'town_id',
+				'custom_id'     => 'custom_id',
 			);
 
 			foreach ($searchAddresses as $address) {
 				foreach ($matchAddressFields as $mdsField => $newField) {
-					if ($address[$mdsField] != $newAddress[$newField]) {
+					if ($address[ $mdsField ] != $newAddress[ $newField ]) {
 						$match = false;
 					}
 				}
 
 				if ($match) {
-					if (!isset($address['contact_id'])) {
+					if ( ! isset($address['contact_id'])) {
 						$contacts = $this->collivery->getContacts($address['address_id']);
 						list($contact_id) = array_keys($contacts);
 						$address['contact_id'] = $contact_id;
@@ -274,7 +290,13 @@ class MdsColliveryService
 	{
 		$towns = $this->collivery->getTowns();
 		$location_types = $this->collivery->getLocationTypes();
-		return array('towns' => array_combine($towns, $towns), 'location_types' => array_combine($location_types, $location_types));
+
+		return array(
+			'towns' => array_combine($towns, $towns), 'location_types' => array_combine(
+				$location_types,
+				$location_types
+			)
+		);
 	}
 
 	/**
@@ -306,10 +328,11 @@ class MdsColliveryService
 	{
 		$default_address_id = $this->collivery->getDefaultAddressId();
 		$data = array(
-			'address' => $this->collivery->getAddress($default_address_id),
+			'address'            => $this->collivery->getAddress($default_address_id),
 			'default_address_id' => $default_address_id,
-			'contacts' => $this->collivery->getContacts($default_address_id)
+			'contacts'           => $this->collivery->getContacts($default_address_id)
 		);
+
 		return $data;
 	}
 
@@ -326,18 +349,23 @@ class MdsColliveryService
 	 *
 	 * @param $price
 	 * @param $markup
+	 *
 	 * @return float|string
 	 */
 	public function addMarkup($price, $markup)
 	{
 		$price += $price * ($markup / 100);
-		return (isset($this->settings['round']) && $this->settings['round'] == 'yes') ? $this->round($price) : $this->format($price);
+
+		return (isset($this->settings['round']) && $this->settings['round'] == 'yes') ? $this->round(
+			$price
+		) : $this->format($price);
 	}
 
 	/**
 	 * Format a number with grouped thousands
 	 *
 	 * @param $price
+	 *
 	 * @return string
 	 */
 	public function format($price)
@@ -349,6 +377,7 @@ class MdsColliveryService
 	 * Rounds number up to the next highest integer
 	 *
 	 * @param $price
+	 *
 	 * @return float
 	 */
 	public function round($price)
