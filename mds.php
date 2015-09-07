@@ -199,7 +199,7 @@ class Mds extends CarrierModule {
 	public function getPackageShippingCost($params, $shipping_cost, $products)
 	{
 		$price = new Mds_TransactionTable($this->db);
-		$price->getShoppingCartQuote($params, $shipping_cost);
+		return $price->getShoppingCartQuote($params, $shipping_cost);
 	}
 
 	/**
@@ -293,20 +293,5 @@ class Mds extends CarrierModule {
 
 
 
-
-
-
-
-
-
-//	/**
-//	 * @param $carrierId
-//	 *
-//	 * @return mixed
-//	 */
-//	protected function getServiceFromCarrierId($carrierId)
-//	{
-//		return Mds_Services::getServiceId($carrierId);
-//	}
 
 }

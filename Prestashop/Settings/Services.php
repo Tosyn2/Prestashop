@@ -22,8 +22,7 @@ class Services extends Settings {
 		if (!array_key_exists($carrierId, $serviceMappings)) {
 			throw new InvalidData('Invalid Carrier Id: '. $carrierId);
 		}
-
-		return $serviceMappings[$carrierId];
+		return (string)$serviceMappings[$carrierId];
 	}
 
 	/**
