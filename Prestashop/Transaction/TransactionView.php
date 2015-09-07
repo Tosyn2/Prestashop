@@ -5,6 +5,7 @@ use Mds\Prestashop;
 use Mds_View;
 use Mds_ColliveryApi;
 use Mds\Prestashop\Settings;
+use Tools;
 
 class TransactionView extends Transaction {
 
@@ -66,12 +67,12 @@ class TransactionView extends Transaction {
 
 			if ($form_action_func === "getQuote") {
 
-				$price = $this->getQuote($params);
+				$price = $this->transactionTable->getQuote($params);
 
 			} elseif ($form_action_func === "addCollivery") {
 
 				$idOrder = $_GET['id_order'];
-				$this->despatchDelivery($params, $idOrder);
+				$this->transactionTable->despatchDelivery($params, $idOrder);
 
 				return header($back);
 
@@ -82,7 +83,7 @@ class TransactionView extends Transaction {
 
 					$value = Tools::getValue('id_collection_address');
 
-					$this->changeCollectionAddress($value, $idOrder);
+					$this->transactionTable->changeCollectionAddress($value, $idOrder);
 				}
 
 				return header($back);
@@ -94,7 +95,7 @@ class TransactionView extends Transaction {
 
 					$value = Tools::getValue('id_address');
 
-					$this->changeDeliveryAddress($value, $idOrder);
+					$this->transactionTable->changeDeliveryAddress($value, $idOrder);
 				}
 
 				return header($back);
@@ -133,7 +134,7 @@ class TransactionView extends Transaction {
 
 		} else {
 
-			$status = $this->getDeliveryStatus($waybill);
+			$status = $this->transactionTable->getDeliveryStatus($waybill);
 
 			return Mds_View::make(
 				'delivery_details',
@@ -164,7 +165,6 @@ class TransactionView extends Transaction {
 	public function addAdminJs()
 	{
 
-		$this->collivery = Mds_ColliveryApi::getInstance();
 		$idAddress = $_GET['id_address'];
 
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;
@@ -188,7 +188,6 @@ class TransactionView extends Transaction {
 	public function addFrontEndJs()
 	{
 
-		$this->collivery = Mds_ColliveryApi::getInstance();
 		$idAddress = (int) $this->context->cart->id_address_delivery;
 
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;

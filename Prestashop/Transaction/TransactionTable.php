@@ -27,7 +27,7 @@ class TransactionTable extends Transaction {
 	}
 	public function createTransaction($params)
 	{
-		$collivery = Mds_ColliveryApi::getInstance();
+
 
 		new SoapClient(
 			'http://www.collivery.co.za/wsdl/v2',
@@ -42,15 +42,15 @@ class TransactionTable extends Transaction {
 		$carrierName = $this->db->getValue($sql);
 		$serviceId = Mds_Services::getServiceId($carrierId);
 
-		$defaultAddressId = $collivery->getDefaultAddressId();
-		$defaultAddress = $collivery->getAddress($defaultAddressId);
+		$defaultAddressId = $this->collivery->getDefaultAddressId();
+		$defaultAddress = $this->collivery->getAddress($defaultAddressId);
 
-		$towns = $collivery->getTowns();
-		$location_types = $collivery->getLocationTypes();
+		$towns = $this->collivery->getTowns();
+		$location_types = $this->collivery->getLocationTypes();
 
 		$client_id = $defaultAddress['client_id'];
 
-		$contacts = $collivery->getContacts($defaultAddressId);
+		$contacts = $this->collivery->getContacts($defaultAddressId);
 
 		$contact = array_pop($contacts);
 
@@ -121,7 +121,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function buildColliveryControlDataArray($params)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
 		$service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
 
 		$colliveryAddressTo = $this->addControlColliveryAddressTo($params);
@@ -157,7 +156,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function addControlColliveryAddressTo($params)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
 
 		$sql = 'SELECT `id_delivery_address` FROM ' . _DB_PREFIX_ . 'mds_collivery_processed
 		WHERE id_order = \'' . $params['id_order'] . '\'';
@@ -193,7 +191,7 @@ class TransactionTable extends Transaction {
 		$colliveryParams['email'] = $this->db->getValue($sql);
 
 		try {
-			return $this->mdsService->addColliveryAddress($colliveryParams);
+			return $this->mdsColliveryService->addColliveryAddress($colliveryParams);
 		} catch (Exception $e) {
 			die($e->getMessage());
 		}
@@ -207,7 +205,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function addControlColliveryAddressFrom($params)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
 
 		$sql = 'SELECT `id_collection_address` FROM ' . _DB_PREFIX_ . 'mds_collivery_processed
 		WHERE id_order = \'' . $params['id_order'] . '\'';
@@ -243,7 +240,7 @@ class TransactionTable extends Transaction {
 		$colliveryParams['email'] = $this->db->getValue($sql);
 
 		try {
-			return $this->mdsService->addColliveryAddress($colliveryParams);
+			return $this->mdsColliveryService->addColliveryAddress($colliveryParams);
 		} catch (Exception $e) {
 			die($e->getMessage());
 		}
@@ -256,7 +253,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function changeDeliveryAddress($value, $idOrder)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
 
 		if ($result = $this->db->update(
 			'mds_collivery_processed',
@@ -276,7 +272,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function changeCollectionAddress($value, $idOrder)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
 
 		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_collection_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
 		$this->db->execute($sql);
@@ -292,8 +287,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function getDeliveryStatus($waybill)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
-
 		$status = $this->collivery->getStatus($waybill);
 
 		return $status;
@@ -308,8 +301,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function despatchDelivery($params, $idOrder)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
-
 		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$waybill = $this->db->getValue($sql);
 
@@ -320,7 +311,7 @@ class TransactionTable extends Transaction {
 				if (Mds_RiskCover::hasCover()) {
 					$orderParams['cover'] = 1;
 				}
-				$waybill = $this->mdsService->addCollivery($orderParams, true);
+				$waybill = $this->mdsColliveryService->addCollivery($orderParams, true);
 
 				$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
 				$this->db->execute($sql);
@@ -342,8 +333,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function getQuote($params)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
-
 		try {
 			$orderParams = $this->buildColliveryControlDataArray($params);
 			if (Mds_RiskCover::hasCover()) {
@@ -364,7 +353,6 @@ class TransactionTable extends Transaction {
 
 	public function addTownsToPsDb()
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
 
 		$towns = $this->collivery->getTowns();
 
@@ -386,17 +374,18 @@ class TransactionTable extends Transaction {
 
 	/**
 	 * @param $params
-	 * @param $shipping_cost
+	 * @param $shipping_costmds
 	 *
 	 * @return bool
 	 */
 	public function getShoppingCartQuote($params, $shipping_cost)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
 
 		try {
 			$orderParams = $this->buildColliveryGetPriceArray($params);
-			$serviceId = $this->getServiceFromCarrierId($this->id_carrier);
+			//die($params->id_carrier);
+			$serviceId = $this->getServiceFromCarrierId($params->id_carrier);
+
 			$orderParams['service'] = $serviceId;
 
 			if (Mds_RiskCover::hasCover()) {
@@ -422,7 +411,6 @@ class TransactionTable extends Transaction {
 	 */
 	function addColliveryAddressTo($params)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
 
 		$addAddress1 = $params['cart']->id_address_delivery;
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
@@ -455,9 +443,10 @@ class TransactionTable extends Transaction {
 		$colliveryParams['email'] = $this->db->getValue($sql);
 
 		try {
-			return $this->mdsService->addColliveryAddress($colliveryParams);
-		} catch (Exception $e) {
-			die($e->getMessage());
+			return $this->mdsColliveryService->addColliveryAddress($colliveryParams);
+		} catch (\SoapFault $e) {
+
+			return false;
 		}
 	}
 
@@ -468,10 +457,9 @@ class TransactionTable extends Transaction {
 	 */
 	function getDefaultColliveryAddressFrom($params)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
-		$this->mdsService = Mds\MdsColliveryService::getInstance();
 
-		$colliveryAddressesFrom = $this->mdsService->returnDefaultAddress();
+
+		$colliveryAddressesFrom = $this->mdsColliveryService->returnDefaultAddress();
 
 		return array_pop($colliveryAddressesFrom['contacts']);
 	}
@@ -483,7 +471,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function buildColliveryDataArray($params)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
 
 		$service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
 
@@ -520,7 +507,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function buildColliveryGetPriceArray($params)
 	{
-		$this->collivery = Mds_ColliveryApi::getInstance();
 
 		$addAddress1 = $params->id_address_delivery;
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
