@@ -185,10 +185,9 @@ class TransactionView extends Transaction {
 	/**
 	 * @return string
 	 */
-	public function addFrontEndJs()
+	public function addFrontEndJs($params)
 	{
-
-		$idAddress = (int) $this->context->cart->id_address_delivery;
+		$idAddress = $params['cart']->id_address_delivery;
 
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;
 		$address = $this->db->getRow($sql);
