@@ -9,6 +9,13 @@ use Mds\Prestashop\Settings;
 class TransactionView extends Transaction {
 
 	protected $collivery;
+	
+	public function __construct(\Db $db)
+	{
+		parent::__construct($db);
+		$this->collivery = Mds_ColliveryApi::getInstance();
+		$this->transactionTable = new TransactionTable($db);
+	}
 
 	/**
 	 * @param $params
@@ -19,9 +26,6 @@ class TransactionView extends Transaction {
 	 */
 	public function generateView($params, $token)
 	{
-
-		$this->collivery = Mds_ColliveryApi::getInstance();
-
 		$sql = 'SELECT `id_delivery_address` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$deliveryAddressId = $this->db->getValue($sql);
 

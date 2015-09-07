@@ -11,9 +11,20 @@ use Mds_Surcharge;
 
 class TransactionTable extends Transaction {
 
+	protected $mdsColliveryService;
+
 	/**
 	 * @param $params
 	 */
+	protected $collivery;
+
+	public function __construct(\Db $db)
+	{
+		parent::__construct($db);
+		$this->collivery = Mds_ColliveryApi::getInstance();
+		$this->mdsColliveryService = Mds\MdsColliveryService::getInstance();
+
+	}
 	public function createTransaction($params)
 	{
 		$collivery = Mds_ColliveryApi::getInstance();
