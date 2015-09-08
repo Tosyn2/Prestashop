@@ -321,9 +321,7 @@ class TransactionTable extends Transaction {
 				$orderParams['cover'] = 1;
 			}
 
-			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
-			$price = $colliveryPrice;
+			$price = $this->getShippingCost($orderParams);
 
 			return $price;
 
@@ -556,6 +554,19 @@ class TransactionTable extends Transaction {
 		return $colliveryParams;
 	}
 
+	/**
+	 * @param $orderParams
+	 *
+	 * @return mixed
+	 */
+	private function getShippingCost($orderParams)
+	{
+		$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
+		$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+		$price = $colliveryPrice;
+
+		return $price;
+	}
 
 	}
 }
