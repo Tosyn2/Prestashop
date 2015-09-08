@@ -43,7 +43,7 @@ class Services extends Settings {
 	/**
 	 * @return array
 	 */
-	private static function getServiceMappings()
+	public static function getServiceMappings()
 	{
 		$serviceMappings = array();
 
