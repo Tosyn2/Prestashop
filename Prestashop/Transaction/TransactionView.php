@@ -60,7 +60,7 @@ class TransactionView extends Transaction {
 
 		$back = "Location: ./index.php?controller=AdminOrders&id_order=" . $params['id_order'] . "&vieworder&token=" . $token;
 
-		if (isset($_POST['func_name'])) {
+		if (! $_POST['func_name']) {
 
 			$_GET['func_name'];
 			$form_action_func = $_GET['func_name'];
