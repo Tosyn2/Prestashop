@@ -192,13 +192,11 @@ class TransactionView extends Transaction {
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;
 		$address = $this->db->getRow($sql);
 
-		$suburb = $address['city'];
 		$suburbs = $this->collivery->getSuburbs('');
+		$suburb = $address['city'];
 
-		$locationType = $address['other'];
 		$locationTypes = $this->collivery->getLocationTypes();
-
-		//$this->context->controller->addJS(($this->_path) . 'helper.js');
+		$locationType = $address['other'];
 
 		return Mds_View::make(
 			'footer',
