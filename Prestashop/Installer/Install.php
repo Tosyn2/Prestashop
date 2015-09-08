@@ -254,8 +254,8 @@ class Install extends Installer {
 						`id_collection_address` int(11) NOT NULL,
 						`id_delivery_address` int(11) NOT NULL,
 						`id_service` TEXT NOT NULL,
-						`waybill` int(1) NOT NULL DEFAULT 1,
-						PRIMARY KEY (`id`)
+						`waybill` int(10) NOT NULL DEFAULT 1,
+						PRIMARY KEY (`id_order`)
 						) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 		$this->db->execute($sql);
 		return $sql;
