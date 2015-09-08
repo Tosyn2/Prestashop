@@ -500,11 +500,15 @@ class TransactionTable extends Transaction {
 
 		$cartProducts = $params->getProducts();
 
+		$location_types = $this->collivery->getLocationTypes();
+
 		$colliveryGetPriceArray = Array();
 		$colliveryGetPriceArray['to_town_id'] = $mds_town_id;
+		$colliveryGetPriceArray ['collivery_type'] = 2;
+
+		$colliveryGetPriceArray['to_location_type'] = (int) array_search($addressRow['other'], $location_types);
+
 		$colliveryGetPriceArray['collivery_from'] = $colliveryAddressFrom['address_id'];
-
-
 
 		$colliveryGetPriceArray = $this->getParcels($cartProducts, $colliveryGetPriceArray);
 		return $colliveryGetPriceArray;
