@@ -382,23 +382,29 @@ class TransactionTable extends Transaction {
 	{
 
 		try {
-			$orderParams = $this->buildColliveryGetPriceArray($params);
-			//die($params->id_carrier);
-			$serviceId = $this->getServiceFromCarrierId($params->id_carrier);
+			$serviceMappings = Mds_Services::getServiceMappings();
+			$prices = array();
 
-			$orderParams['service'] = $serviceId;
+			foreach ($serviceMappings as $carrierId => $serviceId ) {
 
-			if (Mds_RiskCover::hasCover()) {
-				$orderParams['cover'] = 1;
+				$orderParams = $this->buildColliveryGetPriceArray($params);
+				$orderParams['service'] = $serviceId;
+
+				if (Mds_RiskCover::hasCover()) {
+					$orderParams['cover'] = 1;
+				}
+				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
+				$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+				$surchargePerc = Mds_Surcharge::get($serviceId);
+				$price = $colliveryPrice * (1 + ($surchargePerc / 100));
+				$shippingPrice = $shipping_cost + $price;
+
+				$prices[$carrierId]=$shippingPrice;
+
 			}
+			return $prices;
 
-			$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-			$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
 
-			$surchargePerc = Mds_Surcharge::get($serviceId);
-			$price = $colliveryPrice * (1 + ($surchargePerc / 100));
-
-			return $shipping_cost + $price;
 		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 			return false;
 		}
