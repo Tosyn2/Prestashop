@@ -174,17 +174,8 @@ class TransactionTable extends Transaction {
 		$hash = hash('md5', $addressString);
 		$hash = substr($hash, 0, 15);
 
-		$colliveryParams['company_name'] = $addressRow['company'];
-		$colliveryParams['building'] = '';
-		$colliveryParams['street'] = $addressRow['address1'];
-		$colliveryParams['location_type'] = $addressRow['other'];
-		$colliveryParams['suburb'] = $addressRow['city'];
-		$colliveryParams['town'] = $mds_town_id;
-		$colliveryParams['zip_code'] = $addressRow['postcode'];
-		$colliveryParams['full_name'] = $addressRow['firstname'] . " " . $addressRow['lastname'];
-		$colliveryParams['phone'] = $addressRow['phone'];
-		$colliveryParams['cellphone'] = $addressRow['phone_mobile'];
-		$colliveryParams['custom_id'] = $addressRow['id_address'] . "|" . $hash;
+		$colliveryParams = array();
+		$colliveryParams = $this->setColliveryParamsArray($addressRow, $colliveryParams, $mds_town_id, $hash);
 
 		$sql = 'SELECT email FROM ' . _DB_PREFIX_ . 'customer
 		WHERE id_customer = \'' . $params['cart']->id_customer . '\'';
@@ -223,17 +214,8 @@ class TransactionTable extends Transaction {
 		$hash = hash('md5', $addressString);
 		$hash = substr($hash, 0, 15);
 
-		$colliveryParams['company_name'] = $addressRow['company'];
-		$colliveryParams['building'] = '';
-		$colliveryParams['street'] = $addressRow['address1'];
-		$colliveryParams['location_type'] = $addressRow['other'];
-		$colliveryParams['suburb'] = $addressRow['city'];
-		$colliveryParams['town'] = $mds_town_id;
-		$colliveryParams['zip_code'] = $addressRow['postcode'];
-		$colliveryParams['full_name'] = $addressRow['firstname'] . " " . $addressRow['lastname'];
-		$colliveryParams['phone'] = $addressRow['phone'];
-		$colliveryParams['cellphone'] = $addressRow['phone_mobile'];
-		$colliveryParams['custom_id'] = $addressRow['id_address'] . "|" . $hash;
+		$colliveryParams = array();
+		$colliveryParams = $this->setColliveryParamsArray($addressRow, $colliveryParams, $mds_town_id, $hash);
 
 		$sql = 'SELECT email FROM ' . _DB_PREFIX_ . 'customer
 		WHERE id_customer = \'' . $params['cart']->id_customer . '\'';
@@ -393,10 +375,11 @@ class TransactionTable extends Transaction {
 				if (Mds_RiskCover::hasCover()) {
 					$orderParams['cover'] = 1;
 				}
-				$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
-				$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+//die(print_r($orderParams));
+				$price = $this->getShippingCost($orderParams);
+
 				$surchargePerc = Mds_Surcharge::get($serviceId);
-				$price = $colliveryPrice * (1 + ($surchargePerc / 100));
+				$price = $price * (1 + ($surchargePerc / 100));
 				$shippingPrice = $shipping_cost + $price;
 
 				$prices[$carrierId]=$shippingPrice;
@@ -432,17 +415,8 @@ class TransactionTable extends Transaction {
 		$hash = hash('md5', $addressString);
 		$hash = substr($hash, 0, 15);
 
-		$colliveryParams['company_name'] = $addressRow['company'];
-		$colliveryParams['building'] = '';
-		$colliveryParams['street'] = $addressRow['address1'];
-		$colliveryParams['location_type'] = $addressRow['other'];
-		$colliveryParams['suburb'] = $addressRow['city'];
-		$colliveryParams['town'] = $mds_town_id;
-		$colliveryParams['zip_code'] = $addressRow['postcode'];
-		$colliveryParams['full_name'] = $addressRow['firstname'] . " " . $addressRow['lastname'];
-		$colliveryParams['phone'] = $addressRow['phone'];
-		$colliveryParams['cellphone'] = $addressRow['phone_mobile'];
-		$colliveryParams['custom_id'] = $addressRow['id_address'] . "|" . $hash;
+		$colliveryParams = array();
+		$colliveryParams = $this->setColliveryParamsArray($addressRow, $colliveryParams, $mds_town_id, $hash);
 
 		$sql = 'SELECT email FROM ' . _DB_PREFIX_ . 'customer
 		WHERE id_customer = \'' . $params['cart']->id_customer . '\'';
@@ -557,6 +531,30 @@ class TransactionTable extends Transaction {
 		return (string)Mds_Services::getServiceId($carrierId);
 
 
+	/**
+	 * @param $addressRow
+	 * @param $colliveryParams
+	 * @param $mds_town_id
+	 * @param $hash
+	 *
+	 * @return mixed
+	 */
+	private function setColliveryParamsArray($addressRow, $colliveryParams, $mds_town_id, $hash)
+	{
+		$colliveryParams['company_name'] = $addressRow['company'];
+		$colliveryParams['building'] = '';
+		$colliveryParams['street'] = $addressRow['address1'];
+		$colliveryParams['location_type'] = $addressRow['other'];
+		$colliveryParams['suburb'] = $addressRow['city'];
+		$colliveryParams['town'] = $mds_town_id;
+		$colliveryParams['zip_code'] = $addressRow['postcode'];
+		$colliveryParams['full_name'] = $addressRow['firstname'] . " " . $addressRow['lastname'];
+		$colliveryParams['phone'] = $addressRow['phone'];
+		$colliveryParams['cellphone'] = $addressRow['phone_mobile'];
+		$colliveryParams['custom_id'] = $addressRow['id_address'] . "|" . $hash;
+
+		return $colliveryParams;
+	}
 
 
 	}
