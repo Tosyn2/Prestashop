@@ -59,15 +59,10 @@ class Collivery
 	protected function init()
 	{
 		if (!$this->client) {
-			try {
 				$this->client = new SoapClient( // Setup the soap client
 					'http://www.collivery.co.za/wsdl/v2', // URL to WSDL File
 					array('cache_wsdl' => WSDL_CACHE_NONE) // Don't cache the WSDL file
 				);
-			} catch (SoapFault $e) {
-				$this->catchSoapFault($e);
-				return false;
-			}
 		}
 		return true;
 	}
