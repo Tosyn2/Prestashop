@@ -504,17 +504,9 @@ class TransactionTable extends Transaction {
 		$colliveryGetPriceArray['to_town_id'] = $mds_town_id;
 		$colliveryGetPriceArray['collivery_from'] = $colliveryAddressFrom['address_id'];
 
-		foreach ($cartProducts as $colliveryProduct) {
-			for ($i = 0; $i < $colliveryProduct['cart_quantity']; $i++) {
-				$colliveryGetPriceArray['parcels'][] = array(
-					'weight' => $colliveryProduct['weight'],
-					'height' => $colliveryProduct['height'],
-					'width'  => $colliveryProduct['width'],
-					'length' => $colliveryProduct['depth']
-				);
-			}
-		}
 
+
+		$colliveryGetPriceArray = $this->getParcels($cartProducts, $colliveryGetPriceArray);
 		return $colliveryGetPriceArray;
 	}
 
@@ -568,5 +560,25 @@ class TransactionTable extends Transaction {
 		return $price;
 	}
 
+	/**
+	 * @param $cartProducts
+	 * @param $colliveryGetPriceArray
+	 *
+	 * @return mixed
+	 */
+	private function getParcels($cartProducts, $colliveryGetPriceArray)
+	{
+		foreach ($cartProducts as $colliveryProduct) {
+			for ($i = 0; $i < $colliveryProduct['cart_quantity']; $i++) {
+				$colliveryGetPriceArray['parcels'][] = array(
+					'weight' => $colliveryProduct['weight'],
+					'height' => $colliveryProduct['height'],
+					'width'  => $colliveryProduct['width'],
+					'length' => $colliveryProduct['depth']
+				);
+			}
+		}
+
+		return $colliveryGetPriceArray;
 	}
 }
