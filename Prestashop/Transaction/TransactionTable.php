@@ -8,6 +8,7 @@ use SoapClient;
 use Db;
 use Mds_RiskCover;
 use Mds_Surcharge;
+use MdsColliveryService;
 
 class TransactionTable extends Transaction {
 
