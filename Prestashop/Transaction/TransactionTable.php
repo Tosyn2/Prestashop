@@ -359,7 +359,7 @@ class TransactionTable extends Transaction {
 	 *
 	 * @return bool
 	 */
-	public function getShoppingCartQuote($params, $shipping_cost)
+	public function getShoppingCartQuote($params, $shipping_cost, $carrierId)
 	{
 
 		try {

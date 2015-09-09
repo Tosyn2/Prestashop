@@ -26,6 +26,7 @@ class Mds extends CarrierModule {
 		'displayBackOfficeHeader'
 
 	);
+	protected $cache;
 
 	public function __construct()
 	{
