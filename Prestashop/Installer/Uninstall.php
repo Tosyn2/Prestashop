@@ -33,7 +33,7 @@ class Uninstall extends Installer {
 
 	private function setCarriersDeleted()
 	{
-		$sql = 'UPDATE '. _DB_PREFIX_ .'carrier SET `deleted` = 1 WHERE `external_module_name` = "mds";';
+		$sql = 'UPDATE '. _DB_PREFIX_ .'carrier SET `deleted` = 1, `active` = 0 WHERE `external_module_name` = "mds";';
 		$this->db->execute($sql);
 	}
 
