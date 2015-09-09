@@ -1,6 +1,9 @@
 <div class="row">
 	<div class="tab-content panel">
-		<h1>MDS Shipping Control</h1>
+		<div>
+		<img src="../modules/mds/icons/Collivery-Icon.png" style="padding:0 1% 1% 0"><h1 style="display:inline">MDS Shipping Control</h1>
+			</div>
+
 
 		<div class="tab-pane  in active" id="addressShipping" style="display:inline-block; width:100%">
 			<div style="display:inline-block">
@@ -25,7 +28,7 @@
 							</select>
 						</div>
 						<div class="col-lg-3">
-							<button method="submit" name="id_address_col">Change</button>
+							<button class="btn btn-default" method="submit" name="id_address_col"><i class="icon-exchange" style="padding-right:5%"></i>Change</button>
 						</div>
 					</div>
 				</form>
@@ -36,7 +39,7 @@
 								<?php if ($collectionAddress['id_address'] == $collectionAddressId): ?>
 									<a class="btn btn-default pull-right"
 									   href="?controller=AdminManufacturers&amp;token=<?= $token ?>&amp;id_address=<?= $collectionAddress['id_address'] ?>&amp;editaddresses=1">
-										<i class="icon-pencil"></i> Edit
+										<i class="icon-edit"></i> Edit
 									</a>
 									<?= $collectionAddress['alias'] ?> <br>
 									<?= $collectionAddress['address1'] ?> <br>
@@ -47,7 +50,7 @@
 						</div>
 						<a class="btn btn-default pull-right"
 						   href="?controller=AdminManufacturers&amp;addaddress&amp;id_order=<?=$orderId?>&amp;id_manufacturer=<?= $idManufacturer ?>">
-							<i class="icon-pencil"></i> Add Address
+							<i class="icon-plus-circle"></i> Add Address
 						</a>
 					</div>
 				</div>
@@ -75,7 +78,7 @@
 							</select>
 						</div>
 						<div class="col-lg-3">
-							<button method="submit" name="id_address_del">Change</button>
+							<button class="btn btn-default" method="submit" name="id_address_del"><i class="icon-exchange" style="padding-right:5%"></i>Change</button>
 						</div>
 					</div>
 				</form>
@@ -87,7 +90,7 @@
 									?>
 									<a class="btn btn-default pull-right"
 									   href="?controller=adminaddresses&amp;id_address=<?= $deliveryAddress['id_address'] ?>&amp;updateaddress&amp;token=<?= $token ?>">
-										<i class="icon-pencil"></i> Edit
+										<i class="icon-edit"></i> Edit
 									</a>
 									<?php
 									echo
@@ -101,28 +104,29 @@
 						</div>
 
 						<input type="hidden" name="back" value="<?= $back?>" />
-						<input type="hidden" name="token" value=<?=$token?> />
-
-
-
+						<?php $this->tokenb = Tools::getAdminToken($this->controller.(int)$this->id.(int)$this->context->employee->id);?>
 						<a class="btn btn-default pull-right"
-						   href="?controller=AdminAddresses&amp;addaddress&id_order=<?=$orderId?>">
-							<i class="icon-pencil"></i> Add Address
+						   href="index.php?controller=AdminAddresses&addaddress&id_order=<?=$orderId?>">
+							<i class="icon-plus-circle"></i> Add Address
 						</a>
 					</div>
 				</div>
 			</div>
-			<form align="center"
+			<div style="display:inline-flex">
+			<form style="width:50%"
 			      action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=getQuote"
 			      method="post">
-				<button class="btn btn-default">Get Quote</button>
+				<button class="btn btn-default"><i class="icon-question-circle" style="padding-right:5%;"></i>Get Quote</button>
 			</form>
-			<form align="center"
+			<form style="width:50%;"
 			      action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=addCollivery"
 			      method="post">
-				<button class="btn btn-default">Despatch Delivery</button>
+				<button class="btn btn-default"><i class="icon-check-circle" style="padding-right:5%;"></i>Despatch Delivery</button>
 			</form>
-			<?php echo $price; ?>
+				</div>
+			<div style="padding-top: 1%">
+			<span><?php echo $price; ?></span>
+				</div>
 		</div>
 	</div>
 </div>

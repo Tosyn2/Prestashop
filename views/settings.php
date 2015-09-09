@@ -8,8 +8,12 @@
 	}
 </style>
 
-<h1><?= $displayName ?></h1>
+<div style="padding:1% 1% 1% 0;">
+	<img src="../modules/mds/icons/Collivery-Icon.png" style="margin-bottom:-1%">
 
+	<h1 style="display:inline"><?= $displayName ?></h1>
+
+</div>
 <?= $errors ?>
 
 <form action="<?= $formUrl ?>" method="post" class="form" id="configForm">
@@ -18,7 +22,8 @@
 		<?php foreach ($surcharges as $serviceId => $data): ?>
 			<div class="form-group">
 				<label><?= $data['name'] ?> (%):</label>
-				<input class="form-control" type="number" name="surcharge[<?= $serviceId ?>]" value="<?= $data['value'] ?>">
+				<input class="form-control" type="number" name="surcharge[<?= $serviceId ?>]"
+				       value="<?= $data['value'] ?>">
 			</div>
 		<?php endforeach; ?>
 
@@ -34,7 +39,8 @@
 
 		<div class="form-group">
 			<label for="collivery-risk-cover">Risk Cover:</label>
-			<input id="collivery-risk-cover" class="form-control" type="checkbox" name="risk-cover" value="1"<?= $riskCover ? ' checked="checked"' : '' ?>>
+			<input id="collivery-risk-cover" class="form-control" type="checkbox" name="risk-cover"
+			       value="1"<?= $riskCover ? ' checked="checked"' : '' ?>>
 		</div>
 
 		<div class="margin-form">

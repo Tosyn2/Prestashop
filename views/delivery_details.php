@@ -1,6 +1,11 @@
 <div class="row">
 	<div class="tab-content panel">
-		<h1>MDS Delivery Status || Waybill <?= $waybill ?></h1>
+
+		<div>
+			<img src="../modules/mds/icons/Collivery-Icon.png" style="padding:0 1% 1% 0">
+
+			<h1 style="display:inline">MDS Delivery Status || Waybill <?= $waybill ?></h1>
+		</div>
 
 		<div class="tab-pane  in active" id="addressShipping" style="display:inline-block; width:100%">
 			<ul style="padding-top:2%;list-style: none">
@@ -15,7 +20,7 @@
 						   class="btn btn-default">Get POD file</a></li>
 				<?php endif ?>
 			</ul>
-			<div style="display:inline-block; width:50%">
+			<div style="display:inline-block; width:49%">
 				<h2>Collection Address</h2>
 
 				<div class="well">
@@ -34,7 +39,7 @@
 					</div>
 				</div>
 			</div>
-			<div style="float:right;width:50%">
+			<div style="float:right;width:49%">
 				<h2>Delivery Address</h2>
 
 				<div class="well">
