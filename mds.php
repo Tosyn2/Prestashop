@@ -266,13 +266,7 @@ class Mds extends CarrierModule {
 	 */
 	public function hookDisplayFooter($params)
 	{
-		$val = 'other';
-		AddressCore::$definition['fields'][$val] ;
-		AddressCore::$definition['fields'][$val]['type'] = '1';
-		AddressCore::$definition['fields'][$val]['validate'] = "isLanguageIsoCode";
-		AddressCore::$definition['fields'][$val]['required'] = 1;
-
-		//die(print_r(AddressCore::$definition));
+	
 		$view = new Mds_TransactionView($this->db);
 
 		return $view->addFrontEndJs($params);
@@ -286,13 +280,7 @@ class Mds extends CarrierModule {
 	public function hookDisplayBackOfficeHeader($params)
 	{
 		global $token;
-//		$val = 'other';
-//		AddressFormatCore::$definition['fields'][$val] ;
-//		AddressFormatCore::$definition['fields'][$val]['type'] = '1';
-//		AddressFormatCore::$definition['fields'][$val]['validate'] = "isPhpDateFormat";
-//		AddressFormatCore::$definition['fields'][$val]['required'] = 1;
 
-		//die(print_r(AddressFormat::$definition));
 		$view = new Mds_TransactionView($this->db);
 
 		return $view->addAdminJs($params,$token);

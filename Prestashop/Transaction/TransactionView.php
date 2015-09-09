@@ -176,7 +176,6 @@ class TransactionView extends Transaction {
 	 */
 	public function addAdminJs($token)
 	{
-
 		$idAddress = $_GET['id_address'];
 
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;

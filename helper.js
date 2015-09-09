@@ -93,12 +93,7 @@ function addDropDownSuburb(suburbs, suburb) {
 function addHiddenInputToAdminSave(orderId,token) {
 	$(document).ready(function () {
 
-		//for (var key in token) {
-		//	if (token.hasOwnProperty(key)) {
-		//
-		//	}
-		//}
-		alert(JSON.stringify(token, null, 4));
+		//alert(JSON.stringify(token, null, 4));
 
 		$("#address_form_submit_btn")
 			.replaceWith(
