@@ -198,14 +198,22 @@ class Mds extends CarrierModule {
 	 */
 	public function getPackageShippingCost($params, $shipping_cost, $products)
 	{
+		$hash = 'getPackageShippingCost::'. sha1(json_encode($params)) .'-'. $this->id_carrier;
+
+		if (array_key_exists($hash, $this->cache)) {
+			return $this->cache[$hash];
+		}
+
 		$price = new Mds_TransactionTable($this->db);
-		$prices = $price->getShoppingCartQuote($params, $shipping_cost);
+		$prices = $price->getShoppingCartQuote($params, $shipping_cost, $this->id_carrier);
 
 		foreach ($prices as $carrierId => $price) {
 
 			if ($carrierId == $this->id_carrier ) {
-
+				$this->cache[$hash] = $price;
 				return $price;
+			}else {
+				return false;
 			}
 		}
 	}

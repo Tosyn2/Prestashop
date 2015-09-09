@@ -363,27 +363,25 @@ class TransactionTable extends Transaction {
 	{
 
 		try {
-			$serviceMappings = Mds_Services::getServiceMappings();
 			$prices = array();
 
-			foreach ($serviceMappings as $carrierId => $serviceId ) {
+			$orderParams = $this->buildColliveryGetPriceArray($params);
 
-				$orderParams = $this->buildColliveryGetPriceArray($params);
-				$orderParams['service'] = $serviceId;
+			$serviceId = Mds_Services::getServiceId($carrierId);
+			$orderParams['service'] = $serviceId;
 
-				if (Mds_RiskCover::hasCover()) {
-					$orderParams['cover'] = 1;
-				}
-//die(print_r($orderParams));
-				$price = $this->getShippingCost($orderParams);
-
-				$surchargePerc = Mds_Surcharge::get($serviceId);
-				$price = $price * (1 + ($surchargePerc / 100));
-				$shippingPrice = $shipping_cost + $price;
-
-				$prices[$carrierId]=$shippingPrice;
+			if (Mds_RiskCover::hasCover()) {
+				$orderParams['cover'] = 1;
 
 			}
+			$price = $this->getShippingCost($orderParams);
+
+			$surchargePerc = Mds_Surcharge::get($serviceId);
+			$price = $price * (1 + ($surchargePerc / 100));
+			$shippingPrice = $shipping_cost + $price;
+
+			$prices[ $carrierId ] = $shippingPrice;
+
 			return $prices;
 
 
