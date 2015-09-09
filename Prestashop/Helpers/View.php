@@ -7,6 +7,7 @@ class View {
 
 	protected $obLevel = 0;
 
+	public static $currentIndex;
 	public static function make($path, $data)
 	{
 		$view = new self;

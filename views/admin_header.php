@@ -5,6 +5,8 @@
 		location_types = <?=json_encode($locationTypes)?>,
 		suburb = <?=json_encode($suburb)?>,
 		location_type = <?=json_encode($locationType)?>;
+		orderId = <?=json_encode($orderId)?>;
+		token = <?=json_encode($token)?>;
 
 	replaceAdminText('State', 'Town');
 	replaceAdminText('City', 'Suburb');
@@ -12,5 +14,6 @@
 
 	addDropDownSuburb(suburbs, suburb);
 	addDropDownLocationType(location_types, location_type);
+	addHiddenInputToAdminSave(orderId,token);
 
 </script>

@@ -17,6 +17,8 @@ class Mds extends CarrierModule {
 	public $id_carrier;
 	protected $db;
 
+	public static $definition;
+	public static $currentIndex;
 	protected $hooks = array(
 		'displayFooter',
 		'actionOrderStatusPostUpdate',
@@ -259,7 +261,7 @@ class Mds extends CarrierModule {
 	{
 		$view = new Mds_TransactionView($this->db);
 
-		return $view->addAdminJs($params);
+		return $view->addAdminJs($params,$token);
 	}
 
 	/**

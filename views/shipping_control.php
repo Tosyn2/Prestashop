@@ -46,7 +46,7 @@
 							<?php endforeach; ?>
 						</div>
 						<a class="btn btn-default pull-right"
-						   href="?controller=AdminManufacturers&amp;addaddress&amp;token=<?= $token ?>&amp;id_manufacturer=<?= $idManufacturer ?>">
+						   href="?controller=AdminManufacturers&amp;addaddress&amp;id_order=<?=$orderId?>&amp;id_manufacturer=<?= $idManufacturer ?>">
 							<i class="icon-pencil"></i> Add Address
 						</a>
 					</div>
@@ -99,8 +99,11 @@
 								?>
 							<?php endforeach; ?>
 						</div>
+
+						<input type="hidden" name="back" value="<?= $back?>" />
+						<input type="hidden" name="token" value=<?=$token?> />
 						<a class="btn btn-default pull-right"
-						   href="?controller=adminaddresses&amp;addaddress&amp;token=<?= $token ?>">
+						   href="?controller=AdminAddresses&amp;addaddress&id_order=<?=$orderId?>">
 							<i class="icon-pencil"></i> Add Address
 						</a>
 					</div>

@@ -72,4 +72,23 @@ function addDropDownLocationType(location_types, location_type) {
 }
 
 
+function addHiddenInputToAdminSave(orderId,token) {
+	$(document).ready(function () {
 
+		//for (var key in token) {
+		//	if (token.hasOwnProperty(key)) {
+		//
+		//	}
+		//}
+		alert(JSON.stringify(token, null, 4));
+
+		$("#address_form_submit_btn")
+			.replaceWith(
+			 '<input value="./index.php?controller=AdminOrders&id_order='+orderId+'&vieworder" name="back" type="hidden" />'
+			+ '<button type="submit" value="1" id="address_form_submit_btn" name="submitAddaddress" class="btn btn-default pull-right">'
+			+'<i class="process-icon-save"></i>'
+			+ 'Save'
+			+'</button>'
+		);
+	});
+}

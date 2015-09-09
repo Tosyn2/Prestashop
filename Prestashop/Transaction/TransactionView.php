@@ -11,6 +11,8 @@ class TransactionView extends Transaction {
 
 	protected $collivery;
 	
+	public static $currentIndex;
+	//global token;
 	public function __construct(\Db $db)
 	{
 		parent::__construct($db);
@@ -60,7 +62,7 @@ class TransactionView extends Transaction {
 
 		$back = "Location: ./index.php?controller=AdminOrders&id_order=" . $params['id_order'] . "&vieworder&token=" . $token;
 
-		if (! $_POST['func_name']) {
+		if ( ! $_POST['func_name']) {
 
 			$_GET['func_name'];
 			$form_action_func = $_GET['func_name'];
@@ -129,6 +131,7 @@ class TransactionView extends Transaction {
 					'price',
 					'message',
 					'mdsManufacturerId'
+					'currentIndex'
 				)
 			);
 
@@ -162,7 +165,7 @@ class TransactionView extends Transaction {
 	/**
 	 * @return string
 	 */
-	public function addAdminJs()
+	public function addAdminJs($token)
 	{
 
 		$idAddress = $_GET['id_address'];
@@ -176,9 +179,16 @@ class TransactionView extends Transaction {
 		$locationTypes = $this->collivery->getLocationTypes();
 		$locationType = $address['other'];
 
+		if(!$_POST['controller']){
+
+			if(($_GET['controller'] == 'AdminAddresses' || $_GET['controller'] == 'AdminManufacturers') && $_GET['id_order']) {
+				$orderId = $_GET['id_order'];
+
+			}
+		}
 		return Mds_View::make(
 			'admin_header',
-			compact('suburbs', 'suburb', 'locationTypes', 'locationType')
+			compact('suburbs', 'suburb', 'locationTypes', 'locationType','orderId','token')
 		);
 	}
 
