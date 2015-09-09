@@ -69,7 +69,7 @@ class TransactionTable extends Transaction {
 		$city = $defaultAddress['suburb_name'];
 
 		$phone = $contact['phone'];
-		$mobile = $contact['phone_mobile'];
+		$mobile = $contact['cellphone'];
 
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'state where `id_mds` = "' . $defaultAddress['town_id'] . '" AND `active` = 1';
 		$state = $this->db->getRow($sql);
@@ -109,10 +109,11 @@ class TransactionTable extends Transaction {
 
 		}
 
-		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(id_order,id_collection_address,id_service,id_delivery_address,status)
+		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(id_order,id_collection_address,id_service,id_delivery_address)
 		VALUES
-		(\'' . $orderId . '\',\'' . $defaultMdsAddressPsId['id_address'] . '\',\'' . $serviceId . '\', \'' . $deliveryAddressId . '\', "Not yet sent")';
-		$this->db->execute($sql);
+		(\'' . $orderId . '\',\'' . $defaultMdsAddressPsId['id_address'] . '\',\'' . $serviceId . '\', \'' . $deliveryAddressId . '\')';
+
+		return $this->db->execute($sql);
 	}
 
 	/**

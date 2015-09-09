@@ -262,14 +262,13 @@ class Install extends Installer {
 						`id_collection_address` int(11) NOT NULL,
 						`id_delivery_address` int(11) NOT NULL,
 						`id_service` TEXT NOT NULL,
-						`waybill` int(10) NOT NULL DEFAULT 1,
+						`waybill` int(10) NOT NULL DEFAULT 0,
 						PRIMARY KEY (`id_order`)
 						) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
-		$this->db->execute($sql);
-		return $sql;
+
+		return $this->db->execute($sql);
 
 	}
-
 
 	private function addMdsManufacturer()
 	{
