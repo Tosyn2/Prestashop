@@ -6,8 +6,14 @@ if ( ! defined('_PS_VERSION_')) {
 }
 
 define('_MDS_DIR_', __DIR__);
-
 include('autoload.php');
+
+//use Address;
+//use AddressFormat;
+
+
+
+
 
 /**
  * Class Mds
@@ -19,6 +25,7 @@ class Mds extends CarrierModule {
 
 	public static $definition;
 	public static $currentIndex;
+
 	protected $hooks = array(
 		'displayFooter',
 		'actionOrderStatusPostUpdate',
@@ -29,6 +36,7 @@ class Mds extends CarrierModule {
 
 	);
 	protected $cache;
+
 
 	public function __construct()
 	{
@@ -45,9 +53,15 @@ class Mds extends CarrierModule {
 
 		$settings = array();
 
+
+
 		$this->mdsService = \Mds\MdsColliveryService::getInstance($settings);
 		$this->collivery = Mds_ColliveryApi::getInstance();
 		$this->db = Db::getInstance();
+
+
+
+
 	}
 
 	/**
@@ -190,6 +204,7 @@ class Mds extends CarrierModule {
 	public function getOrderShippingCost($params, $shipping_cost)
 	{
 		return false;
+
 	}
 
 	/**
@@ -201,6 +216,10 @@ class Mds extends CarrierModule {
 	 */
 	public function getPackageShippingCost($params, $shipping_cost, $products)
 	{
+
+
+
+
 		$hash = 'getPackageShippingCost::'. sha1(json_encode($params)) .'-'. $this->id_carrier;
 
 		if (array_key_exists($hash, $this->cache)) {
@@ -266,6 +285,7 @@ class Mds extends CarrierModule {
 	 */
 	public function hookDisplayBackOfficeHeader($params)
 	{
+		global $token;
 //		$val = 'other';
 //		AddressFormatCore::$definition['fields'][$val] ;
 //		AddressFormatCore::$definition['fields'][$val]['type'] = '1';

@@ -7,17 +7,23 @@ use Mds_ColliveryApi;
 use Mds\Prestashop\Settings;
 use Tools;
 
+
+//use
+
 class TransactionView extends Transaction {
 
 	protected $collivery;
-	
+
 	public static $currentIndex;
 	//global token;
+
 	public function __construct(\Db $db)
 	{
 		parent::__construct($db);
 		$this->collivery = Mds_ColliveryApi::getInstance();
 		$this->transactionTable = new TransactionTable($db);
+
+
 	}
 
 	/**
@@ -29,6 +35,7 @@ class TransactionView extends Transaction {
 	 */
 	public function generateView($params, $token)
 	{
+
 		$sql = 'SELECT `id_delivery_address` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$deliveryAddressId = $this->db->getValue($sql);
 
@@ -105,10 +112,12 @@ class TransactionView extends Transaction {
 			}
 
 		}
+
 		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$waybill = $this->db->getValue($sql);
 
 		$waybillEnc = base64_encode($waybill);
+
 
 		if ( ! $waybill) {
 			return Mds_View::make(
@@ -130,7 +139,7 @@ class TransactionView extends Transaction {
 					'collectionAddressId',
 					'price',
 					'message',
-					'mdsManufacturerId'
+					'mdsManufacturerId',
 					'currentIndex'
 				)
 			);
@@ -186,6 +195,7 @@ class TransactionView extends Transaction {
 
 			}
 		}
+
 		return Mds_View::make(
 			'admin_header',
 			compact('suburbs', 'suburb', 'locationTypes', 'locationType','orderId','token')

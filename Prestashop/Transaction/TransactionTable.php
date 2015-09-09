@@ -26,9 +26,9 @@ class TransactionTable extends Transaction {
 		$this->mdsColliveryService = Mds\MdsColliveryService::getInstance();
 
 	}
+
 	public function createTransaction($params)
 	{
-
 
 		new SoapClient(
 			'http://www.collivery.co.za/wsdl/v2',
@@ -41,6 +41,7 @@ class TransactionTable extends Transaction {
 		$carrierId = $params['objOrder']->id_carrier;
 		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'carrier` WHERE `id_carrier` = ' . $carrierId;
 		$carrierName = $this->db->getValue($sql);
+
 		$serviceId = Mds_Services::getServiceId($carrierId);
 
 		$defaultAddressId = $this->collivery->getDefaultAddressId();
@@ -104,9 +105,7 @@ class TransactionTable extends Transaction {
 
 				$sql = 'UPDATE ' . _DB_PREFIX_ . 'address SET `id_state` = \'' . $state_id . '\', `lastname` = \'' . $last_name . '\' ,`firstname` =  \'' . $first_name . '\'  ,`address1` =  \'' . $defaultAddress['street'] . '\' , `other` =  \'' . $locationType . '\',`postcode` =  \'' . $defaultAddress['zip_code'] . '\',`city` =  \'' . $defaultAddress['suburb_name'] . '\' ,`phone` =  \'' . $phone . '\',`phone_mobile` = \'' . $mobile . '\' where `id_address` =  \'' . $defaultMdsAddressPsId['id_address'] . '\'';
 				$this->db->execute($sql);
-
 			}
-
 		}
 
 		$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(id_order,id_collection_address,id_service,id_delivery_address)
@@ -114,6 +113,7 @@ class TransactionTable extends Transaction {
 		(\'' . $orderId . '\',\'' . $defaultMdsAddressPsId['id_address'] . '\',\'' . $serviceId . '\', \'' . $deliveryAddressId . '\')';
 
 		return $this->db->execute($sql);
+
 	}
 
 	/**
@@ -158,7 +158,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function addControlColliveryAddressTo($params)
 	{
-
 		$sql = 'SELECT `id_delivery_address` FROM ' . _DB_PREFIX_ . 'mds_collivery_processed
 		WHERE id_order = \'' . $params['id_order'] . '\'';
 		$addAddress1 = $this->db->getValue($sql);
@@ -198,7 +197,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function addControlColliveryAddressFrom($params)
 	{
-
 		$sql = 'SELECT `id_collection_address` FROM ' . _DB_PREFIX_ . 'mds_collivery_processed
 		WHERE id_order = \'' . $params['id_order'] . '\'';
 		$addAddress1 = $this->db->getValue($sql);
@@ -237,7 +235,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function changeDeliveryAddress($value, $idOrder)
 	{
-
 		if ($result = $this->db->update(
 			'mds_collivery_processed',
 			array('id_delivery_address' => trim($value)),
@@ -256,7 +253,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function changeCollectionAddress($value, $idOrder)
 	{
-
 		$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `id_collection_address` = \'' . $value . '\' where `id_order` =  \'' . $idOrder . '\'';
 		$this->db->execute($sql);
 
@@ -335,7 +331,6 @@ class TransactionTable extends Transaction {
 
 	public function addTownsToPsDb()
 	{
-
 		$towns = $this->collivery->getTowns();
 
 		$sql = 'SELECT count(`id_mds`) FROM  `' . _DB_PREFIX_ . 'state` WHERE  `id_country` = 30 AND `active` = 1';
@@ -362,7 +357,6 @@ class TransactionTable extends Transaction {
 	 */
 	public function getShoppingCartQuote($params, $shipping_cost, $carrierId)
 	{
-
 		try {
 			$prices = array();
 
@@ -385,7 +379,6 @@ class TransactionTable extends Transaction {
 
 			return $prices;
 
-
 		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 			return false;
 		}
@@ -398,7 +391,6 @@ class TransactionTable extends Transaction {
 	 */
 	function addColliveryAddressTo($params)
 	{
-
 		$addAddress1 = $params['cart']->id_address_delivery;
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
@@ -435,8 +427,6 @@ class TransactionTable extends Transaction {
 	 */
 	function getDefaultColliveryAddressFrom($params)
 	{
-
-
 		$colliveryAddressesFrom = $this->mdsColliveryService->returnDefaultAddress();
 
 		return array_pop($colliveryAddressesFrom['contacts']);
@@ -511,6 +501,7 @@ class TransactionTable extends Transaction {
 		$colliveryGetPriceArray['collivery_from'] = $colliveryAddressFrom['address_id'];
 
 		$colliveryGetPriceArray = $this->getParcels($cartProducts, $colliveryGetPriceArray);
+
 		return $colliveryGetPriceArray;
 	}
 
@@ -585,4 +576,5 @@ class TransactionTable extends Transaction {
 
 		return $colliveryGetPriceArray;
 	}
+
 }
