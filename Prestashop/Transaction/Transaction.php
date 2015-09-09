@@ -8,7 +8,6 @@ class Transaction {
 
 	public function __construct(Db $db)
 	{
-
 		$this->db = $db;
 
 	}

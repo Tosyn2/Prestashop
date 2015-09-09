@@ -520,9 +520,9 @@ class TransactionTable extends Transaction {
 	 */
 	protected function getServiceFromCarrierId($carrierId)
 	{
+		return (string) Mds_Services::getServiceId($carrierId);
 
-		return (string)Mds_Services::getServiceId($carrierId);
-
+	}
 
 	/**
 	 * @param $addressRow

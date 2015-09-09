@@ -46,11 +46,11 @@ class Install extends Installer {
 			$errors[] = 'MDS Collivery requires PHP 5.3 in order to run. Please upgrade before installing.';
 		}
 
-		if (!extension_loaded('soap')) {
+		if ( ! extension_loaded('soap')) {
 			$errors[] = 'MDS Collivery requires SOAP to be enabled on the server. Please make sure its enabled before installing.';
 		}
 
-		if (!empty($errors)) {
+		if ( ! empty($errors)) {
 			throw new UnmetSystemRequirements($errors);
 		}
 	}
@@ -118,7 +118,9 @@ class Install extends Installer {
 	 */
 	private function addCarrierGroup($carrierId, $groupId)
 	{
-		$this->db->insert('carrier_group', array(
+		$this->db->insert(
+			'carrier_group',
+			array(
 				'id_carrier' => $carrierId,
 				'id_group'   => $groupId
 			)
@@ -181,7 +183,9 @@ class Install extends Installer {
 	 */
 	protected function addCarrierZone($carrierId, $zoneId)
 	{
-		$this->db->insert('carrier_zone', array(
+		$this->db->insert(
+			'carrier_zone',
+			array(
 				'id_carrier' => $carrierId,
 				'id_zone'    => $zoneId
 			)
@@ -197,7 +201,9 @@ class Install extends Installer {
 	 */
 	protected function addDeliveryPriceRange($carrierId, $rangePriceId, $zoneId)
 	{
-		$this->db->insert('delivery', array(
+		$this->db->insert(
+			'delivery',
+			array(
 				'id_carrier'      => $carrierId,
 				'id_range_price'  => $rangePriceId,
 				'id_range_weight' => null,
@@ -217,7 +223,9 @@ class Install extends Installer {
 	 */
 	protected function addDeliveryWeightRange($carrierId, $rangeWeightId, $zoneId)
 	{
-		$this->db->insert('delivery', array(
+		$this->db->insert(
+			'delivery',
+			array(
 				'id_carrier'      => $carrierId,
 				'id_range_price'  => null,
 				'id_range_weight' => $rangeWeightId,
@@ -268,10 +276,12 @@ class Install extends Installer {
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'manufacturer` WHERE `name` = "MDS Collection Addresses" ';
 		$mdsManufacturer = $this->db->getValue($sql);
 
-		if(!$mdsManufacturer) {
+		if ( ! $mdsManufacturer) {
 
-			$this->db->insert('manufacturer', array(
-					'name' => "MDS Collection Addresses",
+			$this->db->insert(
+				'manufacturer',
+				array(
+					'name'   => "MDS Collection Addresses",
 					'active' => 1
 				)
 			);
@@ -282,18 +292,22 @@ class Install extends Installer {
 			$sql = 'SELECT `id_shop` FROM `' . _DB_PREFIX_ . 'shop` WHERE `active` = 1 ';
 			$idShop = $this->db->getValue($sql);
 
-			$this->db->insert('manufacturer_shop', array(
+			$this->db->insert(
+				'manufacturer_shop',
+				array(
 					'id_manufacturer' => $mdsManufacturer,
-					'id_shop' => $idShop
+					'id_shop'         => $idShop
 				)
 			);
 
 			$sql = 'SELECT `id_lang` FROM `' . _DB_PREFIX_ . 'lang_shop` WHERE `id_shop` =' . $idShop;
 			$idLang = $this->db->getValue($sql);
 
-			$this->db->insert('manufacturer_lang', array(
+			$this->db->insert(
+				'manufacturer_lang',
+				array(
 					'id_manufacturer' => $mdsManufacturer,
-					'id_lang' => $idLang
+					'id_lang'         => $idLang
 				)
 			);
 
