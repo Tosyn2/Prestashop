@@ -9,7 +9,7 @@
 
 
 		<div class="tab-pane  in active" id="addressShipping" style="display:inline-block; width:100%">
-			<div style="display:inline-block">
+			<div style="display:inline-block; width:49%">
 				<h2>Collection Address</h2>
 
 				<form class="form-horizontal hidden-print" method="post"
@@ -58,7 +58,7 @@
 					</div>
 				</div>
 			</div>
-			<div style="float:right;width:50%">
+			<div style="float:right;width:49%">
 				<h2>Delivery Address</h2>
 
 				<form class="form-horizontal hidden-print" method="post"
@@ -126,7 +126,7 @@
 				<button class="btn btn-default"><i class="icon-check-circle" style="padding-right:5%;"></i>Despatch Delivery</button>
 			</form>
 				</div>
-			<div style="padding-top: 1%">
+			<div style="padding-top:1%">
 			<span><?php echo $price; ?></span>
 				</div>
 		</div>
