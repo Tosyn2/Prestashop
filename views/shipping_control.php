@@ -1,3 +1,6 @@
+<?php $token = Tools::getAdminToken('AdminAddresses'.(int)TabCore::getIdFromClassName('AdminAddresses').(int)\ContextCore::getContext()->cookie->id_employee);?>
+<?php $tokenb = Tools::getAdminToken('AdminManufacturers'.(int)TabCore::getIdFromClassName('AdminManufacturers').(int)\ContextCore::getContext()->cookie->id_employee);?>
+
 <div class="row">
 	<div class="tab-content panel">
 		<div>
@@ -49,7 +52,7 @@
 							<?php endforeach; ?>
 						</div>
 						<a class="btn btn-default pull-right"
-						   href="?controller=AdminManufacturers&amp;addaddress&amp;id_order=<?=$orderId?>&amp;id_manufacturer=<?= $idManufacturer ?>">
+						   href="?controller=AdminManufacturers&amp;addaddress&amp;id_order=<?=$orderId?>&amp;id_manufacturer=<?= $idManufacturer ?>&token=<?=$tokenb?>">
 							<i class="icon-plus-circle"></i> Add Address
 						</a>
 					</div>
@@ -102,11 +105,10 @@
 								?>
 							<?php endforeach; ?>
 						</div>
+					<input type="hidden" name="back" value="<?= $back?>" />
 
-						<input type="hidden" name="back" value="<?= $back?>" />
-						<?php $this->tokenb = Tools::getAdminToken($this->controller.(int)$this->id.(int)$this->context->employee->id);?>
 						<a class="btn btn-default pull-right"
-						   href="index.php?controller=AdminAddresses&addaddress&id_order=<?=$orderId?>">
+						   href="index.php?controller=AdminAddresses&addaddress&id_order=<?=$orderId?>&token=<?=$token?>">
 							<i class="icon-plus-circle"></i> Add Address
 						</a>
 					</div>
