@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<title>MDS Collivery - WooCommerce Plugin :: Users Manual</title>
+	<link rel="stylesheet" type="text/css" media="screen" href="style.css">
+	<!--[if IE]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	</head>
+	<body>
+	<a name="top"></a>
+	<div class="wrapper">
+		<header>
+		<h1>MDS Collivery - Prestashop Plugin Guide</h1>
+		<p>
+			<span style="color: #ff0000; float: right;">Rev 1.0 Created (2015-08-04)</span>
+		</p>
+		</header>
+		<p>
+		<b>Introduction:</b><br />
+The installation of the MDS Collivery plugin is as easy as a few clicks of the mouse, once installed the plugin will only need you to enter your username and password but by default our demo account is used so that you may test your new plugin before going live. <br /> This plugin gives your Prestashop the ability to get prices from MDS Collivery based on the dimensions and weight of the products added to your client’s cart as well as the ability to send the delivery to MDS Collivery directly from your admin back office.</p>
+		<p>
+		<b>Prerequisites before installing Collivery Extension:</b><br />
+		• WordPress Version: From 3.8.1 To 4.0.1<br />
+		• WooCommerce Version: From 2.1.5 To 2.2.7<br />
+		• PHP Version 5.3 or above<br />
+		• Hosting service with 'SoapClient' - Enabled<br />
+		• MDS Collivery - Prestashop Plugin <a href="#">Download</a>
+		</p>
+		
+		<p>
+			<ul>
+				<li>This plugin only supports your primary Address as listed with MDS as a collection point.</li>
+				<li>This plugin does no unit convertion and works with the units cm - centimetre, kg - kilogram and the currency R - ZAR rand. Whatever specs we recieve or send out will be in cm, kg or R regardless of the symbol unit that is printed out.</li>
+				<li>This plugin only allows for you to dispatch deliveries. To cancel deliveries you will have to log in to https://quote.collivery.co.za/. </li>
+				<li>This plugin requires javascript enabled in browsers to work.</li>
+			</ul>
+		</p>
+		<p><b>Make sure before installing this plugin that you make a full SQL database backup and a full backup of all your files. If for some reason something goes wrong you will need this backup to get your website back to where it was before. Also please note before updating your Prestashop version make sure you confirm with us that the plugin does support the new version.</b></p>
+		<p style="color: red;"><b>Disclaimer:<br />• MDS Collivery provides the following plugins as a service to our clients.<br />• The responsibility to ensure that the integration is working correctly rests with the client.<br />• MDS Collivery does not accept responsibility for any errors in pricing, addresses or any other part of the collivery process which may not work correctly.<br />• By downloading the attached plugins the clients accepts the above conditions and will not in any way hold MDS Collivery responsible for errors.<br />• MDS Collivery’s integration team will provide all assistance to the client in the integration process and, where possible, will  provide technical support to the client.</b></p>
+		<section>
+		<header>
+			<h2><a name="toc">Table of Contents</a></h2>
+		</header>
+		<ol>
+			<li><a href="#instalation">Installation</a></li>
+			<li><a href="#admin_config">Configuration</a></li>
+			<li><a href="#client_usage">Front End Usage (Client Side)</a></li>
+			<li><a href="#admin_usage">Back End Usage (Admin Side)</a></li>
+		</ol>
+		</section>
+
+		<section>
+		<header>
+			<h2><a name="instalation" href="#instalation">Installation</a></h2>
+		</header>
+		<p>In your admin back office navigate to Modules , then click on add module. Upload the mds.zip and click install.</p>
+		<p>To uninstall navigate to Modules in your admin back office, search for the MDS module and in the drop down menu select uninstall.</p>
+		<img src="images/uninstall.png"/><br /><br />
+		</section>
+		<section>
+		<header>
+			<h2><a name="admin_config" href="#admin_config">Configuration</a></h2>
+		</header>
+		<h3>General Configuration</h3>
+		<p>In your admin back office navigate to Modules , then search for the mds module in the search bar. Click on configure. <br>Here you must enter in your MDS login details, an overcost fee for each service and indicate if you have risk cover with MDS. <br>If you don't wish to add an overcost fee for a service you may just enter in the value '0'.</p>
+		<img src="images/generalconfig.png"/><br /><br />
+		<h3>Delivery Option Configuration</h3>
+		<p>In your admin back office navigate to Shipping where you will see a list of carriers. To configure a carrier click it's edit button.
+			<img src="images/carrierConfig.png"/><br /><br />
+			<ol>
+			<li>General settings allows you to change the display name, description, and logo of that service.<img src="images/carrierConfig1.png"/><br /><br /></li>
+			<li>Shipping locations and costs allow you to set an additional handling fee for a service as well the range for which that fee will be applied. Ranges can either be weight or total cart price based. One can configure multiple ranges each with their own fee. Please note that free shipping must be disabled.<img src="images/carrierConfig2.png"/><br /><br /></li>
+			<li>Size, Weight and Group access allows you to restrict use of a delivery option within a group or range.<img src="images/carrierConfig3.png"/><br /><br /></li>
+			</ol>
+		</p>
+		</section>
+		<section>
+		<header>
+			<h2><a name="client_usage" href="#client_usage">Front End Usage (Client Side)</a></h2>
+		</header>
+		<p>During the checkout the shopper will be asked to choose a shipping option. Amoungst the options you will see the MDS shipping options. 
+		The price displayed per option is the sum of the delivery fee that MDS charges you, the overcost fee that you have have set in the plugin configuration and the additional handling fee for a range if it applies.</p>
+		<img src="images/checkout.png"/><br />
+		</section>
+		<section>
+		<header>
+			<h2><a name="admin_usage" href="#admin_usage">Back End Usage (Admin Side)</a></h2>
+		</header>
+		<p>To despatch a delivery once ready navigate to Orders in your admin back office. Set the order status to "Shipped" and update the order status. The delivery will automatically be despatched and we will notify you and the delivery recipient that the delivery is in progress. Please note that everytime you change an order's status to "Shipped" a delivery will be despatched even if the order is no longer valid.</p>
+		<img src="images/deliveryDespatch.png"/><br />
+		</section>
+	</div>
+	<div class="top"><a href="#top">^ Top ^</a></div>
+	</body>
+</html>
