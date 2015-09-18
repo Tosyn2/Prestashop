@@ -1,0 +1,66 @@
+<?php namespace Mds\Prestashop\Settings;
+
+use Mds\Prestashop\Collivery\ColliveryApi;
+use Mds\Prestashop\Exceptions\InvalidData;
+
+class SettingsService {
+
+	protected $surchargeKeys = array();
+
+	protected $errors = array();
+
+	public function getSurchargesInfo()
+	{
+		$services = Services::get();
+		foreach ($services as $serviceId => $serviceName) {
+			$surcharges[$serviceId] = array(
+				'name' => $serviceName .' Surcharge',
+				'value' => Surcharge::get($serviceId)
+			);
+		}
+
+		return $surcharges;
+	}
+
+	public function getColliveryEmail()
+	{
+		return Credentials::getEmail();
+	}
+
+	public function testCurrentCredentials()
+	{
+		$email = Credentials::getEmail();
+		$password = Credentials::getPassword();
+
+		ColliveryApi::testAuthentication($email, $password);
+	}
+
+	public function store($data)
+	{
+		if (!empty($data['email']) && !empty($data['password'])) {
+			$this->updateColliveryCredentials($data['email'], $data['password']);
+		}
+
+		$this->updateSurcharges($data['surcharge']);
+
+		RiskCover::set(!empty($data['risk-cover']));
+
+		return $this->errors;
+	}
+
+	private function updateColliveryCredentials($email, $password)
+	{
+		try {
+			Credentials::set($email, $password);
+		} catch (InvalidData $e) {
+			$this->errors[] = $e->getMessage();
+		}
+	}
+
+	private function updateSurcharges($surcharges)
+	{
+		foreach ($surcharges as $serviceId => $surcharge) {
+			Surcharge::set($serviceId, $surcharge);
+		}
+	}
+}
