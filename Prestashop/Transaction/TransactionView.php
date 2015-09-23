@@ -60,8 +60,11 @@ class TransactionView extends Transaction {
 		$locationType = $address['other'];
 		$locationTypes = $this->collivery->getLocationTypes();
 
-		$token = Tools::getAdminToken('AdminOrders'.(int)\TabCore::getIdFromClassName('AdminOrders').(int)\ContextCore::getContext()->cookie->id_employee);
-		$back = "Location: ./index.php?controller=AdminOrders&id_order=" . $params['id_order'] . "&vieworder&token=".$token;
+		$token = Tools::getAdminToken(
+			'AdminOrders' . (int) \TabCore::getIdFromClassName('AdminOrders') . (int) \ContextCore::getContext(
+			)->cookie->id_employee
+		);
+		$back = "Location: ./index.php?controller=AdminOrders&id_order=" . $params['id_order'] . "&vieworder&token=" . $token;
 
 		if ( ! $_POST['func_name']) {
 
@@ -158,12 +161,14 @@ class TransactionView extends Transaction {
 					'mdsManufacturerId',
 					'currentIndex',
 					'validate'
+					'back'
 				)
 			);
 
 		} else {
 
 			$status = $this->transactionTable->getDeliveryStatus($waybill);
+			$pod = $this->collivery->getPod($waybill);
 
 			return Mds_View::make(
 				'delivery_details',
@@ -182,7 +187,7 @@ class TransactionView extends Transaction {
 					'status',
 					'waybill',
 					'serviceName',
-					'waybillEnc'
+					'waybillEnc',
 					'validate',
 					'pod'
 				)
