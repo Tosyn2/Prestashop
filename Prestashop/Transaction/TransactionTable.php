@@ -291,10 +291,41 @@ class TransactionTable extends Transaction {
 				if (Mds_RiskCover::hasCover()) {
 					$orderParams['cover'] = 1;
 				}
-				$waybill = $this->mdsColliveryService->addCollivery($orderParams, true);
+				$validate = $this->mdsColliveryService->validateCollivery($orderParams);
 
-				$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
-				$this->db->execute($sql);
+				echo $output;
+
+
+				if ($validate['time_changed']) {
+					echo $output;
+					 $output = "\n". '<script>
+										var r = confirm("'. json_encode($validate['time_changed_reason']).' Do you want to continue?" );
+										if (r == true) {
+											x = "You pressed OK!";
+											} else {
+												'. json_encode($validate['time_changed_reason']).'
+												}
+									</script>' ;
+
+					echo $output;
+
+				}
+				echo $output;
+
+				if ($output) {
+					//die($output);
+
+				}
+
+				//die($output);
+				//echo ;
+
+
+				//echo $output;
+
+//				$waybill = $this->mdsColliveryService->addCollivery($orderParams, true);
+//				$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
+//				$this->db->execute($sql);
 
 				return;
 
@@ -369,9 +400,9 @@ class TransactionTable extends Transaction {
 				$orderParams['cover'] = 1;
 
 			}
-			$price = $this->getShippingCost($orderParams);
+			$price = $this->getShippingCosts($orderParams);
 
-			//die(print_r($price));
+//			die(print_r($price));
 
 			$surchargePerc = Mds_Surcharge::get($serviceId);
 			$price = $price * (1 + ($surchargePerc / 100));
@@ -478,7 +509,7 @@ class TransactionTable extends Transaction {
 	public function buildColliveryGetPriceArray($params)
 	{
 
-			//die(print_r($params));
+		//die(print_r($params));
 		$addAddress1 = $params->id_address_delivery;
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';
@@ -549,7 +580,6 @@ class TransactionTable extends Transaction {
 	 * @return mixed
 	 */
 	private function getShippingCost($orderParams)
-
 	{
 		$price = array();
 
@@ -559,14 +589,23 @@ class TransactionTable extends Transaction {
 //		echo date('Y-m-d H:i:s', $validate['delivery_time']);
 //		die(print_r($validate));
 
-
-
 		$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 		$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
 
 		$price = $colliveryPrice;
 
 		return $validate;
+	}
+
+	private function getShippingCosts($orderParams)
+	{
+		$colliveryPriceOptions = array();
+		$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
+		$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
+		$price = array();
+		$price = $colliveryPrice;
+
+		return $price;
 	}
 
 	/**
