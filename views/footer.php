@@ -1,4 +1,4 @@
-<script src="./modules/mds/helper.js"></script>
+<script src=./modules/mds/helper.js></script>
 <script>
 	var suburbs = <?=json_encode($subs)?>,
 		location_types = <?=json_encode($locationTypes)?>,
@@ -9,6 +9,7 @@
 	replaceText('City', 'Suburb');
 	replaceText('Additional information', 'Location Type');
 	replaceText('Address (Line 2)', 'Building Details');
+
 	addStateOnChange();
 
 	var suburbsFlattened = new Array;
@@ -54,3 +55,8 @@
 	});
 
 </script>
+
+
+
+
+

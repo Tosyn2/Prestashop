@@ -32,26 +32,6 @@ function replaceAdminText(oldText, newText, node) {
 
 }
 
-function addDropDownSuburb(suburbs, suburb) {
-	$(document).ready(function () {
-		var text = '';
-
-		for (var key in suburbs) {
-			if (suburbs.hasOwnProperty(key)) {
-				text += '<option value="' + suburbs[key] + '">' + suburbs[key] + '</option>';
-			}
-		}
-
-		$("#city")
-			.replaceWith('<select id="city" name="city" class="form-control">'
-			+ '<option value="' + suburb + '">' + suburb + '</option>'
-			+ text
-			+ '</select>'
-		);
-	});
-}
-
-
 function addDropDownLocationType(location_types, location_type) {
 	$(document).ready(function () {
 		var text = '';

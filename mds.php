@@ -217,9 +217,6 @@ class Mds extends CarrierModule {
 	public function getPackageShippingCost($params, $shipping_cost, $products)
 	{
 
-
-
-
 		$hash = 'getPackageShippingCost::'. sha1(json_encode($params)) .'-'. $this->id_carrier;
 
 		if (array_key_exists($hash, $this->cache)) {

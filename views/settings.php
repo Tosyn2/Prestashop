@@ -16,6 +16,8 @@
 </div>
 <?= $errors ?>
 
+
+
 <form action="<?= $formUrl ?>" method="post" class="form" id="configForm">
 	<fieldset>
 		<legend>General configuration:</legend>
