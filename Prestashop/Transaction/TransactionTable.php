@@ -608,10 +608,6 @@ class TransactionTable extends Transaction {
 
 		$validate = $this->collivery->validate($orderParams);
 
-//		$validate['delivery_time'];
-//		echo date('Y-m-d H:i:s', $validate['delivery_time']);
-//		die(print_r($validate));
-
 		$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 		$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
 
@@ -654,3 +650,5 @@ class TransactionTable extends Transaction {
 	}
 
 }
+
+?>
