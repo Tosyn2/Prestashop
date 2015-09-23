@@ -12,6 +12,7 @@
 	replaceAdminText('State', 'Town');
 	replaceAdminText('City', 'Suburb');
 	replaceAdminText('Other', 'Location Type');
+	replaceAdminText('Address (2)', 'Building Details');
 
 	addDropDownSuburb(suburbs, suburb);
 	addDropDownLocationType(location_types, location_type);

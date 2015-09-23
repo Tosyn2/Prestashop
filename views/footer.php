@@ -8,6 +8,7 @@
 	replaceText('State', 'Town');
 	replaceText('City', 'Suburb');
 	replaceText('Additional information', 'Location Type');
+	replaceText('Address (Line 2)', 'Building Details');
 	addStateOnChange();
 
 	var suburbsFlattened = new Array;
