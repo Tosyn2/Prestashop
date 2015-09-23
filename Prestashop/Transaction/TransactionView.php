@@ -185,16 +185,16 @@ class TransactionView extends Transaction {
 		$locationTypes = $this->collivery->getLocationTypes();
 		$locationType = $address['other'];
 
-		if(!$_POST['controller']){
+		if ( ! $_POST['controller']) {
 
-			if(($_GET['controller'] == 'AdminAddresses' || $_GET['controller'] == 'AdminManufacturers') && $_GET['id_order']) {
+			if (($_GET['controller'] == 'AdminAddresses' || $_GET['controller'] == 'AdminManufacturers') && $_GET['id_order']) {
 				$orderId = $_GET['id_order'];
-}
+			}
 		}
 
 		return Mds_View::make(
 			'admin_header',
-			compact('suburbs', 'suburb', 'locationTypes', 'locationType','orderId')
+			compact('suburbs', 'suburb', 'locationTypes', 'locationType', 'orderId')
 		);
 	}
 
@@ -230,3 +230,4 @@ class TransactionView extends Transaction {
 	}
 
 }
+
