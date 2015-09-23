@@ -583,7 +583,7 @@ class TransactionTable extends Transaction {
 	private function setColliveryParamsArray($addressRow, $colliveryParams, $mds_town_id, $hash)
 	{
 		$colliveryParams['company_name'] = $addressRow['company'];
-		$colliveryParams['building'] = '';
+		$colliveryParams['building'] = $addressRow['address2'];
 		$colliveryParams['street'] = $addressRow['address1'];
 		$colliveryParams['location_type'] = $addressRow['other'];
 		$colliveryParams['suburb'] = $addressRow['city'];
