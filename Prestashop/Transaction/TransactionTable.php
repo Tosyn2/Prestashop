@@ -470,6 +470,29 @@ class TransactionTable extends Transaction {
 	 *
 	 * @return mixed
 	 */
+	function addApprovedCollivery($params, $idOrder,$back)
+	{
+		try {
+			$orderParams = $this->buildColliveryControlDataArray($params);
+			if (Mds_RiskCover::hasCover()) {
+				$orderParams['cover'] = 1;
+			}
+
+				$waybill = $this->mdsColliveryService->addCollivery($orderParams, true);
+				$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
+				$this->db->execute($sql);
+			return header($back);
+			}
+            catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
+			return false;
+		}
+	}
+
+	/**
+	 * @param $params
+	 *
+	 * @return mixed
+	 */
 	public function buildColliveryDataArray($params)
 	{
 
