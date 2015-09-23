@@ -223,12 +223,8 @@ class Mds extends CarrierModule {
 			return $this->cache[$hash];
 		}
 
-		$validate = new Mds_TransactionTable($this->db);
-		$validate = $validate->getShoppingCartQuote($params, $shipping_cost, $this->id_carrier);
-
-		//die(print_r($validate));
-
-
+		$prices = new Mds_TransactionTable($this->db);
+		$prices = $prices->getShoppingCartQuote($params, $shipping_cost, $this->id_carrier);
 
 		foreach ($prices as $carrierId => $price) {
 
