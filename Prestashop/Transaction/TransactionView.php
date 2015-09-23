@@ -208,7 +208,16 @@ class TransactionView extends Transaction {
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;
 		$address = $this->db->getRow($sql);
 
+		$towns = $this->collivery->getTowns();
+
 		$suburbs = $this->collivery->getSuburbs('');
+
+		foreach ($towns as $key => $town) {
+
+			$subs[ $town ] = $this->collivery->getSuburbs($key);
+
+		}
+
 		$suburb = $address['city'];
 
 		$locationTypes = $this->collivery->getLocationTypes();
@@ -216,7 +225,7 @@ class TransactionView extends Transaction {
 
 		return Mds_View::make(
 			'footer',
-			compact('suburbs', 'suburb', 'locationTypes', 'locationType')
+			compact('suburbs', 'suburb', 'locationTypes', 'locationType','subs')
 		);
 	}
 
