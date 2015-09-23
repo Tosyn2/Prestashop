@@ -391,8 +391,6 @@ alert("sucessful");
 			}
 			$price = $this->getShippingCosts($orderParams);
 
-//			die(print_r($price));
-
 			$surchargePerc = Mds_Surcharge::get($serviceId);
 			$price = $price * (1 + ($surchargePerc / 100));
 			$shippingPrice = $shipping_cost + $price;
@@ -521,7 +519,6 @@ alert("sucessful");
 	public function buildColliveryGetPriceArray($params)
 	{
 
-		//die(print_r($params));
 		$addAddress1 = $params->id_address_delivery;
 		$sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'address
 		WHERE id_address = \'' . $addAddress1 . '\' AND deleted = 0';

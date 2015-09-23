@@ -69,6 +69,7 @@ class TransactionView extends Transaction {
 		if ( ! $_POST['func_name']) {
 
 			$_GET['func_name'];
+
 			$form_action_func = $_GET['func_name'];
 
 			if ($form_action_func === "getQuote") {
@@ -160,7 +161,7 @@ class TransactionView extends Transaction {
 					'message',
 					'mdsManufacturerId',
 					'currentIndex',
-					'validate'
+					'validate',
 					'back'
 				)
 			);
