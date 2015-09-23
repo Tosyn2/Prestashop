@@ -74,12 +74,32 @@ class TransactionView extends Transaction {
 
 				$validate = $this->transactionTable->getQuote($params);
 
+			}elseif ($form_action_func == "addApprovedCollivery") {
+				$idOrder = $_GET['id_order'];
+
+				$this->transactionTable->addApprovedCollivery($params,$idOrder,$back);
+
+				return header($back);
+
+			}elseif ($form_action_func === "downloadPod") {
+				$waybill = $_GET['waybill'];
+				$pod = $this->collivery->getPod($waybill);
+
+				$base64 = $pod['file'];
+				$binary = base64_decode($base64);
+				file_put_contents($pod['filename'], $binary);
+
+				header('Content-type: application/pdf');
+				header('Content-Disposition: attachment; filename="'.$pod['filename'].'"');
+
+				return $binary;
+
 			} elseif ($form_action_func === "addCollivery") {
 
 				$idOrder = $_GET['id_order'];
-				$this->transactionTable->despatchDelivery($params, $idOrder);
+				$token = $_GET['token'];
 
-				return header($back);
+				$this->transactionTable->despatchDelivery($params, $idOrder, $token);
 
 			} elseif ($form_action_func === "changeCollectionAddress") {
 				$idOrder = $_GET['id_order'];
@@ -163,6 +183,8 @@ class TransactionView extends Transaction {
 					'waybill',
 					'serviceName',
 					'waybillEnc'
+					'validate',
+					'pod'
 				)
 			);
 		}

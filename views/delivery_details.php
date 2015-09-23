@@ -11,13 +11,20 @@
 			<ul style="padding-top:2%;list-style: none">
 				<li>Current status: <?= $status['status_text'] ?></li>
 				<li>Delivery requested: <?= $status['updated_date'] ?> <?= $status['updated_time'] ?> </li>
+				<li>Deliver by: <?= $status['delivery_date'] ?> <?= $status['delivery_time'] ?> </li>
+				<?php if ($status['eta_text']) {?>
+				<li>Delivery ETA: <?= $status['eta_text'] ?> </li>
+				<?php } ?>
 				<li>Delivery type: <?= $serviceName ?></li>
-				<li>Delivery fee: <?= $status['total_price'] ?></li>
-				<?php if ($status['status_id'] == 32 || $status['status_id'] == 8): ?>
-					<li>
-						<a href="https://quote.collivery.co.za/waybillpdf.php?wb=<?= $waybillEnc ?>&output=I"
+				<li>Delivery fee: R<?= $status['total_price'] ?> ex_vat</li>
+				<li><a href="https://quote.collivery.co.za/waybillpdf.php?wb=<?= $waybillEnc ?>&output=I"
 						   target="_blank"
-						   class="btn btn-default">Get POD file</a></li>
+						   class="btn btn-default">Get Waybill</a></li>
+				<?php if ($pod): ?>
+					<li>
+						<a href="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=downloadPod&amp;waybill=<?= $waybill ?>"
+						   target="_blank"
+						   class="btn btn-default">Get POD</a></li>
 				<?php endif ?>
 			</ul>
 			<div style="display:inline-block; width:49%">

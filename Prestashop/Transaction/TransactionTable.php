@@ -279,7 +279,7 @@ class TransactionTable extends Transaction {
 	 *
 	 * @return bool|void
 	 */
-	public function despatchDelivery($params, $idOrder)
+	public function despatchDelivery($params, $idOrder,$token)
 	{
 		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$waybill = $this->db->getValue($sql);
@@ -291,43 +291,32 @@ class TransactionTable extends Transaction {
 				if (Mds_RiskCover::hasCover()) {
 					$orderParams['cover'] = 1;
 				}
+
+				$validate = array();
 				$validate = $this->mdsColliveryService->validateCollivery($orderParams);
 
-				echo $output;
-
-
 				if ($validate['time_changed']) {
-					echo $output;
-					 $output = "\n". '<script>
-										var r = confirm("'. json_encode($validate['time_changed_reason']).' Do you want to continue?" );
-										if (r == true) {
-											x = "You pressed OK!";
-											} else {
-												'. json_encode($validate['time_changed_reason']).'
-												}
-									</script>' ;
+					echo  '
 
-					echo $output;
+<script>
+    var con = confirm("'.$validate['time_changed_reason'].' Do you still want to add this collivery?");
+    if(con){
+
+var jqxhr = $.post( "?controller=AdminOrders&token='. $token .'&vieworder&id_order='.$idOrder .'&func_name=addApprovedCollivery", function() {
+alert("sucessful");
+})
+
+            }
+</script>';
+				} else {
+					$waybill = $this->mdsColliveryService->addCollivery($orderParams, true);
+					$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
+					$this->db->execute($sql);
 
 				}
-				echo $output;
 
-				if ($output) {
-					//die($output);
+				return ;
 
-				}
-
-				//die($output);
-				//echo ;
-
-
-				//echo $output;
-
-//				$waybill = $this->mdsColliveryService->addCollivery($orderParams, true);
-//				$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
-//				$this->db->execute($sql);
-
-				return;
 
 			} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 				return false;

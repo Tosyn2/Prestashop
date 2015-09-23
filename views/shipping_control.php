@@ -122,12 +122,14 @@
 			<form style="width:50%;"
 			      action="?controller=AdminOrders&amp;token=<?= $token ?>&amp;vieworder&amp;id_order=<?= $orderId ?>&amp;func_name=addCollivery"
 			      method="post">
-				<button class="btn btn-default"><i class="icon-check-circle" style="padding-right:5%;"></i>Despatch Delivery</button>
+				<button class="btn btn-default"><i class="icon-check-circle" style="padding-right:5%;"></i>Accept Collivery</button>
 			</form>
 				</div>
+			<p id = "add"></p>
 			<div style="padding-top:1%">
-				<?php print_r($validate)?>
+				<?php if ($validate) {?>
 			<span>R<?php echo $validate['price']['ex_vat']; ?> excl vat. <br><br> <?php echo $validate['time_changed_reason']?></span>
+				<?php }?>
 				</div>
 		</div>
 	</div>
