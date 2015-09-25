@@ -94,6 +94,9 @@ class MdsColliveryService {
 
 		}
 
+
+
+
 		$collivery_id = $this->collivery->addCollivery($this->validated_data);
 
 		if ($accept) {
@@ -227,8 +230,8 @@ class MdsColliveryService {
 			),
 			$newAddress
 		);
-
 		if (is_array($searchAddresses)) {
+
 			return $searchAddresses;
 		} else {
 			$this->cache->clear(array('addresses', 'contacts'));

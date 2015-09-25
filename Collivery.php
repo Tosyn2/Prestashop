@@ -786,6 +786,8 @@ class Collivery {
 	 */
 	public function addAddress(array $data)
 	{
+
+
 		$location_types = $this->getLocationTypes();
 		$towns = $this->getTowns();
 		$suburbs = $this->getSuburbs($data['town_id']);
@@ -822,9 +824,14 @@ class Collivery {
 
 		if ( ! $this->hasErrors()) {
 			try {
+
 				$result = $this->client()->add_address($data, $this->token);
+
+
 				$this->cache->forget('collivery.addresses.' . $this->client_id);
 			} catch (SoapFault $e) {
+
+
 				$this->catchSoapFault($e);
 
 				return false;
@@ -970,10 +977,14 @@ class Collivery {
 	 */
 	public function validate(array $data)
 	{
+
 		$contacts_from = $this->getContacts($data['collivery_from']);
 		$contacts_to = $this->getContacts($data['collivery_to']);
 		$parcel_types = $this->getParcelTypes();
 		$services = $this->getServices();
+
+
+
 
 		if ( ! isset($data['collivery_from'])) {
 			$this->setError('missing_data', 'collivery_from not set.');
@@ -1008,14 +1019,18 @@ class Collivery {
 		if ( ! isset($data['service'])) {
 			$this->setError('missing_data', 'service not set.');
 		} elseif ( ! isset($services[ $data['service'] ])) {
+
 			$this->setError('invalid_data', 'Invalid service.');
 		}
 
 		if ( ! $this->hasErrors()) {
 			try {
 				$result = $this->client()->validate_collivery($data, $this->token);
+
+
 			} catch (SoapFault $e) {
 				$this->catchSoapFault($e);
+
 
 				return false;
 			}
@@ -1024,6 +1039,8 @@ class Collivery {
 				if (isset($result['error_id'])) {
 					$this->setError($result['error_id'], $result['error']);
 				}
+
+
 
 				return $result;
 			} else {
@@ -1036,6 +1053,8 @@ class Collivery {
 				return false;
 			}
 		}
+
+
 	}
 
 	/**
@@ -1053,6 +1072,8 @@ class Collivery {
 		$contacts_to = $this->getContacts($data['collivery_to']);
 		$parcel_types = $this->getParcelTypes();
 		$services = $this->getServices();
+
+
 
 		if ( ! isset($data['collivery_from'])) {
 			$this->setError('missing_data', 'collivery_from not set.');

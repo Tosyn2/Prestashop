@@ -124,9 +124,9 @@ class TransactionTable extends Transaction {
 	public function buildColliveryControlDataArray($params)
 	{
 		$service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
-
 		$colliveryAddressTo = $this->addControlColliveryAddressTo($params);
 		$colliveryAddressFrom = $this->addControlColliveryAddressFrom($params);
+
 
 		$cart = $params['cart'];
 
@@ -183,6 +183,8 @@ class TransactionTable extends Transaction {
 		$colliveryParams['email'] = $this->db->getValue($sql);
 
 		try {
+
+
 			return $this->mdsColliveryService->addColliveryAddress($colliveryParams);
 		} catch (Exception $e) {
 			die($e->getMessage());
@@ -281,10 +283,13 @@ class TransactionTable extends Transaction {
 	 */
 	public function despatchDelivery($params, $idOrder,$token)
 	{
+
+
 		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$waybill = $this->db->getValue($sql);
 
 		if ( ! $waybill) {
+
 
 			try {
 				$orderParams = $this->buildColliveryControlDataArray($params);
