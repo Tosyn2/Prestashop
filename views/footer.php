@@ -37,7 +37,7 @@
 
 	function changeDropDownSuburb(suburbsInTown) {
 
-		var text = '<option value="">Please Select</option>';
+		var text = '<option value="">Please Select Town First</option>';
 
 		for (var key in suburbsInTown) {
 			if (suburbsInTown.hasOwnProperty(key)) {
