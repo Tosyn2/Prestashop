@@ -191,6 +191,7 @@ class TransactionView extends Transaction {
 					'waybillEnc',
 					'validate',
 					'pod'
+
 				)
 			);
 		}

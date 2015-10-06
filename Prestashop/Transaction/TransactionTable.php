@@ -124,7 +124,6 @@ class TransactionTable extends Transaction {
 		$colliveryAddressTo = $this->addControlColliveryAddressTo($params);
 		$colliveryAddressFrom = $this->addControlColliveryAddressFrom($params);
 
-
 		$cart = $params['cart'];
 
 		$colliveryParams['service'] = (int) $service;
@@ -180,7 +179,6 @@ class TransactionTable extends Transaction {
 		$colliveryParams['email'] = $this->db->getValue($sql);
 
 		try {
-
 
 			return $this->mdsColliveryService->addColliveryAddress($colliveryParams);
 		} catch (Exception $e) {
@@ -334,6 +332,7 @@ class TransactionTable extends Transaction {
 	 */
 	public function getQuote($params)
 	{
+
 		try {
 			$orderParams = $this->buildColliveryControlDataArray($params);
 			if (Mds_RiskCover::hasCover()) {
