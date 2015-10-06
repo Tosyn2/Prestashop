@@ -276,7 +276,7 @@ class Mds extends CarrierModule {
 	 */
 	public function hookDisplayBackOfficeHeader($params)
 	{
-		//global $token;
+		global $token;
 
 		$view = new Mds_TransactionView($this->db);
 
@@ -322,8 +322,8 @@ class Mds extends CarrierModule {
 			return false;
 		}
 
-		$view = new Mds_TransactionView($this->db);
-		return $view->generateView($params, $token);
+		$views = new Mds_TransactionView($this->db);
+		return $views->generateView($params, $token);
 
 	}
 
