@@ -787,7 +787,6 @@ class Collivery {
 	public function addAddress(array $data)
 	{
 
-
 		$location_types = $this->getLocationTypes();
 		$towns = $this->getTowns();
 		$suburbs = $this->getSuburbs($data['town_id']);
@@ -827,10 +826,8 @@ class Collivery {
 
 				$result = $this->client()->add_address($data, $this->token);
 
-
 				$this->cache->forget('collivery.addresses.' . $this->client_id);
 			} catch (SoapFault $e) {
-
 
 				$this->catchSoapFault($e);
 
@@ -978,59 +975,57 @@ class Collivery {
 	public function validate(array $data)
 	{
 
-		$contacts_from = $this->getContacts($data['collivery_from']);
-		$contacts_to = $this->getContacts($data['collivery_to']);
+		$contacts_from = $this->getContacts((int)$data['collivery_from']);
+		$contacts_to = $this->getContacts((int)$data['collivery_to']);
 		$parcel_types = $this->getParcelTypes();
 		$services = $this->getServices();
 
-
-
-
 		if ( ! isset($data['collivery_from'])) {
 			$this->setError('missing_data', 'collivery_from not set.');
-		} elseif ( ! is_array($this->getAddress($data['collivery_from']))) {
+		} elseif ( ! is_array($this->getAddress((int)$data['collivery_from']))) {
 			$this->setError('invalid_data', 'Invalid Address ID for: collivery_from.');
 		}
 
 		if ( ! isset($data['contact_from'])) {
 			$this->setError('missing_data', 'contact_from not set.');
-		} elseif ( ! isset($contacts_from[ $data['contact_from'] ])) {
+		} elseif ( ! isset($contacts_from[ (int)$data['contact_from'] ])) {
 			$this->setError('invalid_data', 'Invalid Contact ID for: contact_from.');
 		}
 
 		if ( ! isset($data['collivery_to'])) {
 			$this->setError('missing_data', 'collivery_to not set.');
-		} elseif ( ! is_array($this->getAddress($data['collivery_to']))) {
+		} elseif ( ! is_array($this->getAddress((int)$data['collivery_to']))) {
 			$this->setError('invalid_data', 'Invalid Address ID for: collivery_to.');
 		}
 
 		if ( ! isset($data['contact_to'])) {
 			$this->setError('missing_data', 'contact_to not set.');
-		} elseif ( ! isset($contacts_to[ $data['contact_to'] ])) {
+		} elseif ( ! isset($contacts_to[ (int)$data['contact_to'] ])) {
 			$this->setError('invalid_data', 'Invalid Contact ID for: contact_to.');
 		}
 
 		if ( ! isset($data['collivery_type'])) {
 			$this->setError('missing_data', 'collivery_type not set.');
-		} elseif ( ! isset($parcel_types[ $data['collivery_type'] ])) {
+		} elseif ( ! isset($parcel_types[ (int)$data['collivery_type'] ])) {
 			$this->setError('invalid_data', 'Invalid collivery_type.');
 		}
 
 		if ( ! isset($data['service'])) {
 			$this->setError('missing_data', 'service not set.');
-		} elseif ( ! isset($services[ $data['service'] ])) {
+		} elseif ( ! isset($services[(int) $data['service'] ])) {
 
 			$this->setError('invalid_data', 'Invalid service.');
 		}
 
+
+
 		if ( ! $this->hasErrors()) {
+
 			try {
 				$result = $this->client()->validate_collivery($data, $this->token);
 
-
 			} catch (SoapFault $e) {
 				$this->catchSoapFault($e);
-
 
 				return false;
 			}
@@ -1039,8 +1034,6 @@ class Collivery {
 				if (isset($result['error_id'])) {
 					$this->setError($result['error_id'], $result['error']);
 				}
-
-
 
 				return $result;
 			} else {
@@ -1053,7 +1046,6 @@ class Collivery {
 				return false;
 			}
 		}
-
 
 	}
 
@@ -1072,8 +1064,6 @@ class Collivery {
 		$contacts_to = $this->getContacts($data['collivery_to']);
 		$parcel_types = $this->getParcelTypes();
 		$services = $this->getServices();
-
-
 
 		if ( ! isset($data['collivery_from'])) {
 			$this->setError('missing_data', 'collivery_from not set.');
