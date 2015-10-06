@@ -94,9 +94,6 @@ class MdsColliveryService {
 
 		}
 
-
-
-
 		$collivery_id = $this->collivery->addCollivery($this->validated_data);
 
 		if ($accept) {

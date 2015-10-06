@@ -39,18 +39,15 @@ class TransactionTable extends Transaction {
 		$deliveryAddressId = $params['objOrder']->id_address_delivery;
 
 		$carrierId = $params['objOrder']->id_carrier;
-//		$sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'carrier` WHERE `id_carrier` = ' . $carrierId;
-//		$carrierName = $this->db->getValue($sql);
+
 
 		$serviceId = Mds_Services::getServiceId($carrierId);
 
 		$defaultAddressId = $this->collivery->getDefaultAddressId();
 		$defaultAddress = $this->collivery->getAddress($defaultAddressId);
 
-//		$towns = $this->collivery->getTowns();
-		$location_types = $this->collivery->getLocationTypes();
 
-//		$client_id = $defaultAddress['client_id'];
+		$location_types = $this->collivery->getLocationTypes();
 
 		$contacts = $this->collivery->getContacts($defaultAddressId);
 
@@ -281,18 +278,19 @@ class TransactionTable extends Transaction {
 	 *
 	 * @return bool|void
 	 */
-	public function despatchDelivery($params, $idOrder,$token)
+	public function despatchDelivery($params, $idOrder, $token)
 	{
-
 
 		$sql = 'SELECT `waybill` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `id_order` = ' . $params['id_order'];
 		$waybill = $this->db->getValue($sql);
 
 		if ( ! $waybill) {
 
+			$orderParams = array();
 
 			try {
 				$orderParams = $this->buildColliveryControlDataArray($params);
+
 				if (Mds_RiskCover::hasCover()) {
 					$orderParams['cover'] = 1;
 				}
@@ -301,27 +299,25 @@ class TransactionTable extends Transaction {
 				$validate = $this->mdsColliveryService->validateCollivery($orderParams);
 
 				if ($validate['time_changed']) {
-					echo  '
+					echo '
 
 <script>
-    var con = confirm("'.$validate['time_changed_reason'].' Do you still want to add this collivery?");
+    var con = confirm("' . $validate['time_changed_reason'] . ' Do you still want to add this collivery?");
     if(con){
 
-var jqxhr = $.post( "?controller=AdminOrders&token='. $token .'&vieworder&id_order='.$idOrder .'&func_name=addApprovedCollivery", function() {
-alert("sucessful");
+		var jqxhr = $.post( "?controller=AdminOrders&token=' . $token . '&vieworder&id_order=' . $idOrder . '&func_name=addApprovedCollivery", function() {
+		window.location.reload(true);
 })
-
             }
 </script>';
 				} else {
-					$waybill = $this->mdsColliveryService->addCollivery($orderParams, true);
+
+					$waybill = $this->mdsColliveryService->addCollivery($orderParams);
 					$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
 					$this->db->execute($sql);
-
 				}
 
-				return ;
-
+				return;
 
 			} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 				return false;
@@ -462,20 +458,19 @@ alert("sucessful");
 	 *
 	 * @return mixed
 	 */
-	function addApprovedCollivery($params, $idOrder,$back)
+	function addApprovedCollivery($params, $idOrder)
 	{
 		try {
+
 			$orderParams = $this->buildColliveryControlDataArray($params);
 			if (Mds_RiskCover::hasCover()) {
 				$orderParams['cover'] = 1;
 			}
 
-				$waybill = $this->mdsColliveryService->addCollivery($orderParams, true);
-				$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
-				$this->db->execute($sql);
-			return header($back);
-			}
-            catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
+			$waybill = $this->mdsColliveryService->addCollivery($orderParams, true);
+			$sql = 'UPDATE ' . _DB_PREFIX_ . 'mds_collivery_processed SET `waybill` = \'' . $waybill . '\' where `id_order` =  \'' . $idOrder . '\'';
+			$this->db->execute($sql);
+		} catch (\Mds\Prestashop\Exceptions\InvalidData $e) {
 			return false;
 		}
 	}
@@ -593,11 +588,11 @@ alert("sucessful");
 	 *
 	 * @return mixed
 	 */
-	private function getShippingCost($orderParams)
+	public function getShippingCost($orderParams)
 	{
-		$price = array();
 
-		$validate = $this->collivery->validate($orderParams);
+		$validate = array();
+		$validate = $this->mdsColliveryService->validateCollivery($orderParams);
 
 		$colliveryPriceOptions = $this->collivery->getPrice($orderParams);
 		$colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
