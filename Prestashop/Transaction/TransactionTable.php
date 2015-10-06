@@ -127,12 +127,12 @@ class TransactionTable extends Transaction {
 
 		$cart = $params['cart'];
 
-		$colliveryParams['service'] = $service;
-		$colliveryParams['collivery_to'] = $colliveryAddressTo['address_id'];
-		$colliveryParams['contact_to'] = $colliveryAddressTo['contact_id'];
-		$colliveryParams['collivery_from'] = $colliveryAddressFrom['address_id'];
-		$colliveryParams['contact_from'] = $colliveryAddressFrom['contact_id'];
-		$colliveryParams['collivery_type'] = '2';
+		$colliveryParams['service'] = (int) $service;
+		$colliveryParams['collivery_to'] = (int) $colliveryAddressTo['address_id'];
+		$colliveryParams['contact_to'] = (int) $colliveryAddressTo['contact_id'];
+		$colliveryParams['collivery_from'] = (int) $colliveryAddressFrom['address_id'];
+		$colliveryParams['contact_from'] = (int) $colliveryAddressFrom['contact_id'];
+		$colliveryParams['collivery_type'] = 2;
 
 		foreach ($cart->getProducts() as $colliveryProduct) {
 			for ($i = 0; $i < $colliveryProduct['cart_quantity']; $i++) {
