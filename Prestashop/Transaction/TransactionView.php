@@ -81,9 +81,7 @@ class TransactionView extends Transaction {
 			}elseif ($form_action_func == "addApprovedCollivery") {
 				$idOrder = $_GET['id_order'];
 
-				$this->transactionTable->addApprovedCollivery($params,$idOrder,$back);
-
-				return header($back);
+				$this->transactionTable->addApprovedCollivery($params,$idOrder);
 
 			}elseif ($form_action_func === "downloadPod") {
 				$waybill = $_GET['waybill'];
@@ -104,6 +102,8 @@ class TransactionView extends Transaction {
 				$token = $_GET['token'];
 
 				$this->transactionTable->despatchDelivery($params, $idOrder, $token);
+
+
 
 			} elseif ($form_action_func === "changeCollectionAddress") {
 				$idOrder = $_GET['id_order'];
@@ -199,7 +199,7 @@ class TransactionView extends Transaction {
 	/**
 	 * @return string
 	 */
-	public function addAdminJs($params)
+	public function addAdminJs()
 	{
 
 		$idAddress = $_GET['id_address'];
