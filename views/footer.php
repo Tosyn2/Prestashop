@@ -12,15 +12,7 @@
 
 	addStateOnChange();
 
-	var suburbsFlattened = new Array;
 
-	for (var key in suburbs) {
-		if (suburbs.hasOwnProperty(key)) {
-			for (var sub in suburbs[key]) {
-				suburbsFlattened.push(suburbs[key][sub]);
-			}
-		}
-	}
 
 	addDropDownLocationType(location_types, location_type);
 

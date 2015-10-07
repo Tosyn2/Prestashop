@@ -200,7 +200,6 @@ class TransactionView extends Transaction {
 	/**
 	 * @return string
 	 */
-	public function addAdminJs()
 	{
 
 		$idAddress = $_GET['id_address'];
