@@ -200,7 +200,7 @@ class TransactionView extends Transaction {
 	/**
 	 * @return string
 	 */
-	public function addAdminJs()
+	public function addAdminJs($params)
 	{
 
 		$idAddress = $_GET['id_address'];
@@ -209,21 +209,19 @@ class TransactionView extends Transaction {
 		$address = $this->db->getRow($sql);
 
 		$suburb = $address['city'];
-		//$towns = $this->collivery->getTowns();
+		$towns = $this->collivery->getTowns();
 
-		$suburbs = $this->collivery->getSuburbs('');
 
 		foreach ($towns as $key => $town) {
 
-			$subs[$town] = $this->collivery->getSuburbs($key);
+			$suburbs[$town] = $this->collivery->getSuburbs($key);
 
 		}
-
 
 		$locationTypes = $this->collivery->getLocationTypes();
 		$locationType = $address['other'];
 
-		if ( ! $_POST['controller']) {
+		if (!$_POST['controller']) {
 
 			if (($_GET['controller'] == 'AdminAddresses' || $_GET['controller'] == 'AdminManufacturers') && $_GET['id_order']) {
 				$orderId = $_GET['id_order'];
@@ -232,7 +230,7 @@ class TransactionView extends Transaction {
 
 		return Mds_View::make(
 				'admin_header',
-				compact('suburbs', 'suburb', 'locationTypes', 'locationType', 'orderId','subs')
+				compact('suburbs', 'suburb', 'locationTypes', 'locationType', 'orderId')
 		);
 	}
 
@@ -241,18 +239,20 @@ class TransactionView extends Transaction {
 	 */
 	public function addFrontEndJs($params)
 	{
-		$idAddress = $params['cart']->id_address_delivery;
+		$idAddress = $_GET['id_address'];
 
 		$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'address` WHERE `id_address` = ' . $idAddress;
 		$address = $this->db->getRow($sql);
 
+
+
 		$towns = $this->collivery->getTowns();
 
-		$suburbs = $this->collivery->getSuburbs('');
+		$suburbs = $this->collivery->getSuburbs();
 
 		foreach ($towns as $key => $town) {
 
-			$subs[ $town ] = $this->collivery->getSuburbs($key);
+			$subs[$town] = $this->collivery->getSuburbs($key);
 
 		}
 
@@ -260,6 +260,7 @@ class TransactionView extends Transaction {
 
 		$locationTypes = $this->collivery->getLocationTypes();
 		$locationType = $address['other'];
+
 
 		return Mds_View::make(
 			'footer',
