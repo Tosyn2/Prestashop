@@ -28,7 +28,7 @@ class Mds extends CarrierModule
 	{
 		$this->name = 'mds';
 		$this->tab = 'shipping_logistics';
-		$this->version = '1.0';
+		$this->version = '1.1.0';
 		$this->author = 'MDS Tech (Pty) Ltd';
 		$this->limited_countries = array();
 
@@ -60,6 +60,7 @@ class Mds extends CarrierModule
 			echo $this->displayError($e->getErrors());
 			return false;
 		} catch (\Mds\Prestashop\Exceptions\ColliveryException $e) {
+			die('UnmetSystemRequirements');
 			return false;
 		}
 
@@ -330,7 +331,7 @@ class Mds extends CarrierModule
 			foreach ($towns as $index => $town) {
 				$sql = 'INSERT INTO ' . _DB_PREFIX_ . 'state (id_country,id_zone,name,iso_code,id_mds,tax_behavior,active)
 				VALUES
-				(30,4,\'' . $town . '\',\'ZA\',' . $index . ',0,1)';
+				(30, 4, "'.PSQL($town).'", "ZA", '.PSQL($index).', 0, 1)';
 				$this->db->execute($sql);
 			}
 		}
