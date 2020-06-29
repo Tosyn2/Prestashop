@@ -233,12 +233,11 @@ class Install extends Installer {
 	private function addIdMdsColumnToStatesTable()
 	{
 		$table = _DB_PREFIX_ . 'state';
-		$sql = "SELECT * FROM {$table} WHERE id_mds";
-		$hasIdMds = $this->db->query($sql);
+		$rows = $this->db->ExecuteS("SELECT * FROM {$table} LIMIT 1");
+		$hasIdMds = array_key_exists('id_mds', $rows[0]);
 		if ( ! $hasIdMds) {
 			$sql = "ALTER TABLE {$table} ADD id_mds INT NULL AFTER  iso_code";
 			$this->db->execute($sql);
-
 			return $sql;
 		}
 	}
@@ -254,6 +253,8 @@ class Install extends Installer {
 						`order_id` int(11) NOT NULL,
 						`validation_results` TEXT NOT NULL,
 						`status` int(1) NOT NULL DEFAULT 1,
+						`service_id` int NOT NULL,
+						`service_name` varchar(64) NOT NULL,
 						PRIMARY KEY (`id`)
 						) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 		$this->db->execute($sql);
