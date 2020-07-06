@@ -19,16 +19,30 @@
 				<div class="form-group">
 					<div class="col-lg-9">
 						<select name="id_address">
-							<?php foreach ($collectionAddresses as $deliveryAddress): ?>
-								<option value="<?= $collectionAddress['id_address'] ?> "
-									<?php if ($collectionAddress['id_address'] == $collectionAddressId) {
-										echo "selected";
-									} ?> >
-									<?= $collectionAddress['alias'] ?> -
-									<?= $collectionAddress['address1'] ?> ,
-									<?= $collectionAddress['city'] ?> ,
-									<?= $collectionAddress['name'] ?>
-								</option>
+							<?php
+                                /**
+                                 * Copyright 2020 MDS Technologies (Pty) Ltd and Contributors
+                                 *
+                                 * NOTICE OF LICENSE
+                                 *
+                                 * This source file is subject to the Academic Free License 3.0 (AFL-3.0).
+                                 * It is also available through the world-wide-web at this URL: https://opensource.org/licenses/AFL-3.0
+                                 *
+                                 *  @author MDS Collivery <integration@collivery.co.za>
+                                 *  @copyright  2020 MDS Technologies (Pty) Ltd
+                                 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+                                 */
+
+                                foreach ($collectionAddresses as $deliveryAddress): ?>
+									<option value="<?= $collectionAddress['id_address'] ?> "
+										<?php if ($collectionAddress['id_address'] == $collectionAddressId) {
+                                    echo "selected";
+                                } ?> >
+										<?= $collectionAddress['alias'] ?> -
+										<?= $collectionAddress['address1'] ?> ,
+										<?= $collectionAddress['city'] ?> ,
+										<?= $collectionAddress['name'] ?>
+									</option>
 							<?php endforeach; ?>
 						</select>
 					</div>
@@ -44,22 +58,22 @@
 					<div class="col-sm-6">
 
 						<?php foreach ($CollectionAddresses as $collectionAddress):
-							if ($collectionAddress['id_address'] == $deliveryAddressId) {
-								?>
+                            if ($collectionAddress['id_address'] == $deliveryAddressId) {
+                                ?>
 								<a class="btn btn-default pull-right"
 								   href="?controller=adminaddresses&amp;id_address=<?= $collectionAddress['id_address'] ?>&amp;updateaddress&amp;token=<?= $token ?>">
 									<i class="icon-pencil"></i>
 									Edit
 								</a>
 								<?php
-								echo
-									$collectionAddress['alias'] . "<br>" .
-									$collectionAddress['address1'] . "<br>" .
-									$collectionAddress['city'] . "<br>" .
-									$collectionAddress['name'];
-							}
+                                echo
+                                    $collectionAddress['alias'] . "<br>" .
+                                    $collectionAddress['address1'] . "<br>" .
+                                    $collectionAddress['city'] . "<br>" .
+                                    $collectionAddress['name'];
+                            }
 
-							?>
+                            ?>
 
 						<?php endforeach; ?>
 
@@ -86,8 +100,8 @@
 							<?php foreach ($deliveryAddresses as $deliveryAddress): ?>
 								<option value="<?= $deliveryAddress['id_address'] ?> "
 									<?php if ($deliveryAddress['id_address'] == $deliveryAddressId) {
-										echo "selected";
-									} ?> >
+                                echo "selected";
+                            } ?> >
 									<?= $deliveryAddress['alias'] ?> -
 									<?= $deliveryAddress['address1'] ?> ,
 									<?= $deliveryAddress['city'] ?> ,
@@ -108,22 +122,22 @@
 					<div class="col-sm-6">
 
 						<?php foreach ($deliveryAddresses as $deliveryAddress):
-							if ($deliveryAddress['id_address'] == $deliveryAddressId) {
-								?>
+                            if ($deliveryAddress['id_address'] == $deliveryAddressId) {
+                                ?>
 								<a class="btn btn-default pull-right"
 								   href="?controller=adminaddresses&amp;id_address=<?= $deliveryAddress['id_address'] ?>&amp;updateaddress&amp;token=<?= $token ?>">
 									<i class="icon-pencil"></i>
 									Edit
 								</a>
 								<?php
-								echo
-									$deliveryAddress['alias'] . "<br>" .
-									$deliveryAddress['address1'] . "<br>" .
-									$deliveryAddress['city'] . "<br>" .
-									$deliveryAddress['name'];
-							}
+                                echo
+                                    $deliveryAddress['alias'] . "<br>" .
+                                    $deliveryAddress['address1'] . "<br>" .
+                                    $deliveryAddress['city'] . "<br>" .
+                                    $deliveryAddress['name'];
+                            }
 
-							?>
+                            ?>
 
 						<?php endforeach; ?>
 
