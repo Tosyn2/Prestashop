@@ -49,7 +49,7 @@ class UnitConverter
             )
         );
 
-        while (list($key, $val) = each($conversions)) {
+        foreach ($conversions as $val) {
             $this->addConversion($val['base'], $val['conv']);
         }
     }
@@ -96,7 +96,10 @@ class UnitConverter
                         $this->bases[$from_unit][] = $to_unit;
 
                         if (!is_array($val)) {
-                            $this->conversion_table[$from_unit . "_" . $to_unit] = array( "ratio" => $val, "offset" => 0 );
+                            $this->conversion_table[$from_unit . "_" . $to_unit] = array(
+                              "ratio" => $val,
+                              "offset" => 0
+                            );
                         } else {
                             $this->conversion_table[$from_unit . "_" . $to_unit] = array(
                                 "ratio" => $val['ratio'],
@@ -132,7 +135,7 @@ class UnitConverter
      * @return   void
      * @access   public
      */
-    public function convert($value, $from_unit, $to_unit, $precision)
+    public function convert($value, $from_unit, $to_unit, $precision, $converted = null)
     {
         if ($this->getConvSpecs($from_unit, $to_unit, $value, $converted)) {
             if (!empty($converted)) {

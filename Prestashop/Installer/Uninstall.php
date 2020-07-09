@@ -34,7 +34,7 @@ class Uninstall extends Installer
     private function deleteServicesConfig()
     {
         $services = Services::get();
-        foreach ($services as $serviceId => $serviceName) {
+        foreach (array_keys($services) as $serviceId) {
             Surcharge::delete($serviceId);
             $carrierId = Services::getCarrierId($serviceId);
 

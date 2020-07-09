@@ -60,7 +60,8 @@ class Install extends Installer
         }
 
         if (!extension_loaded('soap')) {
-            $errors[] = 'MDS Collivery requires SOAP to be enabled on the server. Please make sure its enabled before installing.';
+            $errors[] = 'MDS Collivery requires SOAP to be enabled on the server. Please make sure its enabled'
+            .' before installing.';
         }
 
         if (!empty($errors)) {
@@ -282,8 +283,8 @@ class Install extends Installer
         $this->db->execute($sql);
         return $sql;
     }
-    
-            
+
+
 
     /**
      * @param $serviceId

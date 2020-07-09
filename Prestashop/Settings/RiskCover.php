@@ -41,6 +41,7 @@ class RiskCover extends Settings
 
     protected static function getConfigKey($id)
     {
+        unset($id);
         return self::$riskKey;
     }
 }

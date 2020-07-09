@@ -62,7 +62,7 @@ class Services extends Settings
     {
         $serviceMappings = array();
 
-        foreach (self::$services as $serviceId => $serviceName) {
+        foreach (array_keys(self::$services) as $serviceId) {
             $carrierId = self::getCarrierId($serviceId);
             $serviceMappings[$carrierId] = $serviceId;
         }

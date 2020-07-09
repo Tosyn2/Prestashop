@@ -88,13 +88,21 @@ class MdsColliveryService
             $services = $this->collivery->getServices();
 
             if (!empty($this->settings["wording_$id"])) {
-                $reason = preg_replace('|' . preg_quote($services[$id]) . '|', $this->settings["wording_$id"], $this->validated_data['time_changed_reason']);
+                $reason = preg_replace(
+                    '|' . preg_quote($services[$id]) . '|',
+                    $this->settings["wording_$id"],
+                    $this->validated_data['time_changed_reason']
+                );
             } else {
                 $reason = $this->validated_data['time_changed_reason'];
             }
 
             $reason = preg_replace('|collivery|i', 'delivery', $reason);
-            $reason = preg_replace('|The delivery time has been CHANGED to|i', 'the approximate delivery day is', $reason);
+            $reason = preg_replace(
+                '|The delivery time has been CHANGED to|i',
+                'the approximate delivery day is',
+                $reason
+            );
         }
 
         $collivery_id = $this->collivery->addCollivery($this->validated_data);
@@ -286,7 +294,10 @@ class MdsColliveryService
     {
         $towns = $this->collivery->getTowns();
         $location_types = $this->collivery->getLocationTypes();
-        return array('towns' => array_combine($towns, $towns), 'location_types' => array_combine($location_types, $location_types));
+        return array(
+            'towns' => array_combine($towns, $towns),
+            'location_types' => array_combine($location_types, $location_types)
+        );
     }
 
     /**
@@ -343,7 +354,8 @@ class MdsColliveryService
     public function addMarkup($price, $markup)
     {
         $price += $price * ($markup / 100);
-        return (isset($this->settings['round']) && $this->settings['round'] == 'yes') ? $this->round($price) : $this->format($price);
+        return (isset($this->settings['round']) && $this->settings['round'] == 'yes') ?
+            $this->round($price) : $this->format($price);
     }
 
     /**

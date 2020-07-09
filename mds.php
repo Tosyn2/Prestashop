@@ -70,7 +70,6 @@ class Mds extends CarrierModule
             echo $this->displayError($e->getErrors());
             return false;
         } catch (\Mds\Prestashop\Exceptions\ColliveryException $e) {
-            die('UnmetSystemRequirements');
             return false;
         }
 
@@ -193,6 +192,7 @@ class Mds extends CarrierModule
 		WHERE `id_state` = "' . $town_id . '" ';
         $mds_town_id = $this->db->getValue($sql);
 
+        $colliveryParams = array();
         $colliveryParams['company_name'] = $addressRow['company'];
         $colliveryParams['building'] = '';
         $colliveryParams['street'] = $addressRow['address1'];
@@ -217,7 +217,7 @@ class Mds extends CarrierModule
         }
     }
 
-    public function getDefaultColliveryAddressFrom($params)
+    public function getDefaultColliveryAddressFrom()
     {
         $colliveryAddressesFrom = $this->mdsService->returnDefaultAddress();
 
@@ -229,10 +229,11 @@ class Mds extends CarrierModule
         $service = $this->getServiceFromCarrierId($params['cart']->id_carrier);
 
         $colliveryAddressTo = $this->addColliveryAddressTo($params);
-        $colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
+        $colliveryAddressFrom = $this->getDefaultColliveryAddressFrom();
 
         $cart = $params['cart'];
 
+        $colliveryParams = array();
         $colliveryParams['service'] = $service;
         $colliveryParams['collivery_to'] = $colliveryAddressTo['address_id'];
         $colliveryParams['contact_to'] = $colliveryAddressTo['contact_id'];
@@ -266,7 +267,7 @@ class Mds extends CarrierModule
 		WHERE `id_state` = "' . $town_id . '" ';
         $mds_town_id = $this->db->getValue($sql);
 
-        $colliveryAddressFrom = $this->getDefaultColliveryAddressFrom($params);
+        $colliveryAddressFrom = $this->getDefaultColliveryAddressFrom();
 
         $cartProducts = $params->getProducts();
 
@@ -295,12 +296,15 @@ class Mds extends CarrierModule
 
     public function getOrderShippingCost($params, $shipping_cost)
     {
+        unset($shipping_cost);
+        unset($params);
         return false;
     }
 
     public function getPackageShippingCost($params, $shipping_cost, $products)
     {
         try {
+            unset($products);
             $orderParams = $this->buildColliveryGetPriceArray($params);
             $serviceId = $this->getServiceFromCarrierId($this->id_carrier);
             $orderParams['service'] = $serviceId;
@@ -323,6 +327,7 @@ class Mds extends CarrierModule
 
     public function getOrderShippingCostExternal($params)
     {
+        unset($params);
         return false;
     }
 
@@ -338,10 +343,18 @@ class Mds extends CarrierModule
             $this->db->execute($sql);
 
             foreach ($towns as $index => $town) {
-                $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'state (id_country,id_zone,name,iso_code,id_mds,tax_behavior,active)
-				VALUES
-				(30, 4, "'.PSQL($town).'", "ZA", '.PSQL($index).', 0, 1)';
-                $this->db->execute($sql);
+                $this->db->insert(
+                    'state',
+                    array(
+                      'id_country'  => 30,
+                      'id_zone'     => 4,
+                      'name'        => $town,
+                      'iso_code'    => "ZA",
+                      'id_mds'      => $index,
+                      'tax_behavior'=> 0,
+                      'active'      => 1
+                    )
+                );
             }
         }
     }
@@ -393,73 +406,99 @@ class Mds extends CarrierModule
         $carrierName = $this->db->getValue($sql);
         $serviceId = $this->getServiceFromCarrierId($carrierId);
 
-        $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'mds_collivery_processed(order_id,ps_address_id,service_id,service_name)
-			VALUES
-			(\'' . $orderId . '\',\'' . $deliveryAddressId . '\',\'' . $serviceId . '\', \'' . $carrierName . '\')';
-        $this->db->execute($sql);
+        $this->db->insert(
+            'mds_collivery_processed',
+            array(
+                'order_id'      => $orderId,
+                'ps_address_id' => $deliveryAddressId,
+                'service_id'    => $serviceId,
+                'service_name'  => $carrierName
+            )
+        );
 
-        if ($defAddress != $mdsDefAddress) {
-            $defaultAddressId = $this->collivery->getDefaultAddressId();
+        $defaultAddressId = $this->collivery->getDefaultAddressId();
 
-            $defaultAddress = $this->collivery->getAddress($defaultAddressId);
+        $defaultAddress = $this->collivery->getAddress($defaultAddressId);
 
-            $towns = $this->collivery->getTowns();
-            $location_types = $this->collivery->getLocationTypes();
+        // $towns = $this->collivery->getTowns();
+        $location_types = $this->collivery->getLocationTypes();
 
-            $sql = 'SELECT `id_state` FROM ' . _DB_PREFIX_ . 'state where `id_mds` = "' . $defaultAddress['town_id'] . '" AND `active` = 1';
-            $state_id = $this->db->getValue($sql);
+        $sql = 'SELECT `id_state` FROM ' . _DB_PREFIX_ . 'state where `id_mds` = "' . $defaultAddress['town_id']
+        . '" AND `active` = 1';
+        $state_id = $this->db->getValue($sql);
 
-            $client_id = $defaultAddress['client_id'];
+        // $client_id = $defaultAddress['client_id'];
 
-            $contacts = $this->collivery->getContacts($defaultAddressId);
+        $contacts = $this->collivery->getContacts($defaultAddressId);
 
-            $contact = array_pop($contacts);
+        $contact = array_pop($contacts);
 
-            $name = explode(" ", $contact['full_name']);
+        $name = explode(" ", $contact['full_name']);
 
-            $first_name = array_shift($name);
-            $last_name = array_pop($name);
+        $first_name = array_shift($name);
+        $last_name = array_pop($name);
 
-            $streetAddress = $defaultAddress['street'];
+        $streetAddress = $defaultAddress['street'];
 
-            $locationType = $location_types[$defaultAddress['location_type']];
-            $postCode = $defaultAddress['zip_code'];
+        $locationType = $location_types[$defaultAddress['location_type']];
+        $postCode = $defaultAddress['zip_code'];
 
-            $city = $defaultAddress['suburb_name'];
+        $city = $defaultAddress['suburb_name'];
 
-            $phone = $contact['phone'];
-            $mobile = $contact['phone_mobile'];
+        $phone = $contact['phone'];
+        $mobile = $contact['phone_mobile'];
 
+        // die('<pre>'.print_r($contact, true));
+        // die('<pre>'.print_r($defaultAddress, true));
 
-            die('<pre>'.print_r($contact, true));
-            die('<pre>'.print_r($defaultAddress, true));
-
-
-
-            $sql = 'INSERT INTO ' . _DB_PREFIX_ .'address (id_country,id_state,id_customer,id_manufacturer,id_supplier,id_warehouse,alias,company,lastname,firstname,address1,address2,postcode,city,other,phone,phone_mobile,active,deleted)
-		VALUES
-		(30,$state_id,0,0,0,0,"Collection Address","MDS Address",$last_name,$first_name,$streetAddress,$locationType,$postCode,$city,other,$phone,$mobile,1,0)';
-            $this->db->execute($sql);
-        }
+        $this->db->insert(
+            'address',
+            array(
+                'id_country'      => 30,
+                'id_state'        => $state_id,
+                'id_customer'     => 0,
+                'id_manufacturer' => 0,
+                'id_supplier'     => 0,
+                'id_warehouse'    => 0,
+                'alias'           => "Collection Address",
+                'company'         => "MDS Address",
+                'lastname'        => $last_name,
+                'firstname'       => $first_name,
+                'address1'        => $streetAddress,
+                'address2'        => $locationType,
+                'postcode'        => $postCode,
+                'city'            => $city,
+                'other'           => "other",
+                'phone'           => $phone,
+                'phone_mobile'    => $mobile,
+                'active'          => 1,
+                'deleted'         => 0
+            )
+        );
     }
 
 
     public function hookDisplayAdminOrder($params)
     {
-        $sql = 'SELECT `id_address_delivery` FROM `' . _DB_PREFIX_ . 'orders` WHERE `id_order` = ' . $params['id_order'];
+        $sql = 'SELECT `id_address_delivery` FROM `' . _DB_PREFIX_ . 'orders` WHERE `id_order` = '
+        . $params['id_order'];
         $deliveryAddressId = $this->db->getValue($sql);
 
-        $sql = 'SELECT `service_name` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
+        $sql = 'SELECT `service_name` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = '
+        . $params['id_order'];
         $carrierName = $this->db->getValue($sql);
 
-        $sql = 'SELECT `service_id` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = ' . $params['id_order'];
+        $sql = 'SELECT `service_id` FROM `' . _DB_PREFIX_ . 'mds_collivery_processed` WHERE `order_id` = '
+        . $params['id_order'];
         $serviceId = $this->db->getValue($sql);
 
-        $sql = 'SELECT * FROM '._DB_PREFIX_.'address LEFT JOIN '._DB_PREFIX_.'(state) ON '._DB_PREFIX_.'(address.`id_state`='._DB_PREFIX_.'state.`id_state`) where `id_customer` = 2 AND deleted = 0';
+        $sql = 'SELECT * FROM '._DB_PREFIX_.'address LEFT JOIN '._DB_PREFIX_.'(state) ON '._DB_PREFIX_.'(address.`id_state`='._DB_PREFIX_
+        .'state.`id_state`) where `id_customer` = 2 AND deleted = 0';
         $deliveryAddresses = $this->db->ExecuteS($sql);
 
 
-        $sql = 'SELECT * FROM '._DB_PREFIX_.'address LEFT JOIN '._DB_PREFIX_.'(state) ON '._DB_PREFIX_.'(address.`id_state`='._DB_PREFIX_.'state.`id_state`) where `id_customer` = 0 AND deleted = 0';
+        $sql = 'SELECT * FROM '._DB_PREFIX_.'address LEFT JOIN '._DB_PREFIX_.'(state) ON'
+        ._DB_PREFIX_.'(address.`id_state`='._DB_PREFIX_.'state.`id_state`) where `id_customer` = 0 AND deleted = 0';
         $collectionAdresses = $this->db->ExecuteS($sql);
 
 
@@ -478,10 +517,21 @@ class Mds extends CarrierModule
         $countryName = "South Africa";
 
         $this->context->controller->addJS(($this->_path) . 'helper.js');
-        return Mds_View::make(
-            'shipping_control',
-            compact('deliveryAddressId', 'orderId', 'carrierName', 'serviceId', 'deliveryAddresses', 'suburb', 'suburbs', 'locationType', 'locationTypes', 'countryName', 'token', 'collectionAdresses')
+        $view_data = array(
+            'deliveryAddressId'=> $deliveryAddressId,
+            'orderId' => $orderId,
+            'carrierName' => $carrierName,
+            'serviceId' => $serviceId,
+            'deliveryAddresses' => $deliveryAddresses,
+            'suburb' => $suburb,
+            'suburbs' => $suburbs,
+            'locationType' => $locationType,
+            'locationTypes' => $locationTypes,
+            'countryName' => $countryName,
+            'token' => Tools::getValue('token'),
+            'collectionAdresses' => $collectionAdresses
         );
+        return Mds_View::make('shipping_control', $view_data);
     }
 
     protected function getServiceFromCarrierId($carrierId)

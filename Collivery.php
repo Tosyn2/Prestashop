@@ -14,9 +14,8 @@
 
 namespace Mds;
 
-use SoapClient; // Use PHP Soap Client
-
-use SoapFault;  // Use PHP Soap Fault
+use SoapClient;// Use PHP Soap Client
+use SoapFault;// Use PHP Soap Fault
 
 class Collivery
 {
@@ -48,7 +47,9 @@ class Collivery
         $this->config = (object)array(
             'app_name' => 'Default App Name', // Application Name
             'app_version' => '0.0.1',            // Application Version
-            'app_host' => '', // Framework/CMS name and version, eg 'Wordpress 3.8.1 WooCommerce 2.0.20' / 'Joomla! 2.5.17 VirtueMart 2.0.26d'
+            // Framework/CMS name and version, eg 'Wordpress 3.8.1
+            //WooCommerce 2.0.20' / 'Joomla! 2.5.17 VirtueMart 2.0.26d'
+            'app_host' => '',
             'app_url' => '', // URL your site is hosted on
             'user_email' => 'api@collivery.co.za',
             'user_password' => 'api123',
@@ -113,8 +114,7 @@ class Collivery
     {
         $authCache = $this->cache->get('collivery.auth');
 
-        if (
-            $this->check_cache == 2 &&
+        if ($this->check_cache == 2 &&
             $this->cache->has('collivery.auth') &&
             $authCache['user_email'] == $this->config->user_email
         ) {
@@ -140,6 +140,7 @@ class Collivery
     {
         $user_email = $this->config->user_email;
         $user_password = $this->config->user_password;
+        $result = array();
 
         if ($this->init()) {
             try {
@@ -235,7 +236,8 @@ class Collivery
     {
         if (($this->check_cache == 2) && is_null($province) && $this->cache->has('collivery.towns.' . $country)) {
             return $this->cache->get('collivery.towns.' . $country);
-        } elseif (($this->check_cache == 2) && !is_null($province) && $this->cache->has('collivery.towns.' . $country . '.' . $province)) {
+        } elseif (($this->check_cache == 2) && !is_null($province) && $this->cache->has('collivery.towns.'
+        . $country . '.' . $province)) {
             return $this->cache->get('collivery.towns.' . $country . '.' . $province);
         } else {
             try {
@@ -456,8 +458,9 @@ class Collivery
      */
     public function getAddress($address_id)
     {
-        if (($this->check_cache == 2) && $this->cache->has('collivery.address.' . $this->client_id . '.' . $address_id)) {
-            return $this->cache->get('collivery.address.' . $this->client_id . '.' . $address_id);
+        $cache_key = 'collivery.address.'.$this->client_id.'.'.$address_id;
+        if (($this->check_cache == 2) && $this->cache->has($cache_key)) {
+            return $this->cache->get($cache_key);
         } else {
             try {
                 $result = $this->client()->get_address($address_id, $this->token);
@@ -468,7 +471,7 @@ class Collivery
 
             if (isset($result['address'])) {
                 if ($this->check_cache != 0) {
-                    $this->cache->put('collivery.address.' . $this->client_id . '.' . $address_id, $result['address'], 60 * 24);
+                    $this->cache->put($cache_key, $result['address'], 60 * 24);
                 }
                 return $result['address'];
             } else {
@@ -491,8 +494,9 @@ class Collivery
      */
     public function getAddresses(array $filter = array())
     {
-        if (($this->check_cache == 2) && empty($filter) && $this->cache->has('collivery.addresses.' . $this->client_id)) {
-            return $this->cache->get('collivery.addresses.' . $this->client_id);
+        $cache_key = 'collivery.addresses.' . $this->client_id;
+        if (($this->check_cache == 2) && empty($filter) && $this->cache->has($cache_key)) {
+            return $this->cache->get($cache_key);
         } else {
             try {
                 $result = $this->client()->get_addresses($this->token, $filter);
@@ -503,7 +507,7 @@ class Collivery
 
             if (isset($result['addresses'])) {
                 if ($this->check_cache != 0 && empty($filter)) {
-                    $this->cache->put('collivery.addresses.' . $this->client_id, $result['addresses'], 60 * 24);
+                    $this->cache->put($cache_key, $result['addresses'], 60 * 24);
                 }
                 return $result['addresses'];
             } else {
@@ -526,8 +530,9 @@ class Collivery
      */
     public function getContacts($address_id)
     {
-        if (($this->check_cache == 2) && $this->cache->has('collivery.contacts.' . $this->client_id . '.' . $address_id)) {
-            return $this->cache->get('collivery.contacts.' . $this->client_id . '.' . $address_id);
+        $cache_key = 'collivery.contacts.'.$this->client_id.'.'.$address_id;
+        if (($this->check_cache == 2) && $this->cache->has($cache_key)) {
+            return $this->cache->get($cache_key);
         } else {
             try {
                 $result = $this->client()->get_contacts($address_id, $this->token);
@@ -538,7 +543,7 @@ class Collivery
 
             if (isset($result['contacts'])) {
                 if ($this->check_cache != 0) {
-                    $this->cache->put('collivery.contacts.' . $this->client_id . '.' . $address_id, $result['contacts'], 60 * 24);
+                    $this->cache->put($cache_key, $result['contacts'], 60 * 24);
                 }
                 return $result['contacts'];
             } else {
@@ -561,8 +566,9 @@ class Collivery
      */
     public function getPod($collivery_id)
     {
-        if (($this->check_cache == 2) && $this->cache->has('collivery.pod.' . $this->client_id . '.' . $collivery_id)) {
-            return $this->cache->get('collivery.pod.' . $this->client_id . '.' . $collivery_id);
+        $cache_key = 'collivery.pod.' . $this->client_id . '.' . $collivery_id;
+        if (($this->check_cache == 2) && $this->cache->has($cache_key)) {
+            return $this->cache->get($cache_key);
         } else {
             try {
                 $result = $this->client()->get_pod($collivery_id, $this->token);
@@ -575,7 +581,7 @@ class Collivery
                 if (isset($result['error_id'])) {
                     $this->setError($result['error_id'], $result['error']);
                 } elseif ($this->check_cache != 0) {
-                    $this->cache->put('collivery.pod.' . $this->client_id . '.' . $collivery_id, $result['pod'], 60 * 24);
+                    $this->cache->put($cache_key, $result['pod'], 60*24);
                 }
 
                 return $result['pod'];
@@ -599,8 +605,10 @@ class Collivery
      */
     public function getParcelImageList($collivery_id)
     {
-        if (($this->check_cache == 2) && $this->cache->has('collivery.parcel_image_list.' . $this->client_id . '.' . $collivery_id)) {
-            return $this->cache->get('collivery.parcel_image_list.' . $this->client_id . '.' . $collivery_id);
+        $cache_key = 'collivery.parcel_image_list.'.$this->client_id.'.'. $collivery_id;
+        if (($this->check_cache == 2) &&
+        $this->cache->has($cache_key)) {
+            return $this->cache->get($cache_key);
         } else {
             try {
                 $result = $this->client()->get_parcel_image_list($collivery_id, $this->token);
@@ -613,7 +621,7 @@ class Collivery
                 if (isset($result['error_id'])) {
                     $this->setError($result['error_id'], $result['error']);
                 } elseif ($this->check_cache != 0) {
-                    $this->cache->put('collivery.parcel_image_list.' . $this->client_id . '.' . $collivery_id, $result['images'], 60 * 12);
+                    $this->cache->put($cache_key, $result['images'], 60 * 12);
                 }
 
                 return $result['images'];
@@ -641,8 +649,9 @@ class Collivery
      */
     public function getParcelImage($parcel_id)
     {
-        if (($this->check_cache == 2) && $this->cache->has('collivery.parcel_image.' . $this->client_id . '.' . $parcel_id)) {
-            return $this->cache->get('collivery.parcel_image.' . $this->client_id . '.' . $parcel_id);
+        $cache_key = 'collivery.parcel_image.' . $this->client_id . '.' . $parcel_id;
+        if (($this->check_cache == 2) && $this->cache->has($cache_key)) {
+            return $this->cache->get($cache_key);
         } else {
             try {
                 $result = $this->client()->get_parcel_image($parcel_id, $this->token);
@@ -655,7 +664,7 @@ class Collivery
                 if (isset($result['error_id'])) {
                     $this->setError($result['error_id'], $result['error']);
                 } elseif ($this->check_cache != 0) {
-                    $this->cache->put('collivery.parcel_image.' . $this->client_id . '.' . $parcel_id, $result['image'], 60 * 24);
+                    $this->cache->put($cache_key, $result['image'], 60 * 24);
                 }
 
                 return $result['image'];
@@ -682,8 +691,9 @@ class Collivery
      */
     public function getStatus($collivery_id)
     {
-        if (($this->check_cache == 2) && $this->cache->has('collivery.status.' . $this->client_id . '.' . $collivery_id)) {
-            return $this->cache->get('collivery.status.' . $this->client_id . '.' . $collivery_id);
+        $cache_key = 'collivery.status.' . $this->client_id . '.' . $collivery_id;
+        if (($this->check_cache == 2) && $this->cache->has($cache_key)) {
+            return $this->cache->get($cache_key);
         } else {
             try {
                 $result = $this->client()->get_collivery_status($collivery_id, $this->token);
@@ -696,7 +706,7 @@ class Collivery
                 if (isset($result['error_id'])) {
                     $this->setError($result['error_id'], $result['error']);
                 } elseif ($this->check_cache != 0) {
-                    $this->cache->put('collivery.status.' . $this->client_id . '.' . $collivery_id, $result, 60 * 12);
+                    $this->cache->put($cache_key, $result, 60 * 12);
                 }
 
                 return $result;

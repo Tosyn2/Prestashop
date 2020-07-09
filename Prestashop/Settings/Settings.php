@@ -36,22 +36,22 @@ abstract class Settings
 
     final protected static function getConfig($id = null)
     {
-        return Configuration::get(self::_getConfigKey($id));
+        return Configuration::get(self::getConfigKeyLocal($id));
     }
 
     final protected static function setConfig($value, $id = null)
     {
-        if (!Configuration::updateValue(self::_getConfigKey($id), $value)) {
+        if (!Configuration::updateValue(self::getConfigKeyLocal($id), $value)) {
             throw new UnableToUpdateConfiguration();
         }
     }
 
     final protected static function deleteConfig($id = null)
     {
-        Configuration::deleteByName(self::_getConfigKey($id));
+        Configuration::deleteByName(self::getConfigKeyLocal($id));
     }
 
-    final protected static function _getConfigKey($id)
+    final protected static function getConfigKeyLocal($id)
     {
         return self::$prefix . static::getConfigKey($id);
     }

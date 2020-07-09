@@ -56,9 +56,4 @@ class View
 
         return ltrim(ob_get_clean());
     }
-
-    public static function foo_bar($cache_dir)
-    {
-        return null;
-    }
 }

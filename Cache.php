@@ -44,7 +44,7 @@ class Cache
      *
      * @param $dir_array
      */
-    protected function create_dir($dir_array)
+    protected function createDir($dir_array)
     {
         if (!is_array($dir_array)) {
             $dir_array = explode('/', $this->cache_dir);
@@ -54,7 +54,7 @@ class Cache
         $dir = implode('/', $dir_array);
 
         if ($dir!='' && ! is_dir($dir)) {
-            $this->create_dir($dir_array);
+            $this->createDir($dir_array);
             mkdir($dir);
         }
     }
@@ -72,7 +72,7 @@ class Cache
                 $this->cache[ $name ] = json_decode($content, true);
                 return $this->cache[ $name ];
             } else {
-                $this->create_dir($this->cache_dir);
+                $this->createDir($this->cache_dir);
             }
         } else {
             return $this->cache[ $name ];
@@ -158,13 +158,13 @@ class Cache
      */
     public function clear($group = null)
     {
-        $map = $this->directory_map();
+        $map = $this->directoryMap();
         if (is_array($group)) {
             foreach ($group as $row) {
-                $this->forget_each_file($map, $row);
+                $this->forgetEachFile($map, $row);
             }
         } else {
-            $this->forget_each_file($map, $group);
+            $this->forgetEachFile($map, $group);
         }
     }
 
@@ -174,9 +174,9 @@ class Cache
      * @param array $map
      * @param null $group
      */
-    private function forget_each_file(array $map, $group = null)
+    private function forgetEachFile(array $map, $group = null)
     {
-        foreach ($map as $key => $row) {
+        foreach ($map as $row) {
             if ($group) {
                 if (preg_match('|' . preg_quote($group) . '|', $row)) {
                     $this->forget($row);
@@ -192,7 +192,7 @@ class Cache
      *
      * @return array|bool
      */
-    private function directory_map()
+    private function directoryMap()
     {
         if ($fp = @opendir($this->cache_dir)) {
             $file_data = array();

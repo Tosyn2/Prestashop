@@ -26,6 +26,7 @@ class SettingsService
     public function getSurchargesInfo()
     {
         $services = Services::get();
+        $surcharges = array();
         foreach ($services as $serviceId => $serviceName) {
             $surcharges[$serviceId] = array(
                 'name' => $serviceName .' Surcharge',
