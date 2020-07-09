@@ -17,6 +17,7 @@ namespace Mds;
 use SoapClient;// Use PHP Soap Client
 use SoapFault;// Use PHP Soap Fault
 
+
 class Collivery
 {
     protected $token;
@@ -606,8 +607,7 @@ class Collivery
     public function getParcelImageList($collivery_id)
     {
         $cache_key = 'collivery.parcel_image_list.'.$this->client_id.'.'. $collivery_id;
-        if (($this->check_cache == 2) &&
-        $this->cache->has($cache_key)) {
+        if (($this->check_cache == 2) && $this->cache->has($cache_key)) {
             return $this->cache->get($cache_key);
         } else {
             try {
