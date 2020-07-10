@@ -206,15 +206,15 @@ class UnitConverter
             $converted = (double) (($value * $ratio) + $offset);
 
             return true;
-        } // not found in direct order, try reverse order
-        elseif ($ct_arr = $this->checkKey($revkey)) {
+        } elseif ($ct_arr = $this->checkKey($revkey)) {
+            // not found in direct order, try reverse order
             $ratio = (double) (1 / $ct_arr['ratio']);
             $offset = -$ct_arr['offset'];
             $converted = (double) (($value + $offset) * $ratio);
 
             return true;
-        } // not found test for intermediary conversion
-        else {
+        } else {
+            // not found test for intermediary conversion
             // return ratio = 1 if keyparts match
             if ($key == $revkey) {
                 $ratio = 1;

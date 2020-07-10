@@ -281,7 +281,7 @@ class Collivery
      */
     public function searchTowns($name)
     {
-        if (Tool::strlen($name) < 2) {
+        if (strlen($name) < 2) {
             return $this->get_towns();
         } elseif (($this->check_cache == 2) && $this->cache->has('collivery.search_towns.' . $name)) {
             return $this->cache->get('collivery.search_towns.' . $name);
