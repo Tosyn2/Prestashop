@@ -27,17 +27,17 @@
 			<h2>Collection Address</h2>
 
 			<form class="form-horizontal hidden-print" method="post"
-			      action="?controller=AdminOrders&amp;token={$htmldata.token}&amp;vieworder&amp;id_order={$htmldata.orderId}">
+			      action="?controller=AdminOrders&amp;token={$htmldata.token|escape:'htmlall':'UTF-8'}&amp;vieworder&amp;id_order={$htmldata.orderId|escape:'htmlall':'UTF-8'}">
 				<div class="form-group">
 					<div class="col-lg-9">
 						<select name="id_address">
 							{foreach from=$htmldata.collectionAddresses item=deliveryAddress}
 									<option value="{$collectionAddress.id_address|escape:'htmlall':'UTF-8'}"
 									{($collectionAddress.id_address == $htmldata.collectionAddressId}) ? "selected" : ""}>
-										{$collectionAddress.alias} -
-										{$collectionAddress.address1} ,
-										{$collectionAddress.city} ,
-										{$collectionAddress.name}
+										{$collectionAddress.alias|escape:'htmlall':'UTF-8'} -
+										{$collectionAddress.address1|escape:'htmlall':'UTF-8'} ,
+										{$collectionAddress.city|escape:'htmlall':'UTF-8'} ,
+										{$collectionAddress.name|escape:'htmlall':'UTF-8'}
 									</option>
 							{/foreach}
 						</select>
@@ -55,14 +55,14 @@
 						{foreach from=$htmldata.collectionAddresses item=collectionAddress}
 								{if $collectionAddress.id_address == $htmldata.deliveryAddressId}
 									<a class="btn btn-default pull-right"
-										 href="?controller=adminaddresses&amp;id_address={$collectionAddress.id_address}&amp;updateaddress&amp;token={$htmldata.token}">
+										 href="?controller=adminaddresses&amp;id_address={$collectionAddress.id_address|escape:'htmlall':'UTF-8'}&amp;updateaddress&amp;token={$htmldata.token|escape:'htmlall':'UTF-8'}">
 										<i class="icon-pencil"></i>
 										Edit
 									</a>
-									{$collectionAddress.alias} "<br>"
-									{$collectionAddress.address1} "<br>"
-									{$collectionAddress.city} "<br>"
-									{$collectionAddress.name}
+									{$collectionAddress.alias|escape:'htmlall':'UTF-8'} "<br>"
+									{$collectionAddress.address1|escape:'htmlall':'UTF-8'} "<br>"
+									{$collectionAddress.city|escape:'htmlall':'UTF-8'} "<br>"
+									{$collectionAddress.name|escape:'htmlall':'UTF-8'}
 								{/if}
 						{/foreach}
 					</div>
@@ -81,18 +81,18 @@
 			<h2>Delivery Address</h2>
 
 			<form class="form-horizontal hidden-print" method="post"
-			      action="?controller=AdminOrders&amp;token={$htmldata.token}&amp;vieworder&amp;
-						id_order={$htmldata.orderId}">
+			      action="?controller=AdminOrders&amp;token={$htmldata.token|escape:'htmlall':'UTF-8'}&amp;vieworder&amp;
+						id_order={$htmldata.orderId|escape:'htmlall':'UTF-8'}">
 				<div class="form-group">
 					<div class="col-lg-9">
 						<select name="id_address">
 							{foreach from=$htmldata.deliveryAddresses item=deliveryAddress}
-								<option value="{$deliveryAddress.id_address}"
+								<option value="{$deliveryAddress.id_address|escape:'htmlall':'UTF-8'}"
 									{($deliveryAddress.id_address == $htmldata.deliveryAddressId) ? "selected" : "" >
-									{$deliveryAddress.alias} -
-									{$deliveryAddress.address1} ,
-									{$deliveryAddress.city} ,
-									{$deliveryAddress.name}
+									{$deliveryAddress.alias|escape:'htmlall':'UTF-8'} -
+									{$deliveryAddress.address1|escape:'htmlall':'UTF-8'} ,
+									{$deliveryAddress.city|escape:'htmlall':'UTF-8'} ,
+									{$deliveryAddress.name|escape:'htmlall':'UTF-8'}
 								</option>
 							{/foreach}
 						</select>
@@ -110,15 +110,15 @@
 						{foreach from=$htmldata.deliveryAddresses item=deliveryAddress}
 								{if $deliveryAddress.id_address == $htmldata.deliveryAddressId}
 										<a class="btn btn-default pull-right"
-											 href="?controller=adminaddresses&amp;id_address={$deliveryAddress.id_address}&amp;updateaddress
-											 &amp;token={$htmldata.token}">
+											 href="?controller=adminaddresses&amp;id_address={$deliveryAddress.id_address|escape:'htmlall':'UTF-8'}&amp;updateaddress
+											 &amp;token={$htmldata.token|escape:'htmlall':'UTF-8'}">
 											<i class="icon-pencil"></i>
 											Edit
 										</a>
-										{$deliveryAddress.alias} <br>
-										{$deliveryAddress.address1} <br>
-										{$deliveryAddress.city} <br>
-										{$deliveryAddress.name}
+										{$deliveryAddress.alias|escape:'htmlall':'UTF-8'} <br>
+										{$deliveryAddress.address1|escape:'htmlall':'UTF-8'} <br>
+										{$deliveryAddress.city|escape:'htmlall':'UTF-8'} <br>
+										{$deliveryAddress.name|escape:'htmlall':'UTF-8'}
 								{/if}
 						{/foreach}
 					</div>

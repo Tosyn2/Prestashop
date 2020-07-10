@@ -14,9 +14,8 @@
 
 namespace Mds;
 
-use SoapClient;// Use PHP Soap Client
-use SoapFault;// Use PHP Soap Fault
-
+use SoapFault;
+use SoapClient;
 
 class Collivery
 {

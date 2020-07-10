@@ -40,7 +40,7 @@ class Install extends Installer
             Services::set($serviceId, $carrierId);
             Surcharge::set($serviceId, 10);
         }
-
+        
         Credentials::set('api@collivery.co.za', 'api123');
         RiskCover::set(false);
 
@@ -292,7 +292,7 @@ class Install extends Installer
      */
     private function copyServiceLogos($serviceId, $carrierId)
     {
-        $mdsIconsDirectory = _MDS_DIR_ . '/icons';
+        $mdsIconsDirectory = _MDS_DIR_ . '/views/img/icons';
         $prestashopImageDirectory = _PS_SHIP_IMG_DIR_;
 
         copy("{$mdsIconsDirectory}/{$serviceId}.jpg", "{$prestashopImageDirectory}/{$carrierId}.jpg");

@@ -38,7 +38,7 @@ class View
      */
     protected function generate($__path, $__data)
     {
-        $this->path = _MDS_DIR_ .'/views/'. $__path .'.php';
+        $this->path = _MDS_DIR_ .'/views/templates/'. $__path .'.tpl';
         extract($__data);
 
         $this->obLevel = ob_get_level();

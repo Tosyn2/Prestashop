@@ -44,14 +44,14 @@ class Mds extends CarrierModule
         $this->limited_countries = array();
 
         $this->mdsService = \Mds\MdsColliveryService::getInstance(array());
-        $this->collivery = Mds_ColliveryApi::getInstance();
+        $this->collivery = \Mds\Prestashop\Collivery\ColliveryApi::getInstance();
         $this->db = Db::getInstance();
 
         parent::__construct();
 
         $this->displayName = $this->l('MDS Collivery');
         $this->description = $this->l('Offer your customers, different delivery methods that you want');
-        $this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
+        $this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.8');
     }
 
     /**
@@ -157,7 +157,7 @@ class Mds extends CarrierModule
 
         $surcharges = $settingsService->getSurchargesInfo();
         $email = $settingsService->getColliveryEmail();
-        $riskCover = Mds_RiskCover::hasCover();
+        $riskCover = \Mds\Prestashop\Settings\RiskCover::hasCover();
 
         try {
             $settingsService->testCurrentCredentials();
@@ -167,8 +167,8 @@ class Mds extends CarrierModule
 
         $errors = empty($errors) ? '' : $this->displayError($errors);
 
-        return Mds_View::make(
-            'settings',
+        return \Mds\Prestashop\Helpers\View::make(
+            'admin/settings',
             compact('displayName', 'formUrl', 'errors', 'surcharges', 'email', 'riskCover')
         );
     }
@@ -309,14 +309,14 @@ class Mds extends CarrierModule
             $serviceId = $this->getServiceFromCarrierId($this->id_carrier);
             $orderParams['service'] = $serviceId;
 
-            if (Mds_RiskCover::hasCover()) {
+            if (\Mds\Prestashop\Settings\RiskCover::hasCover()) {
                 $orderParams['cover'] = 1;
             }
 
             $colliveryPriceOptions = $this->collivery->getPrice($orderParams);
             $colliveryPrice = $colliveryPriceOptions['price']['inc_vat'];
 
-            $surchargePerc = Mds_Surcharge::get($serviceId);
+            $surchargePerc = \Mds\Prestashop\Settings\Surcharge::get($serviceId);
             $price = $colliveryPrice * (1 + ($surchargePerc / 100));
 
             return $shipping_cost + $price;
@@ -364,7 +364,7 @@ class Mds extends CarrierModule
         if ($params['newOrderStatus']->name == 'Shipped') {
             try {
                 $orderParams = $this->buildColliveryDataArray($params);
-                if (Mds_RiskCover::hasCover()) {
+                if (\Mds\Prestashop\Settings\RiskCover::hasCover()) {
                     $orderParams['cover'] = 1;
                 }
 
@@ -390,8 +390,8 @@ class Mds extends CarrierModule
 
         $this->context->controller->addJS(($this->_path) . 'helper.js');
 
-        return Mds_View::make(
-            'footer',
+        return \Mds\Prestashop\Helpers\View::make(
+            'admin/footer',
             compact('suburbs', 'suburb', 'locationTypes', 'locationType')
         );
     }
@@ -492,7 +492,8 @@ class Mds extends CarrierModule
         . $params['id_order'];
         $serviceId = $this->db->getValue($sql);
 
-        $sql = 'SELECT * FROM '._DB_PREFIX_.'address LEFT JOIN '._DB_PREFIX_.'(state) ON '._DB_PREFIX_.'(address.`id_state`='._DB_PREFIX_
+        $sql = 'SELECT * FROM '._DB_PREFIX_.'address LEFT JOIN '._DB_PREFIX_.'(state) ON '
+        ._DB_PREFIX_.'(address.`id_state`='._DB_PREFIX_
         .'state.`id_state`) where `id_customer` = 2 AND deleted = 0';
         $deliveryAddresses = $this->db->ExecuteS($sql);
 
@@ -531,11 +532,11 @@ class Mds extends CarrierModule
             'token' => Tools::getValue('token'),
             'collectionAdresses' => $collectionAdresses
         );
-        return Mds_View::make('shipping_control', $view_data);
+        return \Mds\Prestashop\Helpers\View::make('admin/shipping_control', $view_data);
     }
 
     protected function getServiceFromCarrierId($carrierId)
     {
-        return Mds_Services::getServiceId($carrierId);
+        return \Mds\Prestashop\Settings\Services::getServiceId($carrierId);
     }
 }
