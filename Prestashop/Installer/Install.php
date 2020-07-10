@@ -36,7 +36,7 @@ class Install extends Installer
         $services = Services::get();
         foreach ($services as $serviceId => $serviceName) {
             $carrierId = $this->setupNewCarrier($serviceName);
-            $this->copyServiceLogos($serviceId, $carrierId);
+            $this->copyServiceLogos($carrierId);
             Services::set($serviceId, $carrierId);
             Surcharge::set($serviceId, 10);
         }
@@ -290,12 +290,12 @@ class Install extends Installer
      * @param $serviceId
      * @param $carrierId
      */
-    private function copyServiceLogos($serviceId, $carrierId)
+    private function copyServiceLogos($carrierId)
     {
         $mdsIconsDirectory = _MDS_DIR_ . '/views/img/icons';
         $prestashopImageDirectory = _PS_SHIP_IMG_DIR_;
 
-        copy("{$mdsIconsDirectory}/{$serviceId}.jpg", "{$prestashopImageDirectory}/{$carrierId}.jpg");
+        copy("{$mdsIconsDirectory}/logo.png", "{$prestashopImageDirectory}/{$carrierId}.jpg");
     }
 
     private function setZaContainsStates()
