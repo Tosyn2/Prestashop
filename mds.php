@@ -134,7 +134,8 @@ class Mds extends CarrierModule
      */
     public function getContent()
     {
-        $displayName = $this->displayName;
+        $errors = array();
+        $settingsService = new Mds_SettingsService();
 
         $formUrl = 'index.php?tab=' . Tools::getValue('tab')
             . '&configure=' . Tools::getValue('configure')
@@ -142,10 +143,6 @@ class Mds extends CarrierModule
             . '&tab_module=' . Tools::getValue('tab_module')
             . '&module_name=' . Tools::getValue('module_name')
             . '&id_tab=1&section=general';
-
-        $errors = array();
-
-        $settingsService = new Mds_SettingsService();
 
         if (!empty($_POST) and Tools::isSubmit('submitSave')) {
             try {
@@ -155,10 +152,6 @@ class Mds extends CarrierModule
             }
         }
 
-        $surcharges = $settingsService->getSurchargesInfo();
-        $email = $settingsService->getColliveryEmail();
-        $riskCover = \Mds\Prestashop\Settings\RiskCover::hasCover();
-
         try {
             $settingsService->testCurrentCredentials();
         } catch (\Mds\Prestashop\Collivery\InvalidCredentials $e) {
@@ -167,11 +160,20 @@ class Mds extends CarrierModule
 
         $errors = empty($errors) ? '' : $this->displayError($errors);
 
-        return \Mds\Prestashop\Helpers\View::make(
-            'admin/settings',
-            compact('displayName', 'formUrl', 'errors', 'surcharges', 'email', 'riskCover')
-        );
+        $this->context->smarty->assign('htmldata', array(
+            'formUrl' => $formUrl,
+            'errors' => $errors,
+            'displayName' => $this->displayName,
+            'surcharges' => $settingsService->getSurchargesInfo(),
+            'email' => $settingsService->getColliveryEmail(),
+            'riskCover' => \Mds\Prestashop\Settings\RiskCover::hasCover()
+        ));
+
+        $this->html = $this->display(__FILE__, 'views/templates/admin/settings.tpl');
+
+        return $this->html;
     }
+
 
     /**
      * Hook update carrier
@@ -348,7 +350,7 @@ class Mds extends CarrierModule
                     array(
                       'id_country'  => 30,
                       'id_zone'     => 4,
-                      'name'        => $town,
+                      'name'        => PSQL($town),
                       'iso_code'    => "ZA",
                       'id_mds'      => $index,
                       'tax_behavior'=> 0,
@@ -462,12 +464,12 @@ class Mds extends CarrierModule
                 'id_warehouse'    => 0,
                 'alias'           => "Collection Address",
                 'company'         => "MDS Address",
-                'lastname'        => $last_name,
-                'firstname'       => $first_name,
-                'address1'        => $streetAddress,
-                'address2'        => $locationType,
+                'lastname'        => PSQL($last_name),
+                'firstname'       => PSQL($first_name),
+                'address1'        => PSQL($streetAddress),
+                'address2'        => PSQL($locationType),
                 'postcode'        => $postCode,
-                'city'            => $city,
+                'city'            => PSQL($city),
                 'other'           => "other",
                 'phone'           => $phone,
                 'phone_mobile'    => $mobile,
@@ -492,14 +494,14 @@ class Mds extends CarrierModule
         . $params['id_order'];
         $serviceId = $this->db->getValue($sql);
 
-        $sql = 'SELECT * FROM '._DB_PREFIX_.'address LEFT JOIN '._DB_PREFIX_.'(state) ON '
-        ._DB_PREFIX_.'(address.`id_state`='._DB_PREFIX_
-        .'state.`id_state`) where `id_customer` = 2 AND deleted = 0';
+        $sql = 'SELECT * FROM '._DB_PREFIX_.'address LEFT JOIN '._DB_PREFIX_.'state ON '
+        ._DB_PREFIX_.'address.`id_state`='._DB_PREFIX_
+        .'state.`id_state` where `id_customer` = 2 AND deleted = 0';
         $deliveryAddresses = $this->db->ExecuteS($sql);
 
 
-        $sql = 'SELECT * FROM '._DB_PREFIX_.'address LEFT JOIN '._DB_PREFIX_.'(state) ON'
-        ._DB_PREFIX_.'(address.`id_state`='._DB_PREFIX_.'state.`id_state`) where `id_customer` = 0 AND deleted = 0';
+        $sql = 'SELECT * FROM '._DB_PREFIX_.'address LEFT JOIN '._DB_PREFIX_.'state ON '
+        ._DB_PREFIX_.'address.`id_state`='._DB_PREFIX_.'state.`id_state` where `id_customer` = 0 AND deleted = 0';
         $collectionAdresses = $this->db->ExecuteS($sql);
 
 
@@ -532,7 +534,11 @@ class Mds extends CarrierModule
             'token' => Tools::getValue('token'),
             'collectionAdresses' => $collectionAdresses
         );
-        return \Mds\Prestashop\Helpers\View::make('admin/shipping_control', $view_data);
+
+        $this->context->smarty->assign('htmldata', $view_data);
+        $this->html = $this->display(__FILE__, 'views/templates/admin/shipping_control.tpl');
+
+        return $this->html;
     }
 
     protected function getServiceFromCarrierId($carrierId)

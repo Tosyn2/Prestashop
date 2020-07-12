@@ -31,9 +31,8 @@
 				<div class="form-group">
 					<div class="col-lg-9">
 						<select name="id_address">
-							{foreach from=$htmldata.collectionAddresses item=deliveryAddress}
-									<option value="{$collectionAddress.id_address|escape:'htmlall':'UTF-8'}"
-									{($collectionAddress.id_address == $htmldata.collectionAddressId}) ? "selected" : ""}>
+							{foreach from=$htmldata.collectionAdresses item=collectionAddress}
+									<option value="{$collectionAddress.id_address|escape:'htmlall':'UTF-8'}">
 										{$collectionAddress.alias|escape:'htmlall':'UTF-8'} -
 										{$collectionAddress.address1|escape:'htmlall':'UTF-8'} ,
 										{$collectionAddress.city|escape:'htmlall':'UTF-8'} ,
@@ -52,7 +51,7 @@
 			<div class="well">
 				<div class="row">
 					<div class="col-sm-6">
-						{foreach from=$htmldata.collectionAddresses item=collectionAddress}
+						{foreach from=$htmldata.collectionAdresses item=collectionAddress}
 								{if $collectionAddress.id_address == $htmldata.deliveryAddressId}
 									<a class="btn btn-default pull-right"
 										 href="?controller=adminaddresses&amp;id_address={$collectionAddress.id_address|escape:'htmlall':'UTF-8'}&amp;updateaddress&amp;token={$htmldata.token|escape:'htmlall':'UTF-8'}">
@@ -88,7 +87,7 @@
 						<select name="id_address">
 							{foreach from=$htmldata.deliveryAddresses item=deliveryAddress}
 								<option value="{$deliveryAddress.id_address|escape:'htmlall':'UTF-8'}"
-									{($deliveryAddress.id_address == $htmldata.deliveryAddressId) ? "selected" : "" >
+									{($deliveryAddress.id_address|escape:'htmlall':'UTF-8' == $htmldata.deliveryAddressId|escape:'htmlall':'UTF-8') ? "selected" : "" }>
 									{$deliveryAddress.alias|escape:'htmlall':'UTF-8'} -
 									{$deliveryAddress.address1|escape:'htmlall':'UTF-8'} ,
 									{$deliveryAddress.city|escape:'htmlall':'UTF-8'} ,
