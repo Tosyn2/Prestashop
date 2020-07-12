@@ -401,7 +401,6 @@ class Mds extends CarrierModule
     public function hookOrderConfirmation($params)
     {
         $orderId = $params['objOrder']->id;
-        // $deliveryAddressId = $params['objOrder']->id_address_delivery;
 
         $carrierId = $params['objOrder']->id_carrier;
         $sql = 'SELECT `name` FROM `' . _DB_PREFIX_ . 'carrier` WHERE `id_carrier` = ' . $carrierId;
@@ -412,7 +411,6 @@ class Mds extends CarrierModule
             'mds_collivery_processed',
             array(
                 'order_id'      => $orderId,
-                // 'ps_address_id' => $deliveryAddressId,
                 'service_id'    => $serviceId,
                 'service_name'  => $carrierName
             )
@@ -449,9 +447,6 @@ class Mds extends CarrierModule
 
         $phone = $contact['phone'];
         $mobile = isset($contact['phone_mobile']) ? $contact['phone_mobile'] : null;
-
-        // die('<pre>'.print_r($contact, true));
-        // die('<pre>'.print_r($defaultAddress, true));
 
         $this->db->insert(
             'address',
