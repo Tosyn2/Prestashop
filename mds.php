@@ -420,14 +420,11 @@ class Mds extends CarrierModule
 
         $defaultAddress = $this->collivery->getAddress($defaultAddressId);
 
-        // $towns = $this->collivery->getTowns();
         $location_types = $this->collivery->getLocationTypes();
 
         $sql = 'SELECT `id_state` FROM ' . _DB_PREFIX_ . 'state where `id_mds` = "' . $defaultAddress['town_id']
         . '" AND `active` = 1';
         $state_id = $this->db->getValue($sql);
-
-        // $client_id = $defaultAddress['client_id'];
 
         $contacts = $this->collivery->getContacts($defaultAddressId);
 
