@@ -12,13 +12,12 @@
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-namespace Mds\Prestashop\Exceptions;
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 
-class InvalidEmail extends InvalidData
-{
-    public function __construct($message = '', $code = 0, \Exception $previous = null)
-    {
-        $message = 'Invalid Email Address' . ($message ? ": $message" : '.');
-        parent::__construct($message, $code, $previous);
-    }
-}
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+
+header('Location: ../../../../../');
+exit;

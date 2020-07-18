@@ -1,2 +1,4 @@
 /config*.xml
 /.idea
+*.sh
+.DS_Store
